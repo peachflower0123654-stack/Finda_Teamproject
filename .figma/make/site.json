@@ -1,0 +1,12 @@
+{
+  "title": "핀다 대출 프로토타입",
+  "description": "This web application enables user testing by providing a prototype that integrates a custom design system, facilitating seamless deployment via GitHub Actions.",
+  "language": "ko",
+  "robots": {
+    "index": false
+  },
+  "accessibility": {
+    "addBypassLinks": false,
+    "ignoreReducedMotion": false
+  }
+}
