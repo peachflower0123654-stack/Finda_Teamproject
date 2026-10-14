@@ -12,7 +12,7 @@ type ButtonProps = {
 
 const popularPosts = {
   사용팁: [
-    ["loan", "[팩토체크] 대출 조회만 해도 신용점수가 떨어질까?"],
+    ["loan", "dd안녕하세요?"],
     [
       "saving",
       "자산관리부터 지금당장시작! 마이데이터 혜택 놓친 건 없으신가요?",
