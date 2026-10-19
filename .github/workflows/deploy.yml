@@ -21,6 +21,8 @@ jobs:
         steps:
             - name: Checkout
               uses: actions/checkout@v4
+              with:
+                  lfs: true
 
             # version을 지정하지 않으면 package.json의 "packageManager" 버전을 사용
             - name: Set up pnpm
