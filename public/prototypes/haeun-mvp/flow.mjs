@@ -23,4 +23,4 @@ export function next(s){
 }
 export function reveal(s){if(s.screen!=='06')return s;const fields=['count','principal','monthly'];return filled(s[fields[s.revealed-1]])?{...s,revealed:Math.min(3,s.revealed+1)}:s;}
 export function selectOwnership(s,value){return {...s,ownership:value,...(s.ownership!==value?{count:'',principal:'',monthly:'',amount:'',interest:'',purpose:'',revealed:1,result:null}: {})};}
-export function back(s){const map={'02':'01','03':'02','04':'03','05':'04','06':'05','07':'06','08':'05','09':'08','10':s.result==='NoLoan'?'09':'07'};return {...s,screen:map[s.screen]||s.screen};}
+export function back(s){if(s.screen==='11'&&s.homeState==='OB_MD')return {...s,homeState:'OB_NoMD'};const map={'ai-rate':'11','02':'01','03':'02','04':'03','05':'04','06':'05','07':'06','08':'05','09':'08','10':s.result==='NoLoan'?'09':'07'};return {...s,screen:map[s.screen]||s.screen};}
