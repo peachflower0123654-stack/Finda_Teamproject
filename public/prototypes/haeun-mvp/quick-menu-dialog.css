@@ -1,0 +1,36 @@
+#app{position:relative}
+.quick-menu-overlay{position:absolute;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;background:rgba(1,10,38,.32)}
+#app .quick-menu-dialog{position:relative;width:336px;height:328px;background:#fff;border-radius:12px;box-shadow:0 12px 32px #010a2626;padding:0;color:#010a26}
+#app .quick-menu-dialog>header{position:absolute;top:32px;left:24px;width:288px;height:32px;display:flex;align-items:center;justify-content:space-between}
+#app .quick-menu-dialog h2{font-size:16px;line-height:24px;font-weight:700;letter-spacing:0;margin:0}
+#app .quick-menu-close{width:32px;height:32px;padding:0;position:relative;border:0;background:transparent;color:#9198ac;border-radius:8px;cursor:pointer}
+.quick-menu-close span::before,.quick-menu-close span::after{content:'';position:absolute;left:6px;top:15px;width:20px;height:2px;background:currentColor;border-radius:2px;transform:rotate(45deg)}
+.quick-menu-close span::after{transform:rotate(-45deg)}
+.quick-menu-grid{position:absolute;left:24px;width:288px;display:grid;grid-template-columns:repeat(4,49px);justify-content:space-between;align-items:center}
+.quick-menu-first-row{top:80px;height:76px}
+.quick-menu-second-row{top:172px;height:60px}
+#app .quick-menu-item,#app .quick-menu-item:disabled{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:4px;padding:0;border:0;background:transparent;color:#3a415a;opacity:1;overflow:visible;font-size:12px;line-height:20px;font-weight:400;white-space:nowrap;cursor:default}
+.quick-menu-item img{display:block;width:32px;height:32px;flex-shrink:0}
+.quick-menu-item span{text-align:center}
+.quick-menu-second-row .quick-menu-item:nth-child(1) img{width:36px;height:36px}
+.quick-menu-second-row .quick-menu-item:nth-child(n+3) img{width:36px;height:36px}
+#app .quick-menu-edit,#app .quick-menu-edit:disabled{position:absolute;top:256px;left:24px;width:288px;height:36px;border:1px solid #cbcfdd;border-radius:20px;padding:0;background:white;color:#444857;font-size:16px;line-height:24px;font-weight:700;opacity:1;cursor:default}
+#app .quick-menu-close:focus-visible{outline:2px solid #5d4cf2;outline-offset:2px}
+#app .quick-menu-edit{cursor:pointer}#app .quick-menu-edit:focus-visible{outline:2px solid #5d4cf2;outline-offset:2px}
+#app .quick-menu-dialog.is-editing{height:756px;display:flex;flex-direction:column;overflow:hidden}
+#app .quick-menu-dialog.is-editing>header{position:static;top:auto;left:auto;width:296px;height:32px;flex-shrink:0;margin:20px 20px 14px}
+.quick-add-scroll{flex:1;min-height:0;overflow-y:auto;padding:0 20px 20px;scrollbar-width:thin}
+#app .quick-add-intro h3{margin:0;font-size:18px;line-height:28px;color:#181e30;font-weight:700;letter-spacing:-.4px}
+.quick-add-intro p{font-size:12px;line-height:20px;color:#5c6175;margin:2px 0 0}
+.quick-add-counter{height:36px;border-radius:8px;background:#f7f7fa;display:flex;justify-content:space-between;align-items:center;padding:0 12px;margin-top:16px;font-size:12px;line-height:20px;color:#5c6175}
+.quick-add-counter strong{background:#efecff;color:#6553ff;border-radius:12px;padding:0 8px;font-weight:600}
+.quick-add-heading{display:flex;align-items:center;justify-content:space-between;gap:8px;margin:16px 0 8px}
+#app .quick-add-heading h3,#app .quick-add-category{font-size:14px;line-height:22px;margin:0;color:#181e30;font-weight:700}
+.quick-add-heading small{font-size:10px;line-height:16px;color:#989eb3}
+.quick-add-grid{display:grid;grid-template-columns:repeat(4,66px);justify-content:space-between;column-gap:0;row-gap:12px}
+#app .quick-add-item,#app .quick-add-item:disabled{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:8px;width:66px;min-height:92px;padding:0;border:0;background:transparent;color:#010a26;opacity:1;font-size:12px;line-height:14px;white-space:nowrap;font-weight:400;cursor:default}
+.quick-add-item img{width:56px;height:56px;display:block}.quick-add-item span{text-align:center}
+.quick-add-all{margin-top:12px}#app .quick-add-category{margin-bottom:8px}
+#app .quick-menu-dialog.is-editing footer{flex-shrink:0;margin:0 20px;padding:12px 0 16px;width:296px;background:#fff}
+#app .quick-add-done{width:296px;height:56px;flex:none}
+.quick-menu-dialog footer p{margin:8px 0 0;text-align:center;font-size:10px;line-height:16px;color:#989eb3}

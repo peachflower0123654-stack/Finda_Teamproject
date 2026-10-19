@@ -1,0 +1,20 @@
+#app .quick-menu-button {
+ position:relative;display:inline-flex;align-items:center;justify-content:center;
+ width:32px;height:32px;min-width:32px;padding:4px;border:0;border-radius:8px;
+ background:transparent;color:#ff9a23;cursor:pointer;isolation:isolate;
+}
+#app .quick-menu-star {display:block;width:24px;height:24px;flex-shrink:0;transform-origin:center;animation:quick-menu-idle 5s ease-in-out infinite;}
+#app .quick-menu-button:focus-visible {outline:2px solid #5d4cf2;outline-offset:2px;}
+#app .quick-menu-button:is(:hover,:focus-visible) {background:#fff3df;}
+#app .quick-menu-button:is(:hover,:focus-visible) .quick-menu-star {filter:drop-shadow(0 0 3px #ffb74d80);}
+.quick-menu-sparkles {position:absolute;inset:0;pointer-events:none;}
+.quick-menu-sparkles::before,.quick-menu-sparkles::after {content:'';position:absolute;width:8px;height:8px;background:#ffc45c;clip-path:polygon(50% 0,62% 38%,100% 50%,62% 62%,50% 100%,38% 62%,0 50%,38% 38%);opacity:0;}
+.quick-menu-sparkles::before {right:0;top:0;animation:quick-menu-twinkle 5s ease-in-out infinite;}
+.quick-menu-sparkles::after {left:0;bottom:0;width:4px;height:4px;animation:quick-menu-twinkle 5s .25s ease-in-out infinite;}
+#app .quick-menu-button.is-sparkling .quick-menu-star {animation:quick-menu-click .65s ease-in-out;}
+#app .quick-menu-button.is-sparkling .quick-menu-sparkles::before {animation:quick-menu-twinkle .65s ease-in-out;}
+#app .quick-menu-button.is-sparkling .quick-menu-sparkles::after {animation:quick-menu-twinkle .65s .1s ease-in-out;}
+@keyframes quick-menu-idle {0%,8%,100%{transform:scale(1) rotate(0deg)}3%{transform:scale(1.08) rotate(-5deg)}6%{transform:scale(1.04) rotate(4deg)}}
+@keyframes quick-menu-twinkle {0%,15%,100%{opacity:0;transform:scale(.4)}4%,8%{opacity:1;transform:scale(1)}}
+@keyframes quick-menu-click {0%,100%{transform:scale(1) rotate(0deg)}35%{transform:scale(1.16) rotate(-10deg)}65%{transform:scale(1.08) rotate(8deg)}}
+@media(prefers-reduced-motion:reduce){#app .quick-menu-button .quick-menu-star,#app .quick-menu-button .quick-menu-sparkles::before,#app .quick-menu-button .quick-menu-sparkles::after{animation:none;transform:none;}}

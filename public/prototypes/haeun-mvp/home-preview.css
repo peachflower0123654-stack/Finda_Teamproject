@@ -10,3 +10,6 @@
 .figma-home-shell>.home-pinned-top { z-index:10; }
 .figma-home-shell [data-node-id="1986:3913"] { justify-content:space-between; }
 .figma-home-shell img:not([src]) { visibility:hidden; }
+#app .home-nav-icons{display:flex;align-items:center;gap:10px}#app .home-nav-icons>img{width:32px;height:32px;display:block}#app .navbottom>strong,#app .navbottom>span{display:flex;flex-direction:column;align-items:center;gap:8px;width:64px;font-size:12px}#app .navbottom img{width:24px;height:24px;display:block}
+
+.figma-home-shell>.home-ob-loan-tabs{position:absolute;top:52px;left:0;width:360px;z-index:10;background:#f6f6f9}
