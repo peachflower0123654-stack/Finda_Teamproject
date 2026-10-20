@@ -1,0 +1,25 @@
+.ai-rate-screen{height:780px;width:360px;display:flex;flex-direction:column;background:#fff;color:#111;overflow:hidden}
+.ai-rate-top{height:64px;min-height:64px;padding:12px 20px;display:flex;align-items:center;background:#fff}
+#app .ai-rate-back{width:32px;height:40px;padding:0;border:0;background:transparent;color:#444b60;font-family:Arial,sans-serif;font-size:40px;line-height:40px;text-align:left;cursor:pointer}
+.ai-rate-scroll{flex:1;min-height:0;overflow-y:auto;scrollbar-width:none}.ai-rate-scroll::-webkit-scrollbar{display:none}
+.ai-rate-overview{padding:20px 20px 24px}
+.ai-rate-notice{display:flex;align-items:center;gap:8px;padding:16px;border-radius:12px;background:#f6f6f9;font-size:14px;line-height:20px;color:#303546}
+.ai-rate-notice>span{width:18px;height:18px;border-radius:50%;background:#3a415a;color:white;text-align:center;line-height:18px;font-size:12px;flex-shrink:0;font-family:Georgia,serif;font-weight:700}
+.ai-rate-artwork{height:240px;display:flex;align-items:center;justify-content:center;position:relative}
+.ai-rate-art-star{position:absolute;width:28px;height:28px;background:#0872ff;mask:url('assets/5d881.svg') center/contain no-repeat}
+#app .ai-rate-screen h2{font-size:20px;line-height:28px;letter-spacing:-.4px;font-weight:700;color:#111;margin:0}
+.ai-rate-overview>h2{text-align:center}
+#app .ai-rate-explain,#app .ai-rate-explain:disabled{display:block;margin:8px auto 0;padding:0;border:0;background:transparent;color:#303546;font-size:12px;line-height:20px;opacity:1}.ai-rate-explain span{padding-left:4px;font-size:20px}
+.ai-rate-values{display:grid;grid-template-columns:1fr 1fr;gap:20px;padding:0 12px;margin-top:32px}.ai-rate-values>div{min-width:0}.ai-rate-values p{color:#68718c;font-size:12px;line-height:20px}.ai-rate-values strong{display:block;text-align:right;font-size:28px;line-height:40px;font-weight:700}.ai-rate-values strong>span{font-size:24px;margin-left:4px}
+.ai-rate-policy{background:#f2f1fe;border-radius:24px;margin-top:28px;padding:20px 24px 16px}.ai-rate-policy h3{font-size:14px;font-weight:400;line-height:24px;color:#4b5269;margin:0}.ai-rate-policy h3>span{margin-right:8px}.ai-rate-policy .ai-rate-values{margin-top:20px;padding:0;gap:20px}
+.ai-rate-distribution,.ai-rate-comparisons{border-top:8px solid #f6f6f9;padding:24px 20px}
+.ai-rate-distribution>p{font-size:16px;line-height:24px;color:#454a5b;margin-top:8px}.ai-rate-help{display:inline-flex;width:16px;height:16px;align-items:center;justify-content:center;border:2px solid #a0a8bd;border-radius:50%;font-size:12px;color:#909bb7;vertical-align:middle}
+.ai-rate-chart{width:320px;height:280px;display:block;margin-top:32px}.ai-rate-chart text{font-family:'Malgun Gothic',sans-serif;font-size:11px;fill:#485576}.ai-rate-chart .chart-muted{fill:#8c96b0}
+.ai-rate-tabs{display:flex;border-bottom:1px solid #cbcfdd;margin-top:28px}
+#app .ai-rate-tabs button{height:48px;flex:1;border:0;border-bottom:3px solid transparent;background:white;color:#788099;font-size:16px;padding:0;cursor:pointer}
+#app .ai-rate-tabs [aria-selected=true]{border-bottom-color:#5d4cf2;color:#5d4cf2;font-weight:700}
+.ai-rate-offer{display:flex;align-items:flex-start;gap:12px;padding:28px 0 12px;min-height:124px}.ai-rate-bank{width:32px;height:32px;flex-shrink:0;border-radius:50%;background:#6bbd52;color:white;border:4px solid #6bbd52;box-shadow:inset 0 0 0 2px white;text-align:center;font-size:24px;line-height:24px;font-family:Arial,sans-serif;font-weight:700}.ai-rate-bank.blue{background:#064bf0;border-color:#064bf0;font-style:italic}
+.ai-rate-product{flex:1;min-width:0;font-size:14px;line-height:20px}.ai-rate-product strong{font-size:16px;line-height:24px}.ai-rate-product p{color:#68718c;margin-top:4px}.ai-rate-badge{display:inline-block;padding:0 4px;border-radius:4px;background:#d5f5fc;color:#267a89;font-size:11px;line-height:18px;margin-top:4px}
+.ai-rate-terms{text-align:right;white-space:nowrap}.ai-rate-terms strong,.ai-rate-terms b{display:block;font-size:20px;line-height:24px}.ai-rate-terms b{font-size:14px;line-height:20px}.ai-rate-terms small{display:block;font-size:11px;color:#7c859c;line-height:20px;margin-top:4px}.ai-rate-chevron{color:#909bb7;line-height:32px;font-size:24px}
+.ai-rate-update{border-top:8px solid #f6f6f9;padding:24px 20px}.ai-rate-update button,.ai-rate-update button:disabled{width:100%;border:0;background:white;color:#111;padding:8px 0;display:flex;align-items:center;justify-content:space-between;font-size:14px;line-height:24px;opacity:1}.ai-rate-update span{font-size:24px;color:#909bb7}
+.ai-rate-footer{padding:12px 16px 20px;background:white;flex-shrink:0}.ai-rate-footer .primary{width:328px}#app .ai-rate-footer .primary:disabled{background:#5d4cf2;color:white;opacity:1}

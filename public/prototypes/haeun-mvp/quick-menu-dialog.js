@@ -11,7 +11,7 @@ const menuItems=[
  ['추가','add','추가'],
  ['추가','add','추가'],
 ];
-export function openQuickMenu(root,trigger){
+export function openQuickMenu(root,trigger,startEditing=false){
  if(root.querySelector('.quick-menu-overlay'))return;
  const overlay=document.createElement('div');
  overlay.className='quick-menu-overlay';
@@ -20,15 +20,17 @@ export function openQuickMenu(root,trigger){
  overlay.innerHTML=`<section class="quick-menu-dialog" role="dialog" aria-modal="true" aria-label="메뉴 즐겨찾기">${popupContent}</section>`;
  const screen=root.querySelector('.screen,.figma-home-shell');
  if(screen)screen.inert=true;
- const close=()=>{document.removeEventListener('keydown',onKey,true);overlay.remove();openMenus.delete(root);if(screen)screen.inert=false;if(trigger?.isConnected)trigger.focus();};
+ const announce=value=>root.dispatchEvent(new CustomEvent('quick-menu-view',{detail:value}));
+ const close=()=>{document.removeEventListener('keydown',onKey,true);overlay.remove();openMenus.delete(root);if(screen)screen.inert=false;if(trigger?.isConnected)trigger.focus();announce(null);};
  const focusClose=()=>overlay.querySelector('.quick-menu-close').focus();
  const onKey=e=>{if(e.key==='Escape'){e.preventDefault();close();}else if(e.key==='Tab'){const buttons=[...overlay.querySelectorAll('button:not(:disabled)')];const first=buttons[0],last=buttons.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}};
  overlay.addEventListener('click',e=>{
   if(e.target===overlay||e.target.closest('.quick-menu-close')){close();return;}
   const dialog=overlay.querySelector('.quick-menu-dialog');
-  if(e.target.closest('.quick-menu-edit')){dialog.classList.add('is-editing');dialog.setAttribute('aria-label','퀵메뉴 항목 추가');dialog.innerHTML=quickMenuAddScreen();focusClose();}
-  if(e.target.closest('.quick-add-done')){dialog.classList.remove('is-editing');dialog.setAttribute('aria-label','메뉴 즐겨찾기');dialog.innerHTML=popupContent;overlay.querySelector('.quick-menu-edit').focus();}
+  if(e.target.closest('.quick-menu-edit')){dialog.classList.add('is-editing');dialog.setAttribute('aria-label','퀵메뉴 항목 추가');dialog.innerHTML=quickMenuAddScreen();focusClose();announce('popup:quick-add');}
+  if(e.target.closest('.quick-add-done')){dialog.classList.remove('is-editing');dialog.setAttribute('aria-label','메뉴 즐겨찾기');dialog.innerHTML=popupContent;overlay.querySelector('.quick-menu-edit').focus();announce('popup:quick-menu');}
  });
  document.addEventListener('keydown',onKey,true);
- openMenus.set(root,close);root.append(overlay);focusClose();
+ openMenus.set(root,close);root.append(overlay);focusClose();announce('popup:quick-menu');
+ if(startEditing)overlay.querySelector('.quick-menu-edit').click();
 }
