@@ -1,0 +1,18 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="116" height="116" viewBox="0 0 116 116" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="illust/ai-orbit">
+<path id="Vector" d="M105.553 42.5491C110.161 56.731 92.6062 75.1453 66.3435 83.6785C40.0808 92.2118 15.0551 87.6327 10.4472 73.4509C5.83921 59.269 23.3938 40.8547 49.6565 32.3215C75.9192 23.7882 100.945 28.3673 105.553 42.5491Z" stroke-width="5" stroke="url(#paint0_linear_0_84)"/>
+<path id="Vector_2" d="M83.6785 49.6565C92.2118 75.9192 87.6327 100.945 73.4509 105.553C59.269 110.161 40.8547 92.6062 32.3215 66.3435C23.7882 40.0808 28.3673 15.0551 42.5492 10.4472C56.731 5.83921 75.1453 23.3938 83.6785 49.6565Z" stroke-width="5" stroke="url(#paint1_linear_0_84)"/>
+<path id="Vector_3" d="M57 44C58.6 51.6 60.4 53.4 68 55C60.4 56.6 58.6 58.4 57 66C55.4 58.4 53.6 56.6 46 55C53.6 53.4 55.4 51.6 57 44Z" fill="#2FD9CF"/>
+<path id="Vector_4" d="M70 40C70.6 42.8 71.2 43.4 74 44C71.2 44.6 70.6 45.2 70 48C69.4 45.2 68.8 44.6 66 44C68.8 43.4 69.4 42.8 70 40Z" fill="#2FD9CF"/>
+</g>
+<defs>
+<linearGradient id="paint0_linear_0_84" x1="4.88487" y1="56.3318" x2="112.351" y2="63.4724" gradientUnits="userSpaceOnUse">
+<stop stop-color="#8FF0EC"/>
+<stop offset="1" stop-color="#2F6BF3"/>
+</linearGradient>
+<linearGradient id="paint1_linear_0_84" x1="24.8121" y1="14.1074" x2="91.1879" y2="101.893" gradientUnits="userSpaceOnUse">
+<stop stop-color="#2F6BF3"/>
+<stop offset="1" stop-color="#4FD3EE"/>
+</linearGradient>
+</defs>
+</svg>
