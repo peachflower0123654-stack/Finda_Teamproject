@@ -3,7 +3,9 @@ import {emptyConsent,canContinueConsent} from './consent.js';
 export const draftLoanResults=['HasLoanUnavailable','HasLoan'];
 export const initial=()=>({screen:'00',consent:emptyConsent(),affiliation:'',housing:'',ownership:null,count:'',principal:'',monthly:'',amount:'',interest:'',purpose:'',revealed:1,result:null,draftResultIndex:0,homeState:'NoOB_NoMD',tab:'Asset',review:false});
 export const filled=v=>/^\d+$/.test(v);
-export const skipOnboarding=s=>({...s,screen:'11',homeState:'NoOB_NoMD',tab:'Asset',result:null,review:false});
+// 05~09 건너뛰기: 입력값은 유지해 '이어서 입력하기'에서 재사용한다.
+export const skipOnboarding=s=>({...s,screen:'11',homeState:'InOB_NoMD',tab:'Asset',result:null,review:false});
+export const consentHome=s=>({...s,screen:'11',homeState:'NoOB_NoMD',tab:'Asset'});
 export function next(s){
  const t={...s};
  switch(s.screen){
