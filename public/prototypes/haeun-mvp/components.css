@@ -1,0 +1,111 @@
+/* Figma component draft, 2371:2948 and 2058:227.
+   Layout measurements use the requested 4px grid; borders retain 1px strokes.
+   Only documented variants are represented. No pressed fill or disabled
+   tertiary/quaternary treatment was supplied by the source. */
+:root {
+  --button-primary: #5d4cf2;
+  --button-subtle: #f2f1fe;
+  --button-white: #fff;
+  --button-gray-20: #e0e3eb;
+  --button-gray-30: #cbcfdd;
+  --button-gray-40: #b5bbce;
+  --button-gray-90: #444857;
+}
+
+/* Existing callsites reuse these variants without changing their actions. */
+#app :is(.primary, .secondary, .tertiary, .quaternary, .btn) {
+  --button-height: 56px;
+  --button-min-width: 96px;
+  --button-padding: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  height: var(--button-height);
+  min-height: var(--button-height);
+  min-width: var(--button-min-width);
+  padding: 0 var(--button-padding);
+  border: 0;
+  border-radius: 999px;
+  font-size: 16px;
+  line-height: 24px;
+  font-weight: 700;
+  text-align: center;
+  white-space: nowrap;
+  opacity: 1;
+}
+
+#app :is(.primary, .btn[data-hierarchy="primary"]) {
+  background: var(--button-primary);
+  color: var(--button-white);
+}
+
+#app :is(.secondary, .btn[data-hierarchy="secondary"]) {
+  background: var(--button-white);
+  color: var(--button-primary);
+  border: 1px solid var(--button-primary);
+}
+
+#app :is(.tertiary, .btn[data-hierarchy="tertiary"]) {
+  background: var(--button-subtle);
+  color: var(--button-primary);
+}
+
+#app :is(.quaternary, .btn[data-hierarchy="quaternary"]) {
+  background: var(--button-white);
+  color: var(--button-gray-90);
+  border: 1px solid var(--button-gray-30);
+}
+
+#app :is(.primary, .btn[data-hierarchy="primary"]):disabled {
+  background: var(--button-gray-20);
+  color: var(--button-gray-40);
+  border: 0;
+  cursor: default;
+}
+
+#app :is(.secondary, .btn[data-hierarchy="secondary"]):disabled {
+  background: var(--button-white);
+  color: var(--button-gray-30);
+  border: 1px solid var(--button-gray-20);
+  cursor: default;
+}
+
+#app :is(.primary, .secondary, .tertiary, .quaternary, .btn)[data-size="medium"] {
+  --button-height: 48px;
+  --button-min-width: 72px;
+  --button-padding: 12px;
+}
+
+#app :is(.primary, .secondary, .tertiary, .quaternary, .btn)[data-size="small"] {
+  --button-height: 36px;
+  --button-min-width: 32px;
+  --button-padding: 12px;
+}
+
+/* Numeric input component; retain each screen's label, unit and hint. */
+#app .field > span {
+  color: #5649cc;
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 24px;
+}
+#app .inputrow {
+  border-bottom: 2px solid #5444da;
+  padding: 4px 0;
+  font-size: 24px;
+  line-height: 40px;
+}
+#app .inputrow input {
+  font-weight: 400;
+  font-size: 24px;
+  line-height: 40px;
+  color: var(--ink, #010a26);
+}
+#app .inputrow input::placeholder { color: #a1a8c2; opacity: 1; }
+#app .field small {
+  color: #767c92;
+  font-size: 12px;
+  line-height: 20px;
+  text-align: right;
+}
