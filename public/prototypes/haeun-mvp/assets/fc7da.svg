@@ -1,0 +1,20 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="136" height="136" viewBox="0 0 136 136" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="illust/ai-loading">
+<path id="Vector" d="M130 68C130 102.242 102.242 130 68 130C33.7583 130 6 102.242 6 68C6 33.7583 33.7583 6 68 6C102.242 6 130 33.7583 130 68Z" stroke-width="9" stroke="url(#paint0_linear_0_10)"/>
+<path id="Vector_2" d="M127 66C127 96.9279 101.928 122 71 122C40.0721 122 15 96.9279 15 66C15 35.0721 40.0721 10 71 10C101.928 10 127 35.0721 127 66Z" stroke-width="5" stroke="url(#paint1_linear_0_10)"/>
+<path id="Vector_3" d="M70 122C99.8234 122 124 97.8234 124 68C124 38.1766 99.8234 14 70 14C40.1766 14 16 38.1766 16 68C16 97.8234 40.1766 122 70 122Z" fill="white"/>
+<path id="Vector_4" d="M68 52C69.8 61 72 63.2 81 65C72 66.8 69.8 69 68 78C66.2 69 64 66.8 55 65C64 63.2 66.2 61 68 52Z" fill="#3BD9C4"/>
+</g>
+<defs>
+<linearGradient id="paint0_linear_0_10" x1="10" y1="10" x2="126" y2="126" gradientUnits="userSpaceOnUse">
+<stop stop-color="#2F8FF3"/>
+<stop offset="0.6" stop-color="#1E9BEA"/>
+<stop offset="1" stop-color="#2C6BF2"/>
+</linearGradient>
+<linearGradient id="paint1_linear_0_10" x1="30" y1="20" x2="120" y2="120" gradientUnits="userSpaceOnUse">
+<stop stop-color="#7B5CF2"/>
+<stop offset="0.5" stop-color="#3FE0C8"/>
+<stop offset="1" stop-color="#2AD6D0"/>
+</linearGradient>
+</defs>
+</svg>
