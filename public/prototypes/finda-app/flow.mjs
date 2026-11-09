@@ -30,7 +30,7 @@ export function next(s){
  case 'ai-rate-intro':t.screen='ai-rate-consent';t.aiConsent=false;break;
  case 'ai-rate-consent':if(canConfirmAiRate(s)){t.screen='ai-rate-loading';t.aiAutoAdvance=true;}break;
  case 'ai-rate-loading':t.screen='ai-rate';t.aiSort='rate';t.aiAutoAdvance=false;break;
- case '10':t.screen='11';t.tab='Asset';if(!s.review)t.homeState='OB_NoMD';break;
+ case '10':t.screen='11';t.tab='Asset';t.homeState='OB_NoMD';break; // 결과 카드가 나왔다는 건 온보딩 완료 → 항상 scr_11_Home_Asset_OB_NoMD. 화면선택(review)으로 연 결과도 같다.
  }
  return t;
 }
