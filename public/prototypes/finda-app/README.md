@@ -1,10 +1,10 @@
-# 하은 MVP 플로우 초안
+# 핀다 앱 (finda-app)
 
-선영님 초안과 비교하기 위한 독립 프로토타입입니다. 기존 React 앱과 별도로 `public/prototypes/haeun-mvp/`에 보관합니다.
+팀 기준 앱입니다. `public/prototypes/finda-app/`에 있으며, 맨 위 주소(`/Finda_Teamproject/`)로 들어오면 이 앱으로 바로 이동합니다.
 
 ## 실행
 
-프로젝트 개발 서버에서는 `/prototypes/haeun-mvp/`를 엽니다. 이 폴더에서 `node server.mjs`를 실행하면 `http://127.0.0.1:4173`에서도 볼 수 있습니다. 외부 패키지 설치는 필요 없습니다.
+프로젝트 개발 서버에서는 `/`(또는 `/prototypes/finda-app/`)를 엽니다. 이 폴더에서 `node server.mjs`를 실행하면 `http://127.0.0.1:4173`에서도 볼 수 있습니다. 외부 패키지 설치는 필요 없습니다.
 
 검사: 이 폴더에서 `node --test flow.test.mjs`.
 
@@ -33,8 +33,6 @@
 디자인 시스템은 미완성입니다. 제공받은 버튼 상태 및 입력 스타일만 공통 CSS에 반영했습니다. Figma는 수정하지 않았으며 레이어 네이밍은 사용자의 추후 수정 요청을 따릅니다.
 
 ## 협업
-
-작업 브랜치: `codex/haeun-mvp-flow-update`
 
 공유 규칙: 브랜치에서 작업 → 변경 파일만 커밋·푸시 → PR → 팀원 승인 → main 머지.
 
