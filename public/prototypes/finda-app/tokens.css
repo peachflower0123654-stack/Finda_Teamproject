@@ -1,0 +1,162 @@
+/* Finders 디자인 토큰 — Figma "Design Guide Final" / 디자인 가이드 2.2v (2026-10-31)
+   이름 규칙: --ds- 접두사. home-design.css(Tailwind 결과물)가 --radius-*, --font-weight-* 등을 이미 쓰고 있어
+   같은 이름을 쓰면 값이 덮어써지므로 접두사로 분리한다.
+   ⚠️ = 가이드에서 아직 미확정. 적용 방침(2026-11-09): ⚠️ 값도 지금 값 그대로 반영하고 정리는 나중에 한다.
+   화면 CSS에는 Semantic 토큰만 쓴다. Primitive는 Semantic이 참조하는 원본이다. */
+
+:root {
+  /* ───── Color · Primitive ───── */
+  --ds-purple-010: #f2f1fe; --ds-purple-020: #d4d0fc; --ds-purple-030: #b6aff9;
+  --ds-purple-040: #998ef7; --ds-purple-050: #7b6df4; --ds-purple-060: #5d4cf2;
+  --ds-purple-070: #5444da; --ds-purple-080: #4a3dc2; --ds-purple-090: #4135a9;
+
+  --ds-blue-010: #f1f6fe; --ds-blue-020: #d0e1fc; --ds-blue-030: #afccf9;
+  --ds-blue-040: #8eb8f7; --ds-blue-050: #6da3fa; --ds-blue-060: #4c8ef2;
+  --ds-blue-070: #4480da; --ds-blue-080: #3d72c2; --ds-blue-090: #3563a9;
+
+  --ds-aqua-010: #f1fcfe; --ds-aqua-020: #d0f4fc; --ds-aqua-030: #afecf9;
+  --ds-aqua-040: #8ee4f7; --ds-aqua-050: #6ddcf4; --ds-aqua-060: #4cd4f2;
+  --ds-aqua-070: #44bfda; --ds-aqua-080: #3daac2; --ds-aqua-090: #3594a9;
+
+  --ds-green-010: #defff9; --ds-green-020: #c4f3eb; --ds-green-030: #99eade;
+  --ds-green-040: #65e1d1; --ds-green-050: #37d4c3; --ds-green-060: #21bcad;
+  --ds-green-070: #22a396; --ds-green-080: #228b80; --ds-green-090: #0c756b;
+
+  --ds-magenta-010: #fcf1fe; --ds-magenta-020: #f5d0fc; --ds-magenta-030: #eeaff9;
+  --ds-magenta-040: #e78ef7; --ds-magenta-050: #e06df4; --ds-magenta-060: #d94cf2;
+  --ds-magenta-070: #c344da; --ds-magenta-080: #ae3dc2; --ds-magenta-090: #9835a9;
+
+  --ds-red-010: #fef1f2; --ds-red-020: #fcd0d3; --ds-red-030: #f9afb4;
+  --ds-red-040: #f78e95; --ds-red-050: #f46d76; --ds-red-060: #f24c57;
+  --ds-red-070: #da444e; --ds-red-080: #c23d46; --ds-red-090: #a9353d;
+
+  --ds-yellow-010: #fff8f0; --ds-yellow-020: #fee6cd; --ds-yellow-030: #fdd5ab;
+  --ds-yellow-040: #fdc488; --ds-yellow-050: #fcb366; --ds-yellow-060: #fba243;
+  --ds-yellow-070: #e2923c; --ds-yellow-080: #c98236; --ds-yellow-090: #b0712f;
+
+  /* gray는 단계가 다르다 (045, 095, 100, 110 포함) */
+  --ds-gray-010: #f6f6f9; --ds-gray-020: #e0e3eb; --ds-gray-030: #cbcfdd;
+  --ds-gray-040: #b5bbce; --ds-gray-045: #a9b0c9; --ds-gray-050: #a0a7c0;
+  --ds-gray-060: #8a93b2; --ds-gray-070: #737a94; --ds-gray-080: #5b6176;
+  --ds-gray-090: #444857; --ds-gray-095: #3a415a; --ds-gray-100: #2c2f39;
+  --ds-gray-110: #15161b;
+
+  --ds-base-white: #ffffff;
+  --ds-base-black: #000000;
+
+  /* ───── Color · Semantic ───── */
+  --ds-primary: var(--ds-purple-060);
+  --ds-primary-alt: var(--ds-purple-070);
+  --ds-text-on-primary: var(--ds-base-white);
+  --ds-text-label-caption: var(--ds-purple-060);
+  --ds-text-ink: #010a26;              /* ⚠️ 직접 입력 */
+  --ds-text-ink-pure: var(--ds-base-black);
+  --ds-text-body: #3a415a;             /* ⚠️ 직접 입력 (= gray/095로 연결 예정) */
+  --ds-text-muted: #65798e;            /* ⚠️ 직접 입력 */
+  --ds-text-muted-alt: var(--ds-gray-070);
+  --ds-text-faint: #a9b0c9;            /* ⚠️ 직접 입력 (= gray/045로 연결 예정) */
+  --ds-text-error: #f21839;            /* ⚠️ 직접 입력 */
+  --ds-text-white-chip: var(--ds-gray-090);
+  --ds-bg-canvas: var(--ds-base-white);
+  --ds-bg-home: var(--ds-gray-010);    /* ⚠️ 이름 미정 */
+  --ds-bg-dimd: rgb(0 0 0 / 0.32);
+  --ds-surface: #f4f6fa;               /* ⚠️ 직접 입력 */
+  --ds-surface-alt: var(--ds-gray-010);
+  --ds-line-hairline: #dedede;         /* ⚠️ 직접 입력 */
+  --ds-accent-alarm-new: var(--ds-magenta-060);
+  --ds-accent-dot-selected: var(--ds-purple-060);
+  --ds-accent-dot-required: var(--ds-blue-060);
+  --ds-accent-dot-future: var(--ds-green-060);
+  --ds-accent-dot-muted: var(--ds-gray-050);
+
+  /* ───── Typography · 변수 ───── */
+  --ds-font-base: 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+  /* SUIT Variable은 아직 로드하지 않았다. 로드 전에는 base 글꼴로 대체된다. */
+  --ds-font-number: 'SUIT Variable', 'SUIT', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+
+  --ds-font-size-10: 0.625rem;
+  --ds-font-size-12: 0.75rem;
+  --ds-font-size-14: 0.875rem;
+  --ds-font-size-16: 1rem;
+  --ds-font-size-22: 1.375rem;
+  --ds-font-size-24: 1.5rem;
+
+  --ds-font-weight-regular: 400;
+  --ds-font-weight-medium: 500;
+  --ds-font-weight-semibold: 600;
+  --ds-font-weight-bold: 700;
+
+  --ds-line-height-12: 0.75rem;        /* ⚠️ 설명 없음 (Tag Small 10/12) */
+  --ds-line-height-16: 1rem;
+  --ds-line-height-20: 1.25rem;
+  --ds-line-height-24: 1.5rem;
+  --ds-line-height-32: 2rem;
+  --ds-line-height-36: 2.25rem;
+
+  /* ───── Spacing ───── */
+  --ds-spacing-xs: 4px;
+  --ds-spacing-sm: 8px;
+  --ds-spacing-md: 12px;
+  --ds-spacing-base: 16px;
+  --ds-spacing-lg: 20px;
+  --ds-spacing-24: 24px;
+  --ds-spacing-xl: 28px;
+  --ds-spacing-32: 32px;
+  --ds-spacing-36: 36px;
+  --ds-spacing-xxl: 48px;
+  --ds-spacing-section: 64px;
+
+  /* ───── Radius ───── */
+  --ds-radius-sm: 8px;
+  --ds-radius-md: 16px;
+  --ds-radius-lg: 60px;
+  --ds-radius-full: 9999px;
+  --ds-radius-selection: 12px;         /* Segmented, chip, List */
+  --ds-radius-stat-card: 16px;
+  --ds-radius-ad-notice: 20px;         /* AD, Notice */
+  --ds-radius-home-card: 24px;         /* 홈 카드 S·M */
+  /* 실측값 ⚠️ 10·14·18은 4의 배수가 아니고 32·36·40은 용도 미정. 시안에 쓰인 곳은 그 값 그대로 반영한다. */
+  --ds-radius-m-4: 4px;  --ds-radius-m-8: 8px;  --ds-radius-m-10: 10px; --ds-radius-m-12: 12px;
+  --ds-radius-m-14: 14px; --ds-radius-m-16: 16px; --ds-radius-m-18: 18px; --ds-radius-m-20: 20px;
+  --ds-radius-m-24: 24px; --ds-radius-m-32: 32px; --ds-radius-m-36: 36px; --ds-radius-m-40: 40px;
+
+  /* ───── Motion ───── ⚠️ 값은 임의값. 모션 유무 비교 후 확정 */
+  --ds-duration-fast: 120ms;
+  --ds-duration-standard: 200ms;
+  --ds-duration-slow: 320ms;
+  --ds-ease-enter: cubic-bezier(0.2, 0.6, 0.25, 1);
+  --ds-ease-exit: cubic-bezier(0.4, 0, 1, 1);
+  --ds-ease-standard: cubic-bezier(0.25, 0.1, 0.25, 1);
+
+  /* ───── Layout ───── */
+  --ds-frame-width: 360px;
+  --ds-frame-height: 780px;
+  --ds-gutter: var(--ds-spacing-sm);
+  --ds-page-margin: var(--ds-spacing-base);
+  --ds-content-width: 328px;           /* 360 − 16 × 2 */
+  --ds-topbar-height: 52px;
+  --ds-bottombar-height: 90px;         /* ⚠️ 4배수 정리 필요 */
+  --ds-card-gap: var(--ds-spacing-lg);
+}
+
+/* ───── Typography · 텍스트 스타일 ─────
+   사용: <p class="ds-body">. 크기/행간은 가이드(px) 값을 rem으로 옮긴 것이다.
+   Title M(20/28)은 변수가 없어 ⚠️ 값 그대로 쓴다. */
+.ds-title-l { font: var(--ds-font-weight-bold) var(--ds-font-size-24)/var(--ds-line-height-36) var(--ds-font-base); }
+.ds-title-m { font: var(--ds-font-weight-semibold) 1.25rem/1.75rem var(--ds-font-base); }
+.ds-title-s { font: var(--ds-font-weight-bold) var(--ds-font-size-16)/var(--ds-line-height-24) var(--ds-font-base); }
+.ds-body { font: var(--ds-font-weight-regular) var(--ds-font-size-16)/var(--ds-line-height-24) var(--ds-font-base); }
+.ds-body-semibold { font: var(--ds-font-weight-semibold) var(--ds-font-size-16)/var(--ds-line-height-24) var(--ds-font-base); }
+.ds-body-small { font: var(--ds-font-weight-regular) var(--ds-font-size-14)/var(--ds-line-height-24) var(--ds-font-base); }
+.ds-label { font: var(--ds-font-weight-medium) var(--ds-font-size-14)/var(--ds-line-height-20) var(--ds-font-base); }
+.ds-label-bold { font: var(--ds-font-weight-bold) var(--ds-font-size-14)/var(--ds-line-height-20) var(--ds-font-base); }
+.ds-nav-label { font: var(--ds-font-weight-regular) var(--ds-font-size-12)/var(--ds-line-height-16) var(--ds-font-base); }
+.ds-nav-label-active { font: var(--ds-font-weight-bold) var(--ds-font-size-12)/var(--ds-line-height-16) var(--ds-font-base); }
+.ds-primary-button { font: var(--ds-font-weight-bold) var(--ds-font-size-16)/var(--ds-line-height-24) var(--ds-font-base); }
+.ds-title-caption { font: var(--ds-font-weight-regular) var(--ds-font-size-14)/var(--ds-line-height-24) var(--ds-font-base); }
+.ds-input-caption { font: var(--ds-font-weight-medium) var(--ds-font-size-12)/var(--ds-line-height-16) var(--ds-font-base); }
+.ds-tag-small { font: var(--ds-font-weight-medium) var(--ds-font-size-10)/var(--ds-line-height-12) var(--ds-font-base); }
+.ds-unit { font: var(--ds-font-weight-regular) var(--ds-font-size-24)/var(--ds-line-height-36) var(--ds-font-base); }
+.ds-number-l { font: var(--ds-font-weight-bold) var(--ds-font-size-22)/var(--ds-line-height-32) var(--ds-font-number); }
+.ds-number-m { font: var(--ds-font-weight-bold) var(--ds-font-size-16)/var(--ds-line-height-24) var(--ds-font-number); }
+.ds-number-s { font: var(--ds-font-weight-semibold) var(--ds-font-size-14)/var(--ds-line-height-20) var(--ds-font-number); }
