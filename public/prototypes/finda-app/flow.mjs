@@ -1,7 +1,7 @@
 import {emptyConsent,canContinueConsent} from './consent.js';
 // Append the third draft result once its screen is supplied. No approval rules.
 export const draftLoanResults=['HasLoanUnavailable','HasLoan'];
-export const initial=()=>({screen:'00',consent:emptyConsent(),affiliation:'',housing:'',ownership:null,count:'',principal:'',monthly:'',amount:'',interest:'',purpose:'',revealed:1,result:null,draftResultIndex:0,homeState:'NoOB_NoMD',tab:'Asset',review:false,aiConsent:false,aiSort:'rate',aiAutoAdvance:false});
+export const initial=()=>({screen:'00',consent:emptyConsent(),affiliation:'',housing:'',ownership:null,count:'',principal:'',monthly:'',amount:'',interest:'',purpose:'',revealed:1,result:null,draftResultIndex:0,homeState:'NoOB_NoMD',tab:'Asset',review:false,aiConsent:false,aiSort:'rate',aiAutoAdvance:false,postProfile:null,postChip:'MY'});
 export const filled=v=>/^\d+$/.test(v);
 // 05~09 건너뛰기: 입력값은 유지해 '이어서 입력하기'에서 재사용한다.
 export const skipOnboarding=s=>({...s,screen:'11',homeState:'InOB_NoMD',tab:'Asset',result:null,review:false});
