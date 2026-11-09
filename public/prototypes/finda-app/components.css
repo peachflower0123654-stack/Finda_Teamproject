@@ -109,3 +109,42 @@
   line-height: var(--ds-line-height-20);
   text-align: right;
 }
+
+/* cmp_Common_Input — Figma 3839:947 (2.0 채움형). 상태: Default · Typing · Error · Done.
+   Typing=data-active, Done=data-filled="true"(비활성), Error=data-state="error". 에러 상태는 아직 어느 화면에서도 쓰지 않는다.
+   값은 Figma에서 SUIT Variable ExtraBold 22/32 대상이나 SUIT 로드 전까지 Noto Sans KR Bold로 둔다(Figma도 임시 적용). */
+.cmp-input { display: flex; flex-direction: column; gap: var(--ds-spacing-sm); width: 100%; min-width: 0; cursor: text; }
+/* 입력창의 기본 너비(글자 크기 기준)가 그리드 칸을 넓히지 않도록 칸 너비를 고정한다 */
+.cmp-input-list { grid-template-columns: minmax(0, 1fr); gap: var(--ds-spacing-base); }
+.cmp-input__label,
+.cmp-input__caption { display: block; padding: 0 var(--ds-spacing-base); color: var(--ds-text-muted-alt); }
+.cmp-input__label { font: var(--ds-font-weight-medium) var(--ds-font-size-14)/var(--ds-line-height-20) var(--ds-font-base); }
+.cmp-input__caption { font: var(--ds-font-weight-medium) var(--ds-font-size-12)/var(--ds-line-height-16) var(--ds-font-base); text-align: right; }
+.cmp-input__field {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--ds-spacing-sm);
+  /* 브라우저가 1.6px 테두리를 1px로 내림하므로, 높이는 64px(16 + 32 + 16)로 고정해 상태가 바뀌어도 흔들리지 않게 한다 */
+  box-sizing: border-box; height: calc(var(--ds-spacing-base) * 4); padding: 0 calc(var(--ds-spacing-base) - 1.6px); border: 1.6px solid transparent;
+  border-radius: var(--ds-radius-m-20); background: var(--ds-surface-alt);
+}
+.cmp-input__value {
+  flex: 1; width: 0; min-width: 0; height: var(--ds-line-height-32); padding: 0; border: 0; outline: 0; background: none; text-align: left;
+  font: var(--ds-font-weight-bold) var(--ds-font-size-22)/var(--ds-line-height-32) var(--ds-font-base);
+  color: var(--ds-text-muted);
+}
+.cmp-input__value::placeholder { color: var(--ds-text-faint); opacity: 1; }
+.cmp-input__unit {
+  flex-shrink: 0; color: var(--ds-text-muted);
+  font: var(--ds-font-weight-regular) var(--ds-font-size-16)/var(--ds-line-height-24) var(--ds-font-base);
+}
+/* Typing */
+.cmp-input[data-active] .cmp-input__label { color: var(--ds-text-label-caption); }
+.cmp-input[data-active] .cmp-input__field { border-color: var(--ds-purple-040); }
+.cmp-input[data-active] .cmp-input__value { color: var(--ds-text-ink-pure); }
+/* Done: 입력을 마친 필드는 안내 문구를 숨긴다 */
+.cmp-input[data-filled="true"]:not([data-active]) .cmp-input__caption { display: none; }
+/* Error */
+.cmp-input[data-state="error"] .cmp-input__label,
+.cmp-input[data-state="error"] .cmp-input__caption,
+.cmp-input[data-state="error"] .cmp-input__value,
+.cmp-input[data-state="error"] .cmp-input__unit { color: var(--ds-text-error); }
+.cmp-input[data-state="error"] .cmp-input__field { border-color: transparent; background: var(--ds-red-010); }
