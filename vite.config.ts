@@ -12,14 +12,14 @@ export default defineConfig(({ command, mode, isPreview }) => {
 	return {
 		// GitHub Pages 배포 경로 — 레포 이름과 대소문자까지 정확히 일치해야 함.
 		// 로컬/Figma Make 개발 서버(pnpm dev)는 '/'에서 열리고,
-		// 빌드(pnpm build)와 미리보기(pnpm preview)는 '/Finda_DefaultHome_Test/'를 사용.
+		// 빌드(pnpm build)와 미리보기(pnpm preview)는 '/Finda_Teamproject/'를 사용.
 		// Figma Make에서 배포할 때만 FIGMA_PUBLIC_URL을 따름.
 		base:
 			command === 'serve' && !isPreview
 				? '/'
 				: process.env.FIGMA_PUBLIC_URL
 					? `${process.env.FIGMA_PUBLIC_URL}/`
-					: '/Finda_DefaultHome_Test/',
+					: '/Finda_Teamproject/',
 		build: {
 			sourcemap: emitSourcemaps ? 'inline' : false,
 			minify: !emitSourcemaps,

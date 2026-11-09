@@ -1,8 +1,8 @@
-# Finda_DefaultHome_Test
+# Finda_Teamproject
 
-핀다 대출 홈 프로토타입 (React 19 + Vite 8 + Tailwind CSS v4)
+핀다 앱 프로토타입. 앱 본체는 `public/prototypes/finda-app/`에 있고, 맨 위 `index.html`은 그 앱으로 바로 이동합니다. (빌드·배포: Vite 8)
 
-- 배포 주소: https://<GitHub 계정 또는 조직>.github.io/Finda_DefaultHome_Test/
+- 배포 주소: https://<GitHub 계정 또는 조직>.github.io/Finda_Teamproject/
 - 패키지 매니저: **pnpm 10.34.6** (팀 전체 동일 버전 사용)
 
 ---
@@ -39,8 +39,8 @@ pnpm -v   # 10.34.6 확인
 ## 2. 설치
 
 ```bash
-git clone https://github.com/<GitHub 계정 또는 조직>/Finda_DefaultHome_Test.git
-cd Finda_DefaultHome_Test
+git clone https://github.com/<GitHub 계정 또는 조직>/Finda_Teamproject.git
+cd Finda_Teamproject
 pnpm install
 ```
 
@@ -55,10 +55,10 @@ pnpm install
 | --- | --- |
 | `pnpm dev` | 개발 서버 실행 (터미널에 표시되는 주소로 접속, 기본 `http://localhost:8443/`) |
 | `pnpm build` | 배포용 빌드 → `dist/` 폴더 생성 |
-| `pnpm preview` | 빌드 결과 미리보기 → `http://localhost:8443/Finda_DefaultHome_Test/` 로 접속 |
+| `pnpm preview` | 빌드 결과 미리보기 → `http://localhost:8443/Finda_Teamproject/` 로 접속 |
 | `pnpm format` | 코드 포맷 정리 (oxfmt) |
 
-> 빌드 결과물의 base 경로는 `vite.config.ts`에서 `/Finda_DefaultHome_Test/` 로 설정되어 있습니다.
+> 빌드 결과물의 base 경로는 `vite.config.ts`에서 `/Finda_Teamproject/` 로 설정되어 있습니다.
 > 레포 이름과 **대소문자까지** 같아야 GitHub Pages에서 화면이 정상적으로 뜹니다.
 
 ---

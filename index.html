@@ -5,12 +5,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title><!-- figma:title --></title>
+    <!-- 팀 기준 앱(public/prototypes/finda-app/)으로 바로 이동. 상대 경로라 개발 서버(/)와 GitHub Pages(/Finda_Teamproject/) 모두에서 동작한다. -->
+    <meta http-equiv="refresh" content="0; url=prototypes/finda-app/index.html" />
+    <script>location.replace('prototypes/finda-app/index.html' + location.search + location.hash);</script>
     <!-- figma:head-end -->
   </head>
   <body>
     <!-- figma:body-start -->
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+    <p><a href="prototypes/finda-app/index.html">핀다 앱으로 이동</a></p>
     <!-- figma:body-end -->
   </body>
 </html>

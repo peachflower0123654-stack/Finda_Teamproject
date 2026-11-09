@@ -37,7 +37,7 @@ jobs:
             - name: Install dependencies
               run: pnpm install --frozen-lockfile
 
-            # base 경로는 vite.config.ts에서 '/Finda_DefaultHome_Test/'로 고정
+            # base 경로는 vite.config.ts에서 '/Finda_Teamproject/'로 고정
             - name: Build
               run: pnpm run build
 

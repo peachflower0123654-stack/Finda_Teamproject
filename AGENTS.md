@@ -13,10 +13,10 @@ A Vite development server is **already running** on `$PORT` (default 8443). You 
 
 This is the canonical project structure. Start with task-relevant files below. Only follow imports or inspect other files when required, when a documented path is missing, or when the repository contradicts this guide.
 
-- `src/main.tsx` - React entrypoint; imports `src/index.css` and mounts `src/App.tsx` into the `#root` element
-- `src/App.tsx` - Primary application component and the usual starting point for UI work
-- `src/index.css` - Global CSS entrypoint and Tailwind CSS v4 import
-- `index.html` - Vite HTML shell containing the `#root` element and loading `src/main.tsx`
+- `public/prototypes/finda-app/` - The team's app (plain HTML/CSS/JS, no build step) and the usual starting point for UI work
+- `public/prototypes/finda-app/app.js` - App entrypoint; renders screens into `#app` and wires the preview panel
+- `public/prototypes/finda-app/flow.mjs` - Screen flow state (onboarding, home, AI rate); tested by `flow.test.mjs` via `npm test` in that folder
+- `index.html` - Root page that immediately redirects to `prototypes/finda-app/index.html`
 - `package.json` - Project dependencies and the Vite build, development, preview, and formatting scripts
 - `vite.config.ts` - Vite configuration with React, Tailwind CSS v4, and Figma Make plugins plus the `@` alias for `src`
 - `.mise.toml` - Toolchain versions for Node.js and pnpm
