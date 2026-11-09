@@ -1,12 +1,12 @@
 #app .quick-menu-button {
  position:relative;display:inline-flex;align-items:center;justify-content:center;
- width:32px;height:32px;min-width:32px;padding:4px;border:0;border-radius:8px;
+ width:32px;height:32px;min-width:32px;padding:var(--ds-spacing-xs);border:0;border-radius:var(--ds-radius-sm);
  background:transparent;color:#ff9a23;cursor:pointer;isolation:isolate;
 }
 #app .quick-menu-star {display:block;width:24px;height:24px;flex-shrink:0;transform-origin:center;animation:quick-menu-idle 5s ease-in-out infinite;}
-#app .quick-menu-button:focus-visible {outline:2px solid #5d4cf2;outline-offset:2px;}
+#app .quick-menu-button:focus-visible {outline:2px solid var(--ds-primary);outline-offset:2px;}
 #app .quick-menu-button:is(:hover,:focus-visible) {background:#fff3df;}
-#app .quick-menu-button:is(:hover,:focus-visible) .quick-menu-star {filter:drop-shadow(0 0 3px #ffb74d80);}
+
 .quick-menu-sparkles {position:absolute;inset:0;pointer-events:none;}
 .quick-menu-sparkles::before,.quick-menu-sparkles::after {content:'';position:absolute;width:8px;height:8px;background:#ffc45c;clip-path:polygon(50% 0,62% 38%,100% 50%,62% 62%,50% 100%,38% 62%,0 50%,38% 38%);opacity:0;}
 .quick-menu-sparkles::before {right:0;top:0;animation:quick-menu-twinkle 5s ease-in-out infinite;}
