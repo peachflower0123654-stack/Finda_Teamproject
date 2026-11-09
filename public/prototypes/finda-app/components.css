@@ -3,13 +3,13 @@
    Only documented variants are represented. No pressed fill or disabled
    tertiary/quaternary treatment was supplied by the source. */
 :root {
-  --button-primary: var(--ds-primary);
+  --button-primary: #5d4cf2;
   --button-subtle: #f2f1fe;
   --button-white: #fff;
   --button-gray-20: #e0e3eb;
   --button-gray-30: #cbcfdd;
   --button-gray-40: #b5bbce;
-  --button-gray-90: var(--ds-text-white-chip);
+  --button-gray-90: #444857;
 }
 
 /* Existing callsites reuse these variants without changing their actions. */
@@ -26,9 +26,9 @@
   min-width: var(--button-min-width);
   padding: 0 var(--button-padding);
   border: 0;
-  border-radius: var(--ds-radius-full);
-  font-size: var(--ds-font-size-16);
-  line-height: var(--ds-line-height-24);
+  border-radius: 999px;
+  font-size: 16px;
+  line-height: 24px;
   font-weight: 700;
   text-align: center;
   white-space: nowrap;
@@ -86,26 +86,26 @@
 /* Numeric input component; retain each screen's label, unit and hint. */
 #app .field > span {
   color: #5649cc;
-  font-size: var(--ds-font-size-16);
+  font-size: 16px;
   font-weight: 300;
-  line-height: var(--ds-line-height-24);
+  line-height: 24px;
 }
 #app .inputrow {
-  border-bottom: 2px solid var(--ds-primary-alt);
-  padding: var(--ds-spacing-xs) 0;
-  font-size: var(--ds-font-size-24);
+  border-bottom: 2px solid #5444da;
+  padding: 4px 0;
+  font-size: 24px;
   line-height: 40px;
 }
 #app .inputrow input {
   font-weight: 400;
-  font-size: var(--ds-font-size-24);
+  font-size: 24px;
   line-height: 40px;
-  color: var(--ink, var(--ds-text-ink));
+  color: var(--ink, #010a26);
 }
 #app .inputrow input::placeholder { color: #a1a8c2; opacity: 1; }
 #app .field small {
   color: #767c92;
-  font-size: var(--ds-font-size-12);
-  line-height: var(--ds-line-height-20);
+  font-size: 12px;
+  line-height: 20px;
   text-align: right;
 }
