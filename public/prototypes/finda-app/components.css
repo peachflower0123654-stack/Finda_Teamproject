@@ -148,3 +148,31 @@
 .cmp-input[data-state="error"] .cmp-input__value,
 .cmp-input[data-state="error"] .cmp-input__unit { color: var(--ds-text-error); }
 .cmp-input[data-state="error"] .cmp-input__field { border-color: transparent; background: var(--ds-red-010); }
+
+/* cmp_OB_ListItem — Figma 4307:3688 (온보딩 선택 목록). TrueFalse: false=기본, true=선택(aria-pressed).
+   선택돼도 배경은 흰색 그대로이고 테두리만 1.6px 보라로 바뀐다. 글자색은 두 상태가 같다.
+   테두리는 가상 요소로 그려서 상태가 바뀌어도 크기가 변하지 않는다(1행 68px, 2행 설명 84px).
+   범위는 .options > .option 뿐이다. 05 화면의 있어요/없어요(.pair .option)는 건드리지 않는다. */
+#app .options > .option,
+#app .options > .option[aria-pressed="true"] {
+  position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: var(--ds-spacing-xs);
+  width: 100%; min-height: 0; box-sizing: border-box; border: 0; border-radius: var(--ds-radius-selection);
+  padding: var(--ds-spacing-md) var(--ds-spacing-lg); background: var(--ds-bg-canvas); color: var(--ds-text-ink); text-align: left;
+}
+#app .options > .option::after {
+  content: ""; position: absolute; inset: 0; box-sizing: border-box; pointer-events: none;
+  border: 1px solid var(--ds-gray-020); border-radius: inherit;
+}
+#app .options > .option[aria-pressed="true"]::after { border: 1.6px solid var(--ds-accent-dot-selected); }
+#app .options > .option strong,
+#app .options > .option[aria-pressed="true"] strong {
+  display: block; margin: 0; color: var(--ds-text-ink);
+  font: var(--ds-font-weight-bold) var(--ds-font-size-16)/var(--ds-line-height-24) var(--ds-font-base);
+}
+#app .options > .option small,
+#app .options > .option[aria-pressed="true"] small {
+  display: block; margin: 0; color: var(--ds-text-muted);
+  font: var(--ds-font-weight-medium) var(--ds-font-size-12)/var(--ds-line-height-16) var(--ds-font-base);
+}
+/* 03·04: Figma 목록 간격 10px는 4배수 기준으로 12px */
+#app .options.options--md { gap: var(--ds-spacing-md); }
