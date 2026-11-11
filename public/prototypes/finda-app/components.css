@@ -148,3 +148,60 @@
 .cmp-input[data-state="error"] .cmp-input__value,
 .cmp-input[data-state="error"] .cmp-input__unit { color: var(--ds-text-error); }
 .cmp-input[data-state="error"] .cmp-input__field { border-color: transparent; background: var(--ds-red-010); }
+
+/* cmp_OB_ListItem — Figma 4307:3688 (온보딩 선택 목록). TrueFalse: false=기본, true=선택(aria-pressed).
+   true(선택): 배경을 purple/010으로 채우고 테두리를 1.6px 보라로 바꾼다. 글자색은 두 상태가 같다. (2026-11-11 디자인 변경: 이전에는 흰 배경 유지)
+   테두리는 가상 요소로 그려서 상태가 바뀌어도 크기가 변하지 않는다(1행 68px, 2행 설명 84px).
+   범위는 .options > .option 뿐이다. 05 화면의 있어요/없어요(.pair .option)는 건드리지 않는다. */
+#app .options > .option,
+#app .options > .option[aria-pressed="true"] {
+  position: relative; display: flex; flex-direction: column; align-items: flex-start; gap: var(--ds-spacing-xs);
+  width: 100%; min-height: 0; box-sizing: border-box; border: 0; border-radius: var(--ds-radius-selection);
+  padding: var(--ds-spacing-md) var(--ds-spacing-lg); background: var(--ds-bg-canvas); color: var(--ds-text-ink); text-align: left;
+}
+/* true(선택): 내부 색 채움 */
+#app .options > .option[aria-pressed="true"] { background: var(--ds-purple-010); }
+#app .options > .option::after {
+  content: ""; position: absolute; inset: 0; box-sizing: border-box; pointer-events: none;
+  border: 1px solid var(--ds-gray-020); border-radius: inherit;
+}
+#app .options > .option[aria-pressed="true"]::after { border: 1.6px solid var(--ds-accent-dot-selected); }
+#app .options > .option strong,
+#app .options > .option[aria-pressed="true"] strong {
+  display: block; margin: 0; color: var(--ds-text-ink);
+  font: var(--ds-font-weight-bold) var(--ds-font-size-16)/var(--ds-line-height-24) var(--ds-font-base);
+}
+#app .options > .option small,
+#app .options > .option[aria-pressed="true"] small {
+  display: block; margin: 0; color: var(--ds-text-muted);
+  font: var(--ds-font-weight-medium) var(--ds-font-size-12)/var(--ds-line-height-16) var(--ds-font-base);
+}
+/* 03·04: Figma 목록 간격 10px는 4배수 기준으로 12px */
+#app .options.options--md { gap: var(--ds-spacing-md); }
+
+/* Onboarding/NavBar — Figma 3723:939. 높이 52px, 왼쪽에 44×44 터치 영역(Touch Area) 안의 ic_Common_ArrowLeft.
+   아이콘은 에셋의 원래 크기(8×14)를 그대로 쓴다. */
+.cmp-navbar { display: flex; align-items: center; justify-content: space-between; height: 52px; box-sizing: border-box; }
+.cmp-navbar__back { display: grid; place-items: center; width: 44px; height: 44px; padding: 0; border: 0; background: none; cursor: pointer; }
+
+/* cmp_Onboarding_QuestionTitle — Figma 3761:22737 (캡션 없는 형태). Title L 24/36 Bold, 자간 0.4px.
+   색 #11182b는 시안이 토큰 없이 직접 지정한 값이라 그대로 쓴다. */
+.cmp-qtitle {
+  margin: 0; letter-spacing: 0.4px; color: #11182b;
+  font: var(--ds-font-weight-bold) var(--ds-font-size-24)/var(--ds-line-height-36) var(--ds-font-base);
+}
+
+/* 온보딩 화면 틀(03·04): 위 16, 좌우 16, 아래 36(spacing/36), 요소 사이 20 */
+.cmp-ob-screen { padding-bottom: var(--ds-spacing-36); }
+.cmp-ob-screen .actions { padding-bottom: 0; }
+
+/* cmp_Common_ButtonPair — Figma 3761:22829. 이전·다음이 같은 너비(각 154px)가 되도록 이전 버튼의 테두리를 가상 요소로 그린다.
+   (실제 border는 폭을 차지해 두 버튼 너비가 달라진다) */
+#app .cmp-ob-screen .actions > .secondary { position: relative; border: 0; }
+#app .cmp-ob-screen .actions > .secondary::after {
+  content: ""; position: absolute; inset: 0; box-sizing: border-box; pointer-events: none;
+  border: 1px solid var(--ds-primary); border-radius: inherit;
+}
+
+/* ic_Common_ArrowLeft: 에셋(8×14)은 오른쪽(›) 모양이라 시안처럼 좌우 반전해서 쓴다(Figma의 -scale-x-100). 에셋 자체와 크기는 바꾸지 않는다. */
+.cmp-navbar__back img { transform: scaleX(-1); }

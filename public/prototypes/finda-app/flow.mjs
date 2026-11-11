@@ -20,13 +20,13 @@ export function next(s){
  case '00':t.screen='01';break;
  case '01':t.screen='02';break;
  case '02':if(canContinueConsent(s.consent)){t.screen='03';t.homeState='InOB_NoMD';}break;
- case '03':if(s.affiliation==='직장인')t.screen='04';break;
- case '04':if(s.housing==='전월세 세입자')t.screen='05';break;
+ case '03':if(s.affiliation)t.screen='04';break;
+ case '04':if(s.housing)t.screen='05';break;
  case '05':if(s.ownership!==null){t.screen=s.ownership?'06':'08';t.homeState='InOB_NoMD';}break;
  case '06':if([s.count,s.principal,s.monthly].every(filled)&&s.revealed===3)t.screen='07';break;
- case '07':if(s.interest==='전월세 보증금'){t.screen='10';t.result=draftLoanResults[s.draftResultIndex%draftLoanResults.length];t.draftResultIndex=s.draftResultIndex+1;}break; // Temporary preview rotation only.
+ case '07':if(s.interest){t.screen='10';t.result=draftLoanResults[s.draftResultIndex%draftLoanResults.length];t.draftResultIndex=s.draftResultIndex+1;}break; // Temporary preview rotation only.
  case '08':if(filled(s.amount))t.screen='09';break;
- case '09':if(s.purpose==='전월세 보증금'){t.screen='10';t.result='NoLoan';}break;
+ case '09':if(s.purpose){t.screen='10';t.result='NoLoan';}break;
  case 'ai-rate-intro':t.screen='ai-rate-consent';t.aiConsent=false;break;
  case 'ai-rate-consent':if(canConfirmAiRate(s)){t.screen='ai-rate-loading';t.aiAutoAdvance=true;}break;
  case 'ai-rate-loading':t.screen='ai-rate';t.aiSort='rate';t.aiAutoAdvance=false;break;

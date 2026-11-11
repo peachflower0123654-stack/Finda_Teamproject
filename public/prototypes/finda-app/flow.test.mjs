@@ -17,3 +17,9 @@ test('home state follows onboarding progress: NoOB (never started) → InOB (lef
  for(const screen of ['05','06','07','08','09'])assert.equal(skipOnboarding({...initial(),screen}).homeState,'InOB_NoMD',screen+' 건너뛰기는 InOB');
  for(const result of ['HasLoan','HasLoanUnavailable','NoLoan'])assert.equal(next({...initial(),screen:'10',result}).homeState,'OB_NoMD',result+' 완료는 OB');
 });
+test('option screens 03·04·07·09 move on with any selected value, and stay put with none',()=>{
+ for(const [screen,key,to,values] of [['03','affiliation','04',['학생·취업준비·무직','직장인','자영업자·사업자·프리랜서','액티브시니어','은퇴정착층']],['04','housing','05',['전월세 세입자','부모.가족과 함께','자가보유','기타']],['07','interest','10',['전월세 보증금','생활·비상자금·목돈 마련','사업자금','기타','없다']],['09','purpose','10',['전월세 보증금','생활·비상자금·목돈 마련','사업자금','기타']]]){
+  assert.equal(next({...initial(),screen,[key]:''}).screen,screen,screen+' 선택 없으면 이동 안 함');
+  for(const v of values)assert.equal(next({...initial(),screen,[key]:v}).screen,to,screen+' '+v);
+ }
+});
