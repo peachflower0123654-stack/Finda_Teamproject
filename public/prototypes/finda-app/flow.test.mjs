@@ -23,3 +23,12 @@ test('option screens 03·04·07·09 move on with any selected value, and stay pu
   for(const v of values)assert.equal(next({...initial(),screen,[key]:v}).screen,to,screen+' '+v);
  }
 });
+import {emptyConsent,toggleConsent,canContinueConsent,consentItems} from './consent.js';
+test('02 약관동의: 처음엔 모두 해제, 어떤 항목이든 하나라도 체크하면 다음 활성, 모두 해제하면 다시 비활성',()=>{
+ const empty=emptyConsent();assert.ok(Object.values(empty).every(v=>v===false));
+ assert.equal(canContinueConsent(empty),false);assert.equal(next({...initial(),screen:'02',consent:empty}).screen,'02');
+ for(const item of consentItems){const c=toggleConsent(empty,item.id);assert.equal(canContinueConsent(c),true,item.label);assert.equal(next({...initial(),screen:'02',consent:c}).screen,'03',item.label);assert.equal(canContinueConsent(toggleConsent(c,item.id)),false,item.label+' 해제');}
+ const all=toggleConsent(empty,'all');assert.ok(consentItems.every(i=>all[i.id]));assert.equal(canContinueConsent(all),true);
+ const partial=toggleConsent(all,'marketing');assert.equal(partial.marketing,false);assert.equal(partial.service,true);
+ const none=toggleConsent(all,'all');assert.ok(Object.values(none).every(v=>v===false));assert.equal(canContinueConsent(none),false);
+});
