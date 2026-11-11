@@ -205,3 +205,38 @@
 
 /* ic_Common_ArrowLeft: 에셋(8×14)은 오른쪽(›) 모양이라 시안처럼 좌우 반전해서 쓴다(Figma의 -scale-x-100). 에셋 자체와 크기는 바꾸지 않는다. */
 .cmp-navbar__back img { transform: scaleX(-1); }
+
+/* cmp_Common_Keypad — Figma 2638:18273 (폭 360). 화면 아래에 붙는다.
+   구성: 퀵 버튼 줄(금액 입력일 때만) → 3×4 숫자 격자 → 다음 버튼(ButtonPair, 이전 없음) → 하단 48px 여백. 전체 높이 424px(퀵 버튼 없으면 366px).
+   격자 선 색 #e5e5e5는 시안이 토큰 없이 직접 지정한 값이다. */
+.cmp-keypad { display: flex; flex-direction: column; align-self: stretch; margin: auto -16px -16px; background: var(--ds-bg-canvas); }
+.cmp-keypad__quick { display: flex; align-items: center; gap: var(--ds-spacing-sm); padding: var(--ds-spacing-sm) var(--ds-spacing-base); background: var(--ds-surface-alt); }
+.cmp-keypad__chip {
+  flex-shrink: 0; white-space: nowrap; text-align: center; cursor: pointer;
+  padding: var(--ds-spacing-sm) var(--ds-spacing-base) var(--ds-spacing-md);
+  border: 1px solid var(--ds-line-hairline); border-radius: var(--ds-radius-full); background: var(--ds-bg-canvas);
+  color: var(--ds-text-muted); font: 600 var(--ds-font-size-14)/normal var(--ds-font-base);
+}
+.cmp-keypad__body { display: flex; flex-direction: column; gap: var(--ds-spacing-base); background: var(--ds-bg-canvas); }
+.cmp-keypad__body::after { content: ""; display: block; height: 48px; }
+.cmp-keypad__keys {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: repeat(4, minmax(0, 1fr)); height: 230px;
+  border-top: 1px solid #e5e5e5; border-left: 1px solid #e5e5e5;
+}
+.cmp-keypad__key {
+  display: grid; place-items: center; padding: 0; cursor: pointer; border: 0 solid #e5e5e5; border-width: 0 1px 1px 0; border-radius: 0;
+  background: var(--ds-bg-canvas); color: var(--ds-text-ink-pure); letter-spacing: 0.4px;
+  font: var(--ds-font-weight-bold) var(--ds-font-size-24)/var(--ds-line-height-36) var(--ds-font-base);
+}
+.cmp-keypad__action { margin-top: 0; padding: 0 var(--ds-spacing-base); }
+.cmp-keypad .actions { padding-bottom: 0; }
+
+/* 넘버패드가 있는 화면(06): 화면은 780px로 고정하고, 넘버패드는 아래에 붙이고, 그 위 내용만 스크롤한다.
+   입력 중인 창이 맨 위에 있어서 스크롤하지 않아도 보인다. */
+.cmp-keypad-screen { padding: 0; gap: 0; height: 780px; overflow: hidden; }
+.cmp-keypad-screen__scroll {
+  flex: 1 1 auto; min-height: 0; overflow-y: auto; scrollbar-width: none;
+  display: flex; flex-direction: column; gap: var(--ds-spacing-lg); padding: var(--ds-spacing-base);
+}
+.cmp-keypad-screen__scroll::-webkit-scrollbar { display: none; }
+.cmp-keypad-screen .cmp-keypad { margin: 0; }
