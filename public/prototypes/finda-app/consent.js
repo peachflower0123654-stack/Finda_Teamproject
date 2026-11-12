@@ -4,8 +4,8 @@ export const consentItems=[
  {id:'marketing',label:'마케팅 프로모션 알림 수신 동의 (선택)',required:false,detail:false},
 ];
 export const emptyConsent=()=>Object.fromEntries(consentItems.map(item=>[item.id,false]));
-// 다음 버튼은 어떤 항목이든 하나라도 체크하면 활성 (필수/선택 구분 없음. 2026-11-11 기획 변경)
-export const canContinueConsent=values=>consentItems.some(item=>values?.[item.id]===true);
+// 필수 약관 2개에 모두 동의해야 다음 활성. 선택 약관은 진행 조건에 포함하지 않는다.
+export const canContinueConsent=values=>consentItems.filter(item=>item.required).every(item=>values?.[item.id]===true);
 export function toggleConsent(values,id){
  const checked=id==='all'?!consentItems.every(item=>values[item.id]):!values[id];
  return id==='all'?Object.fromEntries(consentItems.map(item=>[item.id,checked])):{...values,[id]:checked};

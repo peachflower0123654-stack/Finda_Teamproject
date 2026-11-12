@@ -2,7 +2,7 @@ import test from 'node:test';import assert from 'node:assert/strict';import {ini
 test('splash goes directly to consent and back never opens the removed login screen',()=>{
  const consent=next(initial());assert.equal(consent.screen,'02');assert.equal(consent.homeState,'NoOB_NoMD');
  const splash=back(consent);assert.equal(splash.screen,'00');assert.equal(next(splash).screen,'02');
- assert.equal(next({...consent,consent:{...consent.consent,service:true}}).screen,'03');
+ assert.equal(next({...consent,consent:{...consent.consent,service:true,privacy:true}}).screen,'03');
  assert.ok(!screenGroups.some(([,items])=>items.some(([key])=>key==='onboarding:01')));
 });
 test('NO route reaches NoLoan then OB_NoMD home',()=>{let s={...initial(),screen:'05'};s=next(selectOwnership(s,false));assert.equal(s.screen,'08');s=next({...s,amount:'50000000'});assert.equal(s.screen,'09');s=next({...s,purpose:'전월세 보증금'});assert.equal(s.result,'NoLoan');s=next(s);assert.equal(s.screen,'11');assert.equal(s.homeState,'OB_NoMD');});
@@ -29,12 +29,19 @@ test('option screens 03·04·07·09 move on with any selected value, and stay pu
   for(const v of values)assert.equal(next({...initial(),screen,[key]:v}).screen,to,screen+' '+v);
  }
 });
-import {emptyConsent,toggleConsent,canContinueConsent,consentItems} from './consent.js';
-test('02 약관동의: 처음엔 모두 해제, 어떤 항목이든 하나라도 체크하면 다음 활성, 모두 해제하면 다시 비활성',()=>{
+import {emptyConsent,toggleConsent,canContinueConsent,consentItems,consentScreen} from './consent.js';
+test('02 약관동의: 필수 2개 모두 동의해야 다음 활성, 선택 약관은 무관',()=>{
  const empty=emptyConsent();assert.ok(Object.values(empty).every(v=>v===false));
  assert.equal(canContinueConsent(empty),false);assert.equal(next({...initial(),screen:'02',consent:empty}).screen,'02');
- for(const item of consentItems){const c=toggleConsent(empty,item.id);assert.equal(canContinueConsent(c),true,item.label);assert.equal(next({...initial(),screen:'02',consent:c}).screen,'03',item.label);assert.equal(canContinueConsent(toggleConsent(c,item.id)),false,item.label+' 해제');}
+ for(const service of [false,true])for(const privacy of [false,true])for(const marketing of [false,true]){
+  const consent={service,privacy,marketing},enabled=service&&privacy;
+  const label=JSON.stringify(consent);
+  assert.equal(canContinueConsent(consent),enabled,label);
+  assert.equal(next({...initial(),screen:'02',consent}).screen,enabled?'03':'02',label);
+  assert.equal(/data-action="next" disabled/.test(consentScreen(consent)),!enabled,label);
+ }
  const all=toggleConsent(empty,'all');assert.ok(consentItems.every(i=>all[i.id]));assert.equal(canContinueConsent(all),true);
- const partial=toggleConsent(all,'marketing');assert.equal(partial.marketing,false);assert.equal(partial.service,true);
+ const partial=toggleConsent(all,'marketing');assert.equal(partial.marketing,false);assert.equal(canContinueConsent(partial),true);
+ for(const item of consentItems.filter(item=>item.required))assert.equal(canContinueConsent(toggleConsent(all,item.id)),false,item.label+' 해제');
  const none=toggleConsent(all,'all');assert.ok(Object.values(none).every(v=>v===false));assert.equal(canContinueConsent(none),false);
 });
