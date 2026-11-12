@@ -5,7 +5,7 @@ export const screenGroups=[
  ]],
  ['결과',['HasLoanUnavailable','HasLoan','NoLoan'].map(value=>['result:'+value,'10 · '+value])],
  ['홈',['NoOB_NoMD','InOB_NoMD','OB_NoMD','OB_MD'].flatMap(value=>[['home:Asset:'+value,'11 · MY금융 · '+value],['home:Loan:'+value,'11 · '+(value==='OB_NoMD'?'대출 찾기':'핀다대출')+' · '+value]])],
- ['추가 화면',[['ai-rate:intro','finda_AIRate_Intro'],['ai-rate:consent','finda_AIRate_ConsentSheet'],['ai-rate:loading','finda_AIRate_Loading'],['ai-rate:rate','finda_AIRate_Result_LowRate'],['ai-rate:limit','finda_AIRate_Result_HighLimit'],['popup:quick-menu','메뉴 즐겨찾기 팝업'],['popup:quick-add','퀵메뉴 항목 추가']]],
+ ['추가 화면',[['ai-rate:intro','finda_AIRate_Intro'],['ai-rate:consent','finda_AIRate_ConsentSheet'],['ai-rate:loading','finda_AIRate_Loading'],['ai-rate:rate','finda_AIRate_Result_LowRate'],['ai-rate:limit','finda_AIRate_Result_HighLimit'],['popup:quick-menu','메뉴 즐겨찾기 팝업'],['popup:quick-add','퀵메뉴 편집']]],
 ];
 export function screenKey(state){
  if(state.screen==='11')return `home:${state.tab}:${state.homeState}`;

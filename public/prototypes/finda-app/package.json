@@ -1,1 +1,1 @@
-{"name":"finda-mvp-flow","private":true,"type":"module","scripts":{"start":"node server.mjs","test":"node --test flow.test.mjs post-personalization.test.mjs chip-group.test.mjs"}}
+{"name":"finda-mvp-flow","private":true,"type":"module","scripts":{"start":"node server.mjs","test":"node --test flow.test.mjs post-personalization.test.mjs chip-group.test.mjs quick-menu.test.mjs"}}
