@@ -12,5 +12,9 @@
 .figma-home-shell img:not([src]) { visibility:hidden; }
 #app .home-nav-icons{display:flex;align-items:center;gap:var(--ds-spacing-md)}#app .home-nav-icons>img{width:32px;height:32px;display:block}#app .navbottom>strong,#app .navbottom>span{display:flex;flex-direction:column;align-items:center;gap:var(--ds-spacing-sm);width:64px;font-size:var(--ds-font-size-12)}#app .navbottom img{width:24px;height:24px;display:block}
 
-.figma-home-shell [data-name="PostCard"] [data-name="Chips"]{overflow-x:auto;scrollbar-width:none}.figma-home-shell [data-name="PostCard"] [data-name="Chips"]::-webkit-scrollbar{display:none}
+.figma-home-shell [data-name="PostCard"] .post-chip-group{min-width:0;max-width:100%;overflow-x:auto;overflow-y:hidden;overscroll-behavior-x:contain;touch-action:pan-x pan-y;scrollbar-width:none;cursor:grab;user-select:none}
+.figma-home-shell [data-name="PostCard"] .post-chip-group::-webkit-scrollbar{display:none}
+.figma-home-shell .post-chip-group>[data-name="Slot"]{display:flex;flex:none;flex-wrap:nowrap;width:max-content;gap:var(--ds-spacing-sm)}
+.figma-home-shell .post-chip-group>[data-name="Slot"]>*{flex-shrink:0;white-space:nowrap}
+.figma-home-shell .post-chip-group.is-dragging,.figma-home-shell .post-chip-group.is-dragging *{cursor:grabbing}
 .figma-home-shell>.home-ob-loan-tabs{position:absolute;top:52px;left:0;width:360px;z-index:10;background:#f6f6f9}

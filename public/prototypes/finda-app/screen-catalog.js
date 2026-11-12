@@ -1,6 +1,6 @@
 export const screenGroups=[
  ['온보딩',[
-  ['onboarding:00','00 · 스플래시'],['onboarding:01','01 · 회원가입·로그인'],['onboarding:02','02 · 약관동의'],['onboarding:03','03 · 소속 선택'],['onboarding:04','04 · 주거형태 선택'],['onboarding:05','05 · 대출 보유 여부'],
+  ['onboarding:00','00 · 스플래시'],['onboarding:02','02 · 약관동의'],['onboarding:03','03 · 소속 선택'],['onboarding:04','04 · 주거형태 선택'],['onboarding:05','05 · 대출 보유 여부'],
   ['onboarding:06:1','06 · 대출 건수 입력'],['onboarding:06:2','06 · 총 원금 입력'],['onboarding:06:3','06 · 월 상환액 입력'],['onboarding:07','07 · 관심 대출 선택'],['onboarding:08','08 · 희망 금액 입력'],['onboarding:09','09 · 대출 목적 선택'],
  ]],
  ['결과',['HasLoanUnavailable','HasLoan','NoLoan'].map(value=>['result:'+value,'10 · '+value])],

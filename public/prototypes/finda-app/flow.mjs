@@ -17,8 +17,7 @@ export const toggleAiRateConsent=s=>({...s,aiConsent:!s.aiConsent});
 export function next(s){
  const t={...s};
  switch(s.screen){
- case '00':t.screen='01';break;
- case '01':t.screen='02';break;
+ case '00':t.screen='02';break;
  case '02':if(canContinueConsent(s.consent)){t.screen='03';t.homeState='InOB_NoMD';}break;
  case '03':if(s.affiliation)t.screen='04';break;
  case '04':if(s.housing)t.screen='05';break;
@@ -36,4 +35,4 @@ export function next(s){
 }
 export function reveal(s){if(s.screen!=='06')return s;const fields=['count','principal','monthly'];return filled(s[fields[s.revealed-1]])?{...s,revealed:Math.min(3,s.revealed+1)}:s;}
 export function selectOwnership(s,value){return {...s,ownership:value,...(s.ownership!==value?{count:'',principal:'',monthly:'',amount:'',interest:'',purpose:'',revealed:1,result:null}: {})};}
-export function back(s){if(s.screen==='11'&&s.homeState==='OB_MD')return {...s,homeState:'OB_NoMD'};if(['ai-rate-intro','ai-rate-loading','ai-rate'].includes(s.screen))return aiRateHome(s);if(s.screen==='ai-rate-consent')return {...s,screen:'ai-rate-intro'};const map={'02':'01','03':'02','04':'03','05':'04','06':'05','07':'06','08':'05','09':'08','10':s.result==='NoLoan'?'09':'07'};return {...s,screen:map[s.screen]||s.screen};}
+export function back(s){if(s.screen==='11'&&s.homeState==='OB_MD')return {...s,homeState:'OB_NoMD'};if(['ai-rate-intro','ai-rate-loading','ai-rate'].includes(s.screen))return aiRateHome(s);if(s.screen==='ai-rate-consent')return {...s,screen:'ai-rate-intro'};const map={'02':'00','03':'02','04':'03','05':'04','06':'05','07':'06','08':'05','09':'08','10':s.result==='NoLoan'?'09':'07'};return {...s,screen:map[s.screen]||s.screen};}
