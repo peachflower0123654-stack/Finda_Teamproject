@@ -1,4 +1,10 @@
-import test from 'node:test';import assert from 'node:assert/strict';import {initial,next,back,reveal,selectOwnership,skipOnboarding,consentHome,openAiRate,toggleAiRateConsent,canConfirmAiRate,shouldAutoAdvanceAiRate} from './flow.mjs';import {aiRateConsentSheet,aiRateName} from './ai-rate.js';import {selectScreen} from './screen-catalog.js';
+import test from 'node:test';import assert from 'node:assert/strict';import {initial,next,back,reveal,selectOwnership,skipOnboarding,consentHome,openAiRate,toggleAiRateConsent,canConfirmAiRate,shouldAutoAdvanceAiRate} from './flow.mjs';import {aiRateConsentSheet,aiRateName} from './ai-rate.js';import {selectScreen,screenGroups} from './screen-catalog.js';
+test('splash goes directly to consent and back never opens the removed login screen',()=>{
+ const consent=next(initial());assert.equal(consent.screen,'02');assert.equal(consent.homeState,'NoOB_NoMD');
+ const splash=back(consent);assert.equal(splash.screen,'00');assert.equal(next(splash).screen,'02');
+ assert.equal(next({...consent,consent:{...consent.consent,service:true}}).screen,'03');
+ assert.ok(!screenGroups.some(([,items])=>items.some(([key])=>key==='onboarding:01')));
+});
 test('NO route reaches NoLoan then OB_NoMD home',()=>{let s={...initial(),screen:'05'};s=next(selectOwnership(s,false));assert.equal(s.screen,'08');s=next({...s,amount:'50000000'});assert.equal(s.screen,'09');s=next({...s,purpose:'전월세 보증금'});assert.equal(s.result,'NoLoan');s=next(s);assert.equal(s.screen,'11');assert.equal(s.homeState,'OB_NoMD');});
 test('YES expands one screen then follows explicit draft result route without calculating approval',()=>{let s=next(selectOwnership({...initial(),screen:'05'},true));assert.equal(s.screen,'06');assert.equal(reveal(s).revealed,1);s=reveal({...s,count:'2'});assert.equal(s.screen,'06');assert.equal(s.revealed,2);s=reveal({...s,principal:'30000000'});assert.equal(s.revealed,3);s=next({...s,monthly:'450000'});assert.equal(s.screen,'07');assert.equal(next(s).screen,'07');for(const count of ['1','99']){const t=next({...s,count,interest:'전월세 보증금'});assert.equal(t.screen,'10');assert.equal(t.result,'HasLoanUnavailable');}});
 test('switching ownership clears stale branch values',()=>{const s=selectOwnership({...initial(),ownership:true,count:'2',principal:'3',monthly:'4',interest:'전월세 보증금'},false);assert.equal(s.count,'');assert.equal(s.interest,'');assert.equal(s.result,null);});
@@ -22,4 +28,13 @@ test('option screens 03·04·07·09 move on with any selected value, and stay pu
   assert.equal(next({...initial(),screen,[key]:''}).screen,screen,screen+' 선택 없으면 이동 안 함');
   for(const v of values)assert.equal(next({...initial(),screen,[key]:v}).screen,to,screen+' '+v);
  }
+});
+import {emptyConsent,toggleConsent,canContinueConsent,consentItems} from './consent.js';
+test('02 약관동의: 처음엔 모두 해제, 어떤 항목이든 하나라도 체크하면 다음 활성, 모두 해제하면 다시 비활성',()=>{
+ const empty=emptyConsent();assert.ok(Object.values(empty).every(v=>v===false));
+ assert.equal(canContinueConsent(empty),false);assert.equal(next({...initial(),screen:'02',consent:empty}).screen,'02');
+ for(const item of consentItems){const c=toggleConsent(empty,item.id);assert.equal(canContinueConsent(c),true,item.label);assert.equal(next({...initial(),screen:'02',consent:c}).screen,'03',item.label);assert.equal(canContinueConsent(toggleConsent(c,item.id)),false,item.label+' 해제');}
+ const all=toggleConsent(empty,'all');assert.ok(consentItems.every(i=>all[i.id]));assert.equal(canContinueConsent(all),true);
+ const partial=toggleConsent(all,'marketing');assert.equal(partial.marketing,false);assert.equal(partial.service,true);
+ const none=toggleConsent(all,'all');assert.ok(Object.values(none).every(v=>v===false));assert.equal(canContinueConsent(none),false);
 });

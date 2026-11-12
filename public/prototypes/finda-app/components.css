@@ -240,3 +240,31 @@
 }
 .cmp-keypad-screen__scroll::-webkit-scrollbar { display: none; }
 .cmp-keypad-screen .cmp-keypad { margin: 0; }
+
+/* cmp_Common_CheckCircle — Figma 2337:2696 (32×32). 미선택: 회색 외곽선 원+체크(에셋 24×24), 선택: 보라 채움 원+흰 체크(에셋 22×22).
+   시안처럼 32px 칸 안쪽 여백 5px 안에 놓고, 미선택은 1px 바깥으로 나온다. 에셋의 원래 크기는 바꾸지 않는다.
+   행 구성은 cmp_Checkbox_Rows(4321:19631): 체크 + 문구 14px + 오른쪽 화살표(ic_Common_ArrowRight, 24px 칸 안의 8×14). */
+.consent .consent-rows { gap: var(--ds-spacing-md); }
+.consent .consent-row { min-height: 32px; gap: var(--ds-spacing-sm); }
+.consent .consent-row label {
+  gap: var(--ds-spacing-sm); color: var(--ds-text-body);
+  font: var(--ds-font-weight-regular) var(--ds-font-size-14)/var(--ds-line-height-24) var(--ds-font-base);
+}
+.consent .consent-row:first-child label {
+  color: var(--ds-text-ink);
+  font: var(--ds-font-weight-bold) var(--ds-font-size-14)/var(--ds-line-height-20) var(--ds-font-base);
+}
+.consent .consent-row input { width: 32px; height: 32px; }
+.consent .consent-check { position: relative; width: 32px; height: 32px; flex-shrink: 0; }
+/* 예전 약관 스타일(.consent-check img{width:20px;height:20px})이 에셋을 20×20으로 줄이고 있었다. 에셋의 원래 크기(24×24 / 22×22)를 그대로 쓴다. */
+.consent .consent-check__img { position: absolute; display: block; max-width: none; width: auto; height: auto; }
+.consent .consent-check__img--off { left: 4px; top: 4px; }
+.consent .consent-check__img--on { left: 5px; top: 5px; }
+.consent .consent-row input:focus-visible + .consent-check { outline: 2px solid var(--ds-primary); outline-offset: 0; border-radius: 50%; }
+.consent .consent-detail,
+.consent .consent-detail:disabled { display: grid; place-items: center; flex-shrink: 0; width: 24px; height: 24px; padding: 0; border: 0; background: none; }
+/* 제목(.consent h2 규칙보다 우선) — cmp_Onboarding_QuestionTitle */
+.consent h2.cmp-qtitle {
+  margin: 0; letter-spacing: 0.4px; color: #11182b;
+  font: var(--ds-font-weight-bold) var(--ds-font-size-24)/var(--ds-line-height-36) var(--ds-font-base);
+}
