@@ -10,7 +10,17 @@
 .figma-home-shell>.home-pinned-top { z-index:10; }
 .figma-home-shell [data-node-id="1986:3913"] { justify-content:space-between; }
 .figma-home-shell img:not([src]) { visibility:hidden; }
-#app .home-nav-icons{display:flex;align-items:center;gap:var(--ds-spacing-md)}#app .home-nav-icons>img{width:32px;height:32px;display:block}#app .navbottom>strong,#app .navbottom>span{display:flex;flex-direction:column;align-items:center;gap:var(--ds-spacing-sm);width:64px;font-size:var(--ds-font-size-12)}#app .navbottom img{width:24px;height:24px;display:block}
+#app .home-nav-icons{display:flex;align-items:center;gap:var(--ds-spacing-md)}#app .home-nav-icons>img{width:32px;height:32px;display:block}
+
+/* cmp_Common_BottomBar (2303:701): 360×92. 원본 패딩(위 12·좌우 20·아래 32)과 위쪽 1px 선만 적용. */
+#app .cmp-bottom-bar{box-sizing:border-box;display:flex;align-items:flex-end;justify-content:space-between;flex-shrink:0;width:360px;min-width:360px;max-width:360px;height:92px;margin:0;padding:var(--ds-spacing-md) var(--ds-spacing-lg) var(--ds-spacing-32);overflow:hidden;border:0;border-top:1px solid var(--ds-blue-010);border-radius:0;background:var(--ds-bg-canvas)}
+#app .cmp-bottom-bar__item{display:flex;flex:0 0 64px;flex-direction:column;align-items:center;justify-content:center;gap:var(--ds-spacing-sm);margin:0;padding:0;border:0;border-radius:0;background:none;color:var(--ds-gray-050);font:var(--ds-font-weight-regular) var(--ds-font-size-12)/var(--ds-line-height-16) var(--ds-font-base);text-align:center;white-space:nowrap;cursor:pointer}
+#app .cmp-bottom-bar__item[aria-pressed="true"]{color:var(--ds-gray-100);font-weight:var(--ds-font-weight-bold)}
+#app .cmp-bottom-bar__item:focus-visible{outline:2px solid var(--ds-primary);outline-offset:2px}
+#app .cmp-bottom-bar__item img{display:block;flex:none}
+#app .cmp-bottom-bar__item span{display:block}
+.figma-home-shell>.cmp-bottom-bar{position:absolute;left:0;bottom:0}
+#app .home>.cmp-bottom-bar{margin:auto calc(var(--ds-spacing-base) * -1) calc(var(--ds-spacing-base) * -1)}
 
 .figma-home-shell [data-name="PostCard"] .post-chip-group{min-width:0;max-width:100%;overflow-x:auto;overflow-y:hidden;overscroll-behavior-x:contain;touch-action:pan-x pan-y;scrollbar-width:none;cursor:grab;user-select:none}
 .figma-home-shell [data-name="PostCard"] .post-chip-group::-webkit-scrollbar{display:none}
