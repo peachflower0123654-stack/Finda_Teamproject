@@ -39,6 +39,15 @@ export function recommend(a,h,n){
  }
  return {order,chips};
 }
+// 온보딩 전(NoOB) 홈 포스트: 개인화 없이 핀다 기본값 그대로 (11/14 결정: 인기순 X, MY 칩 X, 정책 칩 O).
+// 칩은 핀다 기존 순서(사용팁>대출>신용점수>부동산>생활>금융사고)를 그대로 두고, 새 정책 칩은 부동산과 생활 사이.
+// 정책 글의 출처 탭(대출·부동산·생활)과 가깝고, OB 홈처럼 정책이 생활보다 앞이에요. 앞 4칸은 핀다와 같아요.
+// 칩 안 글은 핀다 노출 순서(fo, 탭 위→아래 = 최신순)대로 3개.
+export const DEFAULT_CHIP_ORDER=['사용팁','대출','신용점수','부동산','정책','생활','금융사고'];
+export function defaultFeed(){
+ const chips=DEFAULT_CHIP_ORDER.map(c=>({name:c,posts:POSTS.filter(p=>p.c===c).sort((x,y)=>x.fo-y.fo).slice(0,3).map(p=>({...p,chip:c}))}));
+ return {order:[...DEFAULT_CHIP_ORDER],chips};
+}
 // 온보딩 답 → {a,h,n}. 답이 없는 칸은 참고 파일 기본값(직장인 · 전월세 세입자 · 1~2건).
 export function profileFromAnswers(s){
  const a=AFFILIATIONS.indexOf(s.affiliation),h=HOUSINGS.indexOf(String(s.housing).replace('.','·'));
