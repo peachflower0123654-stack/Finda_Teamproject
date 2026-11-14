@@ -1,5 +1,5 @@
 // 퀵메뉴 팝업·편집 화면 마크업. 상태는 quick-menu-edit.js, 이벤트는 quick-menu-dialog.js에 있어요.
-import {MENUS,POPUP_RECOMMENDED,SECTIONS,popupExtraSlots,sheetButton,MAX_PICKS} from './quick-menu-edit.js';
+import {MENUS,popupRecommended,sections,popupExtraSlots,sheetButton,MAX_PICKS} from './quick-menu-edit.js';
 
 const lines=text=>text.split('\n').join('<br>');
 const closeButton='<button class="quick-menu-close" type="button" aria-label="퀵메뉴 닫기"><span aria-hidden="true"></span></button>';
@@ -7,7 +7,7 @@ const emptyIcon='<span class="qm-empty-icon" aria-hidden="true"></span>';
 
 // pop_Home_QuickMenu (Figma 4329:18315 / 4333:7944): 맞춤 추천 6개 + 추가 2칸 + [편집하기]
 export function popupView(saved){
- const fixed=POPUP_RECOMMENDED.map(([id,text])=>`<span class="quick-menu-item"><img src="${MENUS[id].icon}" alt=""><span>${lines(text)}</span></span>`);
+ const fixed=popupRecommended().map(([id,text])=>`<span class="quick-menu-item"><img src="${MENUS[id].icon}" alt=""><span>${lines(text)}</span></span>`);
  const extra=popupExtraSlots(saved).map(menu=>menu
   ?`<span class="quick-menu-item"><img src="${menu.icon}" alt=""><span>${lines(menu.text)}</span></span>`
   :`<button type="button" class="quick-menu-item is-empty quick-menu-add" aria-label="퀵메뉴 추가">${emptyIcon}<span>추가</span></button>`);
@@ -58,7 +58,7 @@ export function sheetView(picks){
 export function editView(picks){
  return `<section class="qm-edit" role="dialog" aria-modal="true" aria-label="퀵메뉴 편집">
 <header class="qm-topbar"><button type="button" class="qm-back" aria-label="뒤로가기"><svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-hidden="true"><path d="M19 9l-7 7 7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button><h2>퀵메뉴 편집</h2></header>
-<div class="qm-scroll">${SECTIONS.map(section=>sectionView(section,picks)).join('')}</div>
+<div class="qm-scroll">${sections().map(section=>sectionView(section,picks)).join('')}</div>
 <div class="qm-sheet" role="region" aria-label="내가 고른 메뉴">${sheetView(picks)}</div>
 <div class="qm-toast" role="status" aria-live="polite" hidden><svg width="28" height="28" viewBox="0 0 28 28" aria-hidden="true"><circle cx="14" cy="14" r="9.625" fill="var(--ds-primary)"/><rect x="13" y="8.75" width="2" height="7" rx="1" fill="#fff"/><circle cx="14" cy="18.6" r="1.2" fill="#fff"/></svg><p></p></div>
 </section>`;

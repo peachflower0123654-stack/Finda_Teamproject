@@ -1,5 +1,5 @@
 import {popupView,noobPopupView,editView,sheetView} from './quick-menu-views.js';
-import {toggleMenu,getSavedPicks,savePicks,RECOMMENDED} from './quick-menu-edit.js';
+import {toggleMenu,getSavedPicks,savePicks,getRecommended} from './quick-menu-edit.js';
 import {sendTestEvent} from './test-data.js';
 import {showExploreDone} from './explore-done.js';
 const openMenus=new WeakMap();
@@ -58,7 +58,7 @@ export function openQuickMenu(root,trigger,startEditing=false){
   if(e.target.closest('.qm-done')){
    savePicks(picks);
    // 종료 지점 ③ 퀵메뉴 편집 [완료]: 고른 메뉴와 그때 보여 준 맞춤 추천 6개를 Supabase로 보내요.
-   sendTestEvent('quickmenu_done',{selected_menu_ids:getSavedPicks(),recommendation_ids:[...RECOMMENDED]});
+   sendTestEvent('quickmenu_done',{selected_menu_ids:getSavedPicks(),recommendation_ids:getRecommended()});
    // 종료 지점이라 퀵메뉴를 닫고 "Maze로 돌아가세요" 안내를 띄워요 (한 번만).
    close();
    if(!showExploreDone(root))openQuickMenu(root,trigger);
