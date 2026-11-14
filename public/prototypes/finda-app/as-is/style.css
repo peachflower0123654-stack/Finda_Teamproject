@@ -1,0 +1,100 @@
+@font-face{font-family:"Noto Sans KR";src:local("Noto Sans KR"),url("assets/NotoSansKR-VF.ttf") format("truetype");font-style:normal;font-weight:100 900;font-display:swap}
+*{box-sizing:border-box}
+body{margin:0;padding:16px;background:#eceef4;color:var(--ds-text-ink);font-family:var(--ds-font-base)}
+p{margin:0}button,select,a{font:inherit}button,a{touch-action:manipulation}button{cursor:pointer}
+/* Match the reset assumed by the source context without introducing utility classes. */
+:where(#asis-app *){border-width:0;border-style:solid}
+#asis-stage{display:flex;align-items:flex-start;gap:40px;width:690px;margin:0 auto}
+#asis-preview{width:290px;flex-shrink:0;font-size:13px;line-height:1.7}
+#asis-preview h1{font-size:22px;margin:0 0 8px}#asis-preview code{display:block;font-size:11px;overflow-wrap:anywhere}
+#asis-preview label{display:block;margin-top:20px;font-weight:700}
+#asis-preview select{width:100%;margin-top:8px;padding:8px;background:white;border:1px solid #cbd0df;border-radius:8px}
+#asis-preview button,#asis-preview a{display:inline-block;padding:8px 12px;margin:8px 4px 0 0;border:1px solid #cbd0df;border-radius:8px;background:white;color:inherit;text-decoration:none}
+#asis-preview button:disabled{color:#8a93b2;background:#e0e3eb;cursor:default}
+.asis-note{padding:12px;background:white;border-radius:12px;margin:16px 0}
+#asis-app{position:relative;width:360px;height:780px;flex-shrink:0;background:white;overflow:hidden;outline:none}
+#asis-app>[data-node-id]{width:360px;height:780px;overflow:hidden}
+#asis-app [data-action]{cursor:pointer}
+#asis-app [role="button"]:focus-visible,#asis-preview :focus-visible{outline:3px solid #aaa1ff;outline-offset:2px}
+#asis-app[data-screen="all"]>[data-node-id]{gap:0}
+.asis-tab-scroll{width:360px;height:688px;flex:0 0 688px;overflow:auto;overflow-x:hidden;scrollbar-width:none;background:var(--ds-bg-home)}
+.asis-tab-scroll::-webkit-scrollbar{display:none}
+.asis-detail-scroll{width:360px;flex:1;min-height:0;overflow:auto;overflow-x:hidden;scrollbar-width:none}
+.asis-detail-scroll::-webkit-scrollbar{display:none}
+.asis-detail-scroll>div{flex-shrink:0}
+.asis-post-scroll{position:absolute;left:0;top:76px;width:360px;height:650px;overflow:auto;overflow-x:hidden;scrollbar-width:none}
+.asis-post-scroll::-webkit-scrollbar{display:none}
+.asis-post-content{position:relative;width:360px;height:1028px}
+#asis-app [data-node-id="4525:8344"]{top:14px}
+#asis-app [data-node-id="4525:8345"]{top:352px}
+#asis-app [data-node-id="4525:8346"]{top:420px}
+#asis-app [data-node-id="4525:8347"]{top:726px}
+#asis-app [data-node-id="4525:9537"]{top:964px;z-index:1}
+#asis-app [data-node-id="4525:9450"]{overflow-x:auto;scrollbar-width:none}
+#asis-app [data-node-id="4525:9451"]{width:max-content;padding-right:20px;overflow:visible}
+.asis-post-category-slot{display:flex;width:max-content;align-items:flex-start}
+#asis-app .asis-post-category{border-bottom:2px solid transparent;user-select:none;-webkit-user-select:none}
+#asis-app .asis-post-category[aria-pressed="true"]{border-bottom-color:var(--ds-primary)}
+#asis-app .asis-post-category[aria-pressed="true"] p{color:var(--ds-primary);font-weight:var(--ds-font-weight-bold)}
+#asis-app .asis-post-category[aria-pressed="false"] p{color:var(--ds-text-muted-alt);font-weight:var(--ds-font-weight-medium)}
+#asis-app [data-node-id="4525:9450"].post-chip-group{cursor:grab;touch-action:pan-x pan-y;overscroll-behavior-x:contain;user-select:none;-webkit-user-select:none}
+#asis-app [data-node-id="4525:9450"].is-dragging,#asis-app [data-node-id="4525:9450"].is-dragging *{cursor:grabbing}
+#asis-app .asis-post-instance-title{font-size:var(--ds-font-size-14);font-weight:var(--ds-font-weight-bold);line-height:var(--ds-line-height-20);letter-spacing:0;white-space:pre-line}
+.asis-post-instance-crop{position:absolute;inset:0;overflow:hidden;border-radius:4px;contain:paint}
+.asis-post-instance-crop img{position:absolute;max-width:none;pointer-events:none}
+/* Keep anonymized point balances inside the original 88px value row. */
+#asis-app [data-node-id="4468:11698"]{font-size:16px}
+.asis-redacted-point-counter{position:absolute;inset:0;display:block;font:var(--ds-font-weight-bold) 16px/24px var(--ds-font-base);color:var(--ds-text-ink);text-align:right;white-space:nowrap}
+#asis-app[data-screen="refinance"],#asis-app[data-screen="refinance"]>[data-node-id]{height:800px}
+.asis-refinance{position:relative;width:360px;height:800px;overflow:hidden;background:var(--ds-bg-canvas);outline:none;touch-action:pan-y}
+.asis-refinance__capture{position:relative;width:360px;height:800px}
+.asis-refinance__capture>img{position:absolute;inset:0;display:block;width:360px;height:800px;max-width:none;object-fit:cover;pointer-events:none}
+.asis-refinance__capture>button{position:absolute;z-index:1;padding:0;border:0;background:transparent;cursor:pointer}
+.asis-refinance__capture>button:focus-visible{outline:3px solid var(--ds-primary);outline-offset:2px}
+.asis-refinance__back{left:8px;top:30px;width:40px;height:42px;border-radius:8px}
+.asis-refinance__cta{left:16px;top:682px;width:328px;height:54px;border-radius:var(--ds-radius-full)}
+.asis-direct-assets{position:relative;width:360px;height:780px;overflow:hidden;background:var(--ds-bg-canvas)}
+.asis-direct-assets__capture{position:absolute;left:.17px;top:0}
+.asis-direct-assets__capture>button{border-radius:8px}
+.asis-direct-assets__capture>[data-direct-action="continue"]{border-radius:var(--ds-radius-full)}
+#asis-app [data-node-id="4500:7005"]>div{height:56px;padding-top:0;padding-bottom:0}
+#asis-app:is([data-screen="find-loan"],[data-screen="rate-cut"]) [data-name^="혜택 ·"]>p{font-size:14px;white-space:nowrap;flex:none}
+#asis-app [data-node-id="4500:6982"]{letter-spacing:-0.25px}
+#asis-app[data-screen="all"] .asis-tab-scroll{padding-bottom:40px;background:white}
+#asis-app .cmp-bottom-bar{box-sizing:border-box;display:flex;align-items:flex-end;justify-content:space-between;flex-shrink:0;width:360px;min-width:360px;max-width:360px;height:92px;margin:0;padding:var(--ds-spacing-md) var(--ds-spacing-lg) var(--ds-spacing-32);overflow:hidden;border:0;border-top:1px solid var(--ds-blue-010);border-radius:0;background:var(--ds-bg-canvas)}
+#asis-app .cmp-bottom-bar__item{display:flex;flex:0 0 64px;flex-direction:column;align-items:center;justify-content:center;gap:var(--ds-spacing-sm);margin:0;padding:0;border:0;border-radius:0;background:none;color:var(--ds-gray-050);font:var(--ds-font-weight-regular) var(--ds-font-size-12)/var(--ds-line-height-16) var(--ds-font-base);text-align:center;white-space:nowrap;cursor:pointer}
+#asis-app .cmp-bottom-bar__item[aria-pressed="true"]{color:var(--ds-gray-100);font-weight:var(--ds-font-weight-bold)}
+#asis-app .cmp-bottom-bar__item:focus-visible{outline:2px solid var(--ds-primary);outline-offset:2px}
+#asis-app .cmp-bottom-bar__item img{display:block;flex:none}
+#asis-app .cmp-bottom-bar__item span{display:block}
+.asis-layer-6{line-height:16px}
+/* Keep the 2,292px home content scrollable above its original 92px bottom bar. */
+#asis-app [data-node-id="4453:5120"]{height:688px;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;display:block}
+#asis-app [data-node-id="4453:5120"]::-webkit-scrollbar{display:none}
+#asis-app [data-node-id="4453:5120"]> :not([data-node-id="4453:5121"]){margin-left:auto;margin-right:auto}
+#asis-app [data-node-id="4453:5123"]{height:56px}
+#asis-app [data-node-id="I4453:5707;3819:21208"]{overflow-x:auto;scrollbar-width:none;scroll-snap-type:x mandatory}
+#asis-app [data-node-id="I4453:5707;3819:21208"]>div{scroll-snap-align:start}
+#asis-app [data-node-id$=";3531:2955"] p{white-space:nowrap}
+/* The source screenshot uses a 32% dim; context omits that layer's opacity. */
+#asis-app [data-node-id="4438:10086"]{background:color-mix(in srgb,var(--ds-gray-110) 32%,transparent)}
+#asis-app [data-node-id="4434:4370"]>div,#asis-app [data-node-id="4434:4370"]>a,#asis-app [data-node-id="4438:10075"]>div{height:56px;padding-top:0;padding-bottom:0}
+#asis-app [data-node-id="4438:10087"]{outline:none}
+#asis-app [data-node-id="4426:16426"]{border-top-width:1px;height:92px}
+.asis-action-hit{position:absolute;background:transparent;color:transparent;padding:0;left:8px;top:32px;width:40px;height:44px}
+.asis-toast{position:absolute;bottom:108px;left:16px;right:16px;padding:12px 16px;border-radius:12px;background:#2c2f39;color:white;font-size:13px;line-height:20px;text-align:center;z-index:10}
+body[data-mode="test"]{padding:0;background:white}
+body[data-mode="test"] #asis-preview{display:none}
+body[data-mode="test"] #asis-stage{width:360px;gap:0}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto}}
+
+/* 금융 예시는 계좌번호와 금액이 없는 HTML로 표시합니다. */
+.asis-assets-example{position:absolute;inset:0;overflow:hidden;background:radial-gradient(ellipse at 50% 45%,#eeedff 0%,#f5f8ff 50%,#fff 78%);color:#17171b}
+.asis-assets-card{position:absolute;width:140px;background:#fff;border-radius:8px;box-shadow:0 2px 8px #6864a51a;padding:8px;font-size:6px;line-height:1.5}
+.asis-assets-card strong{display:block;font-size:7px}.asis-assets-card small{display:block;font-size:5.5px;color:#8b8c99;text-decoration:underline}
+.asis-assets-card b{display:block;margin-top:10px;font-size:12px;font-weight:700}.asis-assets-card p{margin:3px 0;color:#77778a;font-size:6px}.asis-assets-card aside{margin-top:12px;padding:7px;background:#f7f7fa;border-radius:7px;color:#77778a;font-size:5.5px}
+.asis-assets-card aside span,.asis-assets-card strong span{float:right;font-weight:400}.asis-assets-card footer{display:flex;justify-content:space-between;color:#90909c;font-size:5px}.asis-assets-progress{height:3px;margin:22px 0 5px;border-radius:3px;background:#f3f1fe}
+.asis-assets-card.is-loan{left:37px;top:82px;height:124px}.asis-assets-card.is-savings{left:37px;top:212px;height:110px}.asis-assets-card.is-bill{left:183px;top:45px;height:134px;border-radius:0 0 8px 8px}
+.asis-assets-card.is-bill header{display:flex;justify-content:space-between;font-size:8px;color:#7c7c8d;margin-bottom:17px}.asis-assets-card.is-bill h3{margin:0;font-size:10px;font-weight:700}.asis-assets-card.is-bill b{margin-top:0}
+.asis-assets-card.is-total{left:183px;top:185px;height:83px}.asis-assets-card.is-total p{margin:7px 0 0 20px}.asis-assets-card.is-total b{margin:0 0 0 20px;font-size:9px}.asis-assets-card.is-total aside{margin-top:6px;background:#f3f1fe;color:#7057c7}
+.asis-assets-example>h2{position:absolute;top:354px;left:0;width:360px;margin:0;text-align:center;font-size:24px;line-height:32px;font-weight:700;color:#211d1d}

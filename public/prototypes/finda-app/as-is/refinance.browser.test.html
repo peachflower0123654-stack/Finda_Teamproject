@@ -1,0 +1,40 @@
+<!doctype html><html lang="ko"><meta charset="UTF-8"><title>As-is refinance checks</title>
+<style>body{font:13px/1.5 monospace}iframe{width:760px;height:920px;border:0}pre{white-space:pre-wrap}</style>
+<pre id="report">RUNNING</pre><iframe title="대환 화면 검사"></iframe>
+<script type="module">
+const frame=document.querySelector("iframe"),report=document.querySelector("#report"),checks=[];
+const doc=()=>frame.contentDocument,app=()=>doc().querySelector("#asis-app"),wait=ms=>new Promise(r=>setTimeout(r,ms));
+const check=(pass,message)=>checks.push({pass:!!pass,message});
+const load=screen=>new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(Error("load timeout")),10000);frame.onload=async()=>{await doc().fonts.ready;await Promise.all([...doc().images].map(i=>i.complete?Promise.resolve():new Promise(r=>{i.onload=r;i.onerror=r;})));clearTimeout(timer);resolve();};frame.src="index.html?screen="+screen;});
+const note=()=>app().querySelector('[role="status"]')?.textContent;
+try{
+ await load("refinance");
+ check(app().dataset.screen==="refinance","direct review");
+ const img=app().querySelector("img"),b=img.getBoundingClientRect(),s=app().getBoundingClientRect().width/360;
+ check(img.complete&&img.naturalWidth>0&&img.src.endsWith("/assets/refinance.png"),"original local source loaded");
+ check(Math.abs(b.width/s-360)<.1&&Math.abs(b.height/s-800)<.1,"exact 360x800 source geometry");
+ const cta=app().querySelector(".asis-refinance__cta"),cb=cta.getBoundingClientRect(),a=app().getBoundingClientRect();
+ check(Math.abs((cb.x-a.x)/s-16)<.1&&Math.abs((cb.y-a.y)/s-682)<.1&&Math.abs(cb.width/s-328)<.1&&Math.abs(cb.height/s-54)<.1,"CTA matches image slot");
+ check(!note(),"no notice before interaction");cta.click();
+ check(note()==="이 테스트에서는 구현되지 않았습니다.","CTA shows exact scope notice");
+ check(app().dataset.screen==="refinance","CTA does not start an application");
+ await load("refinance");
+ const root=app().querySelector(".asis-refinance");
+ root.dispatchEvent(new WheelEvent("wheel",{deltaY:80,bubbles:true}));
+ check(note()==="이 테스트에서는 구현되지 않았습니다.","wheel attempt shows scope notice");
+ await load("refinance");const touchRoot=app().querySelector(".asis-refinance");
+ const touch=(type,y)=>{const e=new Event(type,{bubbles:true});Object.defineProperty(e,"touches",{value:[{clientX:100,clientY:y}]});touchRoot.dispatchEvent(e);};
+ touch("touchstart",400);touch("touchmove",320);
+ check(note()==="이 테스트에서는 구현되지 않았습니다.","vertical touch attempt shows scope notice");
+ await load("refinance");app().querySelector(".asis-refinance").dispatchEvent(new KeyboardEvent("keydown",{key:"PageDown",bubbles:true,cancelable:true}));
+ check(note()==="이 테스트에서는 구현되지 않았습니다.","keyboard scroll attempt shows scope notice");
+ await load("home");const scroll=app().querySelector('[data-node-id="4453:5120"]');scroll.scrollTop=260;
+ app().querySelector('[data-node-id="4453:5214"]').click();check(app().dataset.screen==="refinance","exact requested Home card opens refinance");
+ app().querySelector(".asis-refinance__back").click();check(app().dataset.screen==="home"&&app().querySelector('[data-node-id="4453:5120"]').scrollTop===260,"back restores Home scroll");
+ await load("refinance");app().querySelector(".asis-refinance__back").click();check(app().dataset.screen==="home","direct review back falls back to Home");
+ frame.style.width="320px";frame.style.height="640px";await load("refinance");
+ check(app().getBoundingClientRect().width<=320.1&&doc().documentElement.scrollWidth<=320,"narrow viewport fits");
+ check(app().getBoundingClientRect().height<=640,"full 800px screen fits narrow viewport height");
+}catch(error){check(false,String(error.stack||error));}
+const result={passed:checks.filter(c=>c.pass).length,failed:checks.filter(c=>!c.pass)};report.textContent=JSON.stringify(result,null,2);document.title=result.failed.length?"FAIL Refinance":"PASS Refinance";
+</script></html>

@@ -1,0 +1,35 @@
+<!doctype html><html lang="ko"><meta charset="UTF-8"><title>As-is direct asset checks</title>
+<style>body{font:13px/1.5 monospace}iframe{width:760px;height:900px;border:0}pre{white-space:pre-wrap}</style>
+<pre id="report">RUNNING</pre><iframe title="금융사 직접 선택 검사"></iframe>
+<script type="module">
+const frame=document.querySelector("iframe"),report=document.querySelector("#report"),checks=[];
+const doc=()=>frame.contentDocument,app=()=>doc().querySelector("#asis-app");
+const check=(pass,message)=>checks.push({pass:!!pass,message});
+const load=screen=>new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(Error("frame timeout")),10000);frame.onload=async()=>{await doc().fonts.ready;await Promise.all([...doc().images].map(i=>i.complete?Promise.resolve():new Promise(r=>{i.onload=r;i.onerror=r;})));clearTimeout(timer);resolve();};frame.src="index.html?screen="+screen;});
+const button=label=>app().querySelector('[aria-label="'+label+'"]');
+try{
+ await load("asset-select");check(app().dataset.screen==="asset-select","direct screen review");
+ const image=app().querySelector("img"),a=app().getBoundingClientRect(),b=image.getBoundingClientRect(),s=a.width/360;
+ check(image.complete&&image.naturalWidth>0&&image.src.endsWith("/assets/direct-assets.png"),"local original image loaded");
+ check(Math.abs((b.x-a.x)/s-.17)<.1&&Math.abs((b.y-a.y)/s)<.1&&Math.abs(b.width/s-360)<.1&&Math.abs(b.height/s-800)<.1,"source image geometry and crop preserved");
+ check(Math.abs(a.height/s-780)<.1,"source 780px frame preserved");
+ check(app().querySelectorAll("[data-direct-action]").length===13,"all 13 visible controls enabled");
+ const cta=button("한 번에 불러오기"),c=cta.getBoundingClientRect();
+ check(Math.abs((c.x-a.x)/s-16.17)<.1&&Math.abs((c.y-a.y)/s-682)<.1&&Math.abs(c.width/s-328)<.1&&Math.abs(c.height/s-54)<.1,"primary button matches source slot");
+ const original=image.src;
+ for(const target of app().querySelectorAll('[data-direct-action="notice"]')){
+  target.click();check(app().querySelector('[role="status"]')?.textContent==="이 테스트에서는 구현되지 않았습니다.","scope notice: "+target.getAttribute("aria-label"));
+  check(app().dataset.screen==="asset-select"&&image.src===original,"scope control does not invent data or navigation");
+ }
+ await load("connect");button("자산 직접 선택").click();check(app().dataset.screen==="asset-select","connect direct-selection button opens missing screen");
+ button("한 번에 불러오기").click();check(app().dataset.screen==="consent","primary button reuses existing consent sheet");
+ check(app().querySelector('[role="dialog"]')?.getAttribute("aria-modal")==="true","existing accessible consent component reused");
+ doc().dispatchEvent(new KeyboardEvent("keydown",{key:"Escape",bubbles:true}));check(app().dataset.screen==="asset-select","closing consent restores direct selection");
+ button("뒤로가기").click();check(app().dataset.screen==="connect","back restores connection method");
+ await load("asset-select");button("뒤로가기").click();check(app().dataset.screen==="connect","direct review back fallback");
+ await load("connect");button("한 번에 불러오기").click();check(app().dataset.screen==="consent","original one-step connection remains available");
+ frame.style.width="320px";frame.style.height="640px";await load("asset-select");
+ check(app().getBoundingClientRect().width<=320.1&&doc().documentElement.scrollWidth<=320,"small viewport fits");
+}catch(error){check(false,String(error.stack||error));}
+const result={passed:checks.filter(c=>c.pass).length,failed:checks.filter(c=>!c.pass)};report.textContent=JSON.stringify(result,null,2);document.title=result.failed.length?"FAIL Direct assets":"PASS Direct assets";
+</script></html>

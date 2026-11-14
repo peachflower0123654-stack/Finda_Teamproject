@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="ko">
+<meta charset="UTF-8">
+<title>As-is browser checks</title>
+<style>body{font:14px/1.5 monospace}iframe{width:760px;height:900px;border:1px solid #ccc}pre{white-space:pre-wrap}</style>
+<h1>As-is browser checks</h1>
+<pre id="report">RUNNING</pre>
+<iframe title="As-is test app"></iframe>
+<script type="module">
+import {asIsScreens} from "./flow.mjs";
+const frame=document.querySelector("iframe"), report=document.querySelector("#report");
+const results=[],geometry=[],assets=[];
+const standalone=new URLSearchParams(location.search).has("standalone");
+const securityPopupOnly=new URLSearchParams(location.search).has("security-popup");
+const check=(condition,message)=>{results.push({pass:!!condition,message});};
+const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+const load=(screen,participant=false)=>new Promise((resolve,reject)=>{
+ const timeout=setTimeout(()=>reject(new Error("Frame timeout: "+screen)),15000);
+ frame.onload=()=>{
+  const doc=frame.contentDocument;
+  const ready=async()=>{
+   if(!doc.querySelector("#asis-app")?.dataset.screen)return;
+   observer.disconnect();
+   await doc.fonts.ready;
+   await Promise.all([...doc.images].map(image=>image.complete?Promise.resolve():new Promise(done=>{image.onload=done;image.onerror=done;})));
+   clearTimeout(timeout);resolve();
+  };
+  const observer=new MutationObserver(ready);observer.observe(doc.querySelector("#asis-app"),{attributes:true});ready();
+ };
+ const query=new URLSearchParams();if(screen)query.set("screen",screen);
+ if(standalone)query.set("mode",participant||!screen?"test":"review");else if(participant)query.set("mode","test");
+ frame.src=(standalone?"share/Finda_AsIs_Notion.html":"index.html")+(query.size?"?"+query:"");
+});
+const app=()=>frame.contentDocument.querySelector("#asis-app");
+const pick=id=>frame.contentDocument.querySelector(`[data-node-id="${id}"]`);
+function rect(id){const a=app().getBoundingClientRect(),b=pick(id).getBoundingClientRect(),scale=a.width/360;return {x:(b.x-a.x)/scale,y:(b.y-a.y)/scale,w:b.width/scale,h:b.height/scale};}
+function near(id,expected){const actual=rect(id);geometry.push({id,expected,actual});check(Object.entries(expected).every(([key,value])=>Math.abs(actual[key]-value)<0.15),"geometry "+id);}
+function click(label){const target=app().querySelector(`[aria-label="${label}"]`);check(!!target,"action exists: "+label);target?.click();}
+const specs={
+ splash:[["4466:5863",{x:116,y:331,w:128,h:40.727}]],
+ intro:[["4422:4262",{x:0,y:112,w:360,h:72}],["4422:4349",{x:16,y:664,w:328,h:56}]],
+ security:[["4426:10018",{x:0,y:246,w:360,h:178.494}],["4428:4353",{x:20,y:549,w:320,h:68}],["4428:4366",{x:16,y:664,w:328,h:56}]],
+ "security-consent":[["4516:6643",{x:0,y:390,w:360,h:390}],["I4516:6643;4438:6375",{x:164,y:398,w:32,h:4}],["I4516:6643;4438:6377",{x:0,y:438,w:360,h:56}],["I4516:6643;4438:6396",{x:16,y:684,w:328,h:56}]],
+ assets:[["4426:10076",{x:0,y:80,w:360,h:433.965}],["4431:4347",{x:16,y:606,w:328,h:56}]],
+ connect:[["4434:4367",{x:0,y:192,w:360,h:469.785}],["4434:4370",{x:16,y:664,w:328,h:56}]],
+ consent:[["4438:10087",{x:0,y:386,w:360,h:371}]],
+ verify:[["4442:4436",{x:0,y:195.35,w:360,h:432.766}],["4442:4439",{x:16,y:629.115,w:328,h:56}]],
+ signing:[["4417:4259",{x:0,y:0,w:360,h:800}]],
+ home:[["4453:5190",{x:16,y:88,w:328,h:274}],["4426:16426",{x:0,y:688,w:360,h:92}]],
+ point:[["4468:11687",{x:0,y:27,w:360,h:204}],["4468:11625",{x:16,y:177,w:328,h:144}],["4468:11660",{x:16,y:341,w:328,h:188}],["4468:11700",{x:16,y:545,w:328,h:122}],["4466:11944",{x:0,y:688,w:360,h:92}]],
+ all:[["4462:6513",{x:0,y:32,w:360,h:72}],["4462:6568",{x:36,y:132,w:288,h:104}],["4462:6529",{x:0,y:332,w:360,h:44}],["4426:16446",{x:0,y:688,w:360,h:92}]],
+ "find-loan":[["4500:6615",{x:0,y:0,w:360,h:28}],["4500:6616",{x:0,y:28,w:360,h:48}],["4500:6617",{x:0,y:76,w:360,h:606.15}],["4500:6620",{x:0,y:688,w:360,h:92}]],
+ "rate-cut":[["4500:6921",{x:0,y:0,w:360,h:28}],["4500:6939",{x:0,y:80,w:360,h:528.414}],["4500:6941",{x:0,y:647.95,w:360,h:76}],["4500:6942",{x:0,y:723.95,w:360,h:56.051}]],
+};
+try{
+ await load("security");click("악성앱 찾기");
+ check(app().dataset.screen==="security-consent","malware action opens required consent");
+ check(frame.contentDocument.activeElement===pick("4516:6643"),"focus enters security popup");
+ check(pick("4516:6643").getAttribute("aria-modal")==="true","security popup is a modal dialog");
+ check(pick("4516:6753-background").inert,"security popup background inert");
+ for(const [id,expected] of specs["security-consent"])near(id,expected);
+ const image=app().querySelector("img");await wait(500);
+ check(image.naturalWidth>0&&image.complete,"original popup image loaded");
+ const slot=image.getBoundingClientRect(),scale=app().getBoundingClientRect().width/360;
+ check(Math.abs(slot.width/scale-360)<.15&&Math.abs(slot.height/scale-780)<.15,"popup background original geometry");
+ check(image.src.endsWith("/assets/security-popup-background.png"),"popup uses supplied local background");
+ const button=pick("I4516:6643;4438:6396");
+ check(button.textContent.trim()==="동의하고 연결하기","source CTA label retained");
+ check(pick("I4516:6643;4438:6393").textContent.includes("App설치&Update정보 등"),"collected information notice retained");
+ button.focus();frame.contentDocument.dispatchEvent(new KeyboardEvent("keydown",{key:"Tab",bubbles:true,cancelable:true}));
+ check(frame.contentDocument.activeElement===button,"Tab remains inside security popup");
+ frame.contentDocument.dispatchEvent(new KeyboardEvent("keydown",{key:"Tab",shiftKey:true,bubbles:true,cancelable:true}));
+ check(frame.contentDocument.activeElement===button,"Shift Tab remains inside security popup");
+ frame.contentDocument.dispatchEvent(new KeyboardEvent("keydown",{key:"Escape",bubbles:true}));
+ check(app().dataset.screen==="security","Escape dismisses security popup");
+ check(frame.contentDocument.activeElement===pick("4428:4366"),"dismiss restores malware action focus");
+ click("악성앱 찾기");pick("4516:6753-dim").click();check(app().dataset.screen==="security","dim dismisses security popup");
+ click("악성앱 찾기");click("동의하고 연결하기");check(app().dataset.screen==="assets","security consent continues to asset intro");
+ await load("security-consent");check(app().dataset.screen==="security-consent","popup can be reviewed directly");
+ frame.style.width="320px";frame.style.height="640px";await load("security-consent");
+ check(app().getBoundingClientRect().width<=320,"security popup fits narrow review viewport");
+ frame.style.width="760px";frame.style.height="900px";
+ if(!securityPopupOnly){
+ for(const [key] of asIsScreens){
+  await load(key);
+  check(app()?.dataset.screen===key,"render "+key);
+  for(const [id,expected] of specs[key]||[])near(id,expected);
+  for(const image of frame.contentDocument.images){
+   const bounds=image.getBoundingClientRect();
+   const data={screen:key,src:image.getAttribute("src").slice(0,120),loaded:image.complete&&image.naturalWidth>0,w:bounds.width,h:bounds.height,slot:image.parentElement.dataset.nodeId||image.parentElement.parentElement.dataset.nodeId};
+   assets.push(data);
+   check(data.loaded&&bounds.width>0&&bounds.height>0,"image "+key+" "+data.src);
+   check(standalone?image.src.startsWith("data:image/"):image.src.startsWith(new URL("assets/",frame.src).href),"local image "+key);
+  }
+  if(key==="home"){
+   const scroller=pick("4453:5120");
+   check(scroller.scrollHeight>=2290,"full home content retained");
+   scroller.scrollTop=9999;
+   check(scroller.scrollTop>1500,"home scrolls to bottom");
+   near("4426:16426",{y:688,h:92});
+  }
+  if(key==="all"){
+   check(app().querySelectorAll('[data-name="cmp_All_MenuSection"]').length===8,"all 8 categories retained");
+   check(app().querySelectorAll('[data-name="cmp_All_MenuRow"]').length===41,"all 41 menu rows retained");
+   const scroller=app().querySelector(".asis-tab-scroll");check(scroller.scrollHeight===2823,"all full source height retained");scroller.scrollTop=9999;check(scroller.scrollTop>2000,"all scrolls to bottom");near("4426:16446",{y:688,h:92});
+  }
+  if(["home","point","all"].includes(key)){
+   check(app().querySelector('[aria-current="page"]').dataset.bottomNav===key,"correct selected tab "+key);
+   check(app().querySelectorAll('[data-bottom-nav][aria-pressed="true"]').length===1,"single active tab "+key);
+  }
+  if(["find-loan","rate-cut"].includes(key)){
+   const scroller=app().querySelector(".asis-detail-scroll");
+   check(scroller.scrollHeight>scroller.clientHeight,"detail scrolls "+key);
+   for(const row of app().querySelectorAll('[data-name^="혜택 ·"]')){const text=row.querySelector("p");check(text.getBoundingClientRect().width<=row.clientWidth-43,"benefit label fits "+text.textContent);}
+   scroller.scrollTop=9999;
+   if(key==="find-loan"){
+    check(app().querySelectorAll('[data-name^="금융사 ·"]').length===16,"all 16 lender logos retained");
+    near("4500:6620",{y:688,h:92});click("신용대출 조건 비교하기");check(app().dataset.screen==="find-loan","loan CTA does not invent next step");
+   }else{
+    check(pick("4500:6982").children.length===7,"all 7 rate-cut notices retained");check(pick("4500:6991").querySelector("p").clientHeight===18,"notice hard line fits original width");near("4500:6941",{y:647.95,h:76});click("금리인하 신청");check(app().dataset.screen==="rate-cut","rate-cut CTA does not make a real request");
+   }
+  }
+ }
+ await load("home");pick("4453:5120").scrollTop=250;
+ app().querySelector('[data-name="cmp_Home_LoanActionCard · 대출 받기"]').click();check(app().dataset.screen==="find-loan","home loan card opens loan intro");click("뒤로가기");check(app().dataset.screen==="home"&&pick("4453:5120").scrollTop===250,"loan back restores home position");
+ await load("all");app().querySelector(".asis-tab-scroll").scrollTop=200;
+ for(const [label,screen] of [["대출 받기","find-loan"],["금리인하 자동신청","rate-cut"]]){app().querySelector('[data-name="cmp_All_MenuRow"][aria-label="'+label+'"]').click();check(app().dataset.screen===screen,"all entry "+screen);click("뒤로가기");check(app().dataset.screen==="all"&&app().querySelector(".asis-tab-scroll").scrollTop===200,"detail back restores all "+screen);}
+ await load("home");
+ const tab=name=>{const button=app().querySelector(`[data-bottom-nav="${name}"]`);check(!!button,"tab exists "+name);button?.click();check(app().dataset.screen===name,"tab navigation "+name);};
+ pick("4453:5120").scrollTop=500;tab("point");tab("all");app().querySelector(".asis-tab-scroll").scrollTop=1900;tab("home");check(pick("4453:5120").scrollTop===500,"home scroll restored");tab("all");check(app().querySelector(".asis-tab-scroll").scrollTop===1900,"all scroll restored");
+ app().querySelector('[data-name="cmp_All_MenuRow"][aria-label="포인트"]').click();check(app().dataset.screen==="point","all point row opens point");
+ const balance=pick("4468:11698").textContent;click("출석하고 5P 받기");check(pick("4468:11698").textContent===balance,"no fabricated point rewards");
+ tab("all");app().querySelector('[data-name="cmp_All_MenuRow"][aria-label="출석체크"]').click();check(app().dataset.screen==="point","all check-in row opens point");check(frame.contentDocument.activeElement===pick("4468:11623"),"check-in action focused");
+ await load("intro");
+ for(const [label,screen] of [["시작하기","security"],["악성앱 찾기","security-consent"],["동의하고 연결하기","assets"],["자산 연결하기","connect"],["한 번에 불러오기","consent"],["동의하고 연결하기","verify"],["카카오 인증서로 인증하기","signing"]]){
+  click(label);check(app().dataset.screen===screen,"navigate "+screen);
+ }
+ await load("assets");click("다음에");check(app().dataset.screen==="home","skip connection to home");
+ await load("consent");
+ check(pick("4438:10064").inert,"modal background inert");
+ check(frame.contentDocument.activeElement===pick("4438:10087"),"focus enters consent dialog");
+ frame.contentDocument.dispatchEvent(new KeyboardEvent("keydown",{key:"Escape",bubbles:true}));
+ check(app().dataset.screen==="connect","Escape closes consent");
+ await load();check(app().dataset.screen==="splash","live starts at splash");await wait(1600);check(app().dataset.screen==="intro","live splash timer");
+ click("시작하기");click("악성앱 찾기");click("동의하고 연결하기");click("자산 연결하기");click("한 번에 불러오기");click("동의하고 연결하기");click("카카오 인증서로 인증하기");
+ check(app().dataset.screen==="signing","live signing entered");await wait(2100);check(app().dataset.screen==="home","live signing timer to home");
+ await load(undefined,true);
+ check(frame.contentWindow.getComputedStyle(frame.contentDocument.querySelector("#asis-preview")).display==="none","participant mode hides review controls");
+ frame.style.width="320px";frame.style.height="640px";
+ await load(undefined,true);
+ geometry.push({mobile:{innerWidth:frame.contentWindow.innerWidth,innerHeight:frame.contentWindow.innerHeight,appWidth:app().getBoundingClientRect().width,scrollWidth:frame.contentDocument.documentElement.scrollWidth}});
+ check(app().getBoundingClientRect().width<=320.1,"participant fits 320px viewport");
+ check(frame.contentDocument.documentElement.scrollWidth<=320,"participant has no horizontal overflow");
+ }
+}catch(error){check(false,String(error.stack||error));}
+const summary={passed:results.filter(r=>r.pass).length,failed:results.filter(r=>!r.pass),geometry,assets};
+report.textContent=JSON.stringify(summary,null,2);
+document.title=summary.failed.length?"FAIL As-is browser checks":"PASS As-is browser checks";
+</script>
+</html>
