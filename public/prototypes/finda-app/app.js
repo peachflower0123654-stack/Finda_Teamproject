@@ -101,7 +101,8 @@ function wirePostCard(card,makeButton){
   const group=slot.parentElement,left=group.scrollLeft;
   slot.replaceChildren(...chips.map(c=>{const el=(c===current?selectedChip:chip).cloneNode(true);el.querySelector('p').textContent=c.name;makeButton(el,c.name+' 포스트',()=>{state.postChip=c.name;fill();slot.querySelector('[aria-pressed="true"]')?.focus({preventScroll:true});});el.setAttribute('aria-pressed',String(c===current));return el;}));
   group.scrollLeft=left;
-  list.replaceChildren(...current.posts.map(p=>{const el=row.cloneNode(true);el.firstElementChild.setAttribute('style',thumbStyle(p));el.querySelector('p').textContent=p.t;return el;}));
+  // 종료 지점 ② 포스트 클릭: 글 상세 화면이 없어서 "Maze로 돌아가세요" 안내만 띄워요 (한 번만).
+  list.replaceChildren(...current.posts.map(p=>{const el=row.cloneNode(true);el.firstElementChild.setAttribute('style',thumbStyle(p));el.querySelector('p').textContent=p.t;makeButton(el,p.t,()=>showExploreDone(app));return el;}));
  };
  fill();
 }
