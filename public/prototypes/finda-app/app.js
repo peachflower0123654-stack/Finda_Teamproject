@@ -3,6 +3,7 @@ import {aiRateName,aiRateIntro,aiRateConsentSheet,aiRateLoading,aiRateScreen,wir
 import {quickMenuButton,wireQuickMenuButtons} from './quick-menu-button.js';
 import {closeQuickMenu,openQuickMenu} from './quick-menu-dialog.js';
 import {popupMode} from './quick-menu-edit.js';
+import {showExploreDone} from './explore-done.js';
 import {homeDesigns} from './home-design.js';
 import {consentScreen,toggleConsent} from './consent.js';
 import {initial,next,back,reveal,selectOwnership,filled,skipOnboarding,consentHome,openAiRate,aiRateHome,toggleAiRateConsent,shouldAutoAdvanceAiRate} from './flow.mjs';
@@ -111,7 +112,8 @@ panel.addEventListener('change',e=>{
  state=selectScreen(state,value);
  if(state.screen==='06')activeField=['count','principal','monthly'][state.revealed-1];
  render();
- if(value.startsWith('popup:'))openQuickMenu(app,app.querySelector('.quick-menu-button'),value==='popup:quick-add');
+ if(value==='popup:explore-done')showExploreDone(app,{force:true});
+ else if(value.startsWith('popup:'))openQuickMenu(app,app.querySelector('.quick-menu-button'),value==='popup:quick-add');
 });
 app.addEventListener('quick-menu-view',e=>{
  const selector=panel.querySelector('#screen-review');if(selector)selector.value=e.detail||screenKey(state);
