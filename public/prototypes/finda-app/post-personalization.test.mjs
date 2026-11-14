@@ -10,7 +10,7 @@ test('no-onboarding feed follows Finda default order with a policy chip and no M
  const {defaultFeed,DEFAULT_CHIP_ORDER}=await import('./post-personalization.js');
  const {POSTS}=await import('./post-data.js');
  const {order,chips}=defaultFeed();
- assert.deepEqual(order,['사용팁','대출','신용점수','부동산','생활','정책','금융사고']);
+ assert.deepEqual(order,['사용팁','대출','신용점수','부동산','정책','생활','금융사고']);
  assert.ok(!chips.some(c=>c.name==='MY'));
  for(const c of chips){
   assert.equal(c.posts.length,3,c.name);
