@@ -45,7 +45,7 @@ export function sheetView(picks){
  const slots=Array.from({length:MAX_PICKS},(_,i)=>{
   const menu=MENUS[picks[i]];
   return menu
-   ?`<li class="qm-pick"><span class="qm-icon"><img src="${menu.icon}" alt=""></span><span class="qm-label">${lines(menu.text)}</span></li>`
+   ?`<li class="qm-pick"><button type="button" class="qm-pick-remove" data-menu="${menu.id}" aria-label="${menu.label} 선택 해제"><span class="qm-icon"><img src="${menu.icon}" alt=""></span><span class="qm-label">${lines(menu.text)}</span></button></li>`
    :`<li class="qm-pick is-empty"><span class="qm-icon">${emptyIcon}</span><span class="qm-label">추가</span></li>`;
  }).join('');
  const button=sheetButton(picks);

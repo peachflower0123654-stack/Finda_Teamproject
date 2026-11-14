@@ -1,5 +1,5 @@
 // 탐색 완료 안내 모달: 테스터에게 "Maze로 돌아가 [다음]"을 알려 줘요.
-// 종료 지점(①홈 끝까지 스크롤 ②콘텐츠 클릭 ③퀵메뉴 편집 [완료])에서 showExploreDone(app)만 부르면 돼요.
+// 종료 지점(①홈 끝까지 스크롤 ②콘텐츠 클릭 ③퀵메뉴 저장 결과 확인 후 팝업 닫기)에서 showExploreDone(app)을 불러요.
 // 온보딩 값을 받은 개인화 홈(Home_OB_NoMD)에서만, 같은 화면을 다시 불러오기 전까지 한 번만 떠요.
 // app.js가 root.dataset.homeState에 지금 홈 상태를 넣어 둬요. 화면선택 미리보기(force)는 언제든 띄워요.
 export const EXPLORE_DONE_HOME='OB_NoMD';
