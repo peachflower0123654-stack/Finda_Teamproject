@@ -56,6 +56,8 @@ export const SECTIONS=[
 ];
 
 export const MAX_PICKS=2;
+// 온보딩을 마친 홈(OB_*)만 맞춤 팝업을 보여 줘요. 그 전(NoOB·InOB)에는 빈 상태 팝업이에요.
+export const popupMode=homeState=>String(homeState||'').startsWith('OB_')?'personal':'noob';
 export const TOAST_FIXED='맞춤 메뉴는 제거가 어려워요.\n대신 다른 메뉴 2가지 추가가 가능해요';
 export const TOAST_MAX='추가 메뉴는 최대 2개까지 고를 수 있어요';
 

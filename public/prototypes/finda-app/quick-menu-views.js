@@ -20,6 +20,15 @@ export function popupView(saved){
 </section>`;
 }
 
+// pop_Home_QuickMenu/Default (Figma 4509:7660): 온보딩 전(NoOB·InOB)이라 맞춤 메뉴가 없을 때
+export function noobPopupView(){
+ return `<section class="quick-menu-dialog is-noob" role="dialog" aria-modal="true" aria-label="메뉴 즐겨찾기">
+<header><h2>메뉴 즐겨찾기</h2>${closeButton}</header>
+<div class="quick-menu-empty"><img src="assets/ic-quick-menu.svg" alt="" width="56" height="56"><h3>아직 맞춤 메뉴가 없어요</h3><p>몇 가지만 알려 주시면<br>자주 쓸 메뉴를 골라 드릴게요</p></div>
+<div class="quick-menu-actions"><button type="button" class="btn quick-menu-start" data-hierarchy="primary" data-size="medium" data-action="start">1분 만에 맞춤 메뉴 받기</button><button type="button" class="quick-menu-browse">먼저 둘러볼게요</button></div>
+</section>`;
+}
+
 const menuButton=(id,picks,fixed)=>{
  const menu=MENUS[id];
  const state=fixed?'data-fixed="true" aria-describedby="qm-fixed-note"':`aria-pressed="${picks.includes(id)}"`;

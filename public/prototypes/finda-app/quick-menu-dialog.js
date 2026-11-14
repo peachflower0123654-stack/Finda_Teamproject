@@ -1,4 +1,4 @@
-import {popupView,editView,sheetView} from './quick-menu-views.js';
+import {popupView,noobPopupView,editView,sheetView} from './quick-menu-views.js';
 import {toggleMenu,getSavedPicks,savePicks,RECOMMENDED} from './quick-menu-edit.js';
 import {sendTestEvent} from './test-data.js';
 const openMenus=new WeakMap();
@@ -17,8 +17,9 @@ export function openQuickMenu(root,trigger,startEditing=false){
  const showPopup=focusSelector=>{
   clearTimeout(toastTimer);
   overlay.classList.remove('is-editing');
-  overlay.innerHTML=popupView(getSavedPicks());
-  overlay.querySelector(focusSelector||'.quick-menu-close').focus();
+  // app.js가 홈 상태에 따라 root.dataset.quickMenu를 'personal' 또는 'noob'으로 정해 둬요.
+  overlay.innerHTML=root.dataset.quickMenu==='noob'?noobPopupView():popupView(getSavedPicks());
+  (focusSelector&&overlay.querySelector(focusSelector)||overlay.querySelector('.quick-menu-close')).focus();
   announce('popup:quick-menu');
  };
  const showEdit=()=>{
@@ -47,7 +48,8 @@ export function openQuickMenu(root,trigger,startEditing=false){
   else if(e.key==='Tab'){const buttons=[...overlay.querySelectorAll('button:not(:disabled)')];const first=buttons[0],last=buttons.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}
  };
  overlay.addEventListener('click',e=>{
-  if(e.target===overlay&&!overlay.classList.contains('is-editing')||e.target.closest('.quick-menu-close')){close();return;}
+  if(e.target===overlay&&!overlay.classList.contains('is-editing')||e.target.closest('.quick-menu-close,.quick-menu-browse')){close();return;}
+  // [1분 만에 맞춤 메뉴 받기]는 data-action="start"라서 app.js가 온보딩(02 약관)으로 보내요.
   if(e.target.closest('.quick-menu-edit,.quick-menu-add')){showEdit();return;}
   if(e.target.closest('.qm-back')){showPopup('.quick-menu-edit');return;}
   const item=e.target.closest('.qm-item');
