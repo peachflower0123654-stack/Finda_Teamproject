@@ -4,6 +4,8 @@ build/
 .cache/
 .env
 .env*
+# Supabase 키 파일 (예시는 supabase-config.example.js)
+public/prototypes/finda-app/supabase-config.js
 .vite/
 vite.config.*.timestamp-*
 *.tsbuildinfo

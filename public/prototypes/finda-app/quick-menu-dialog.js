@@ -1,5 +1,6 @@
 import {popupView,editView,sheetView} from './quick-menu-views.js';
-import {toggleMenu,getSavedPicks,savePicks} from './quick-menu-edit.js';
+import {toggleMenu,getSavedPicks,savePicks,RECOMMENDED} from './quick-menu-edit.js';
+import {sendTestEvent} from './test-data.js';
 const openMenus=new WeakMap();
 export function closeQuickMenu(root){openMenus.get(root)?.();}
 const TOAST_MS=2000;
@@ -51,7 +52,12 @@ export function openQuickMenu(root,trigger,startEditing=false){
   if(e.target.closest('.qm-back')){showPopup('.quick-menu-edit');return;}
   const item=e.target.closest('.qm-item');
   if(item){const result=toggleMenu(picks,item.dataset.menu);picks=result.picks;renderPicks();if(result.toast)showToast(result.toast);return;}
-  if(e.target.closest('.qm-done')){savePicks(picks);showPopup('.quick-menu-edit');}
+  if(e.target.closest('.qm-done')){
+   savePicks(picks);
+   // 종료 지점 ③ 퀵메뉴 편집 [완료]: 고른 메뉴와 그때 보여 준 맞춤 추천 6개를 Supabase로 보내요.
+   sendTestEvent('quickmenu_done',{selected_menu_ids:getSavedPicks(),recommendation_ids:[...RECOMMENDED]});
+   showPopup('.quick-menu-edit');
+  }
  });
  document.addEventListener('keydown',onKey,true);
  openMenus.set(root,close);root.append(overlay);
