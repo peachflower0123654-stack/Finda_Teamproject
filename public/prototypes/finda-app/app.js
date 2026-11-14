@@ -114,5 +114,5 @@ panel.addEventListener('change',e=>{
 });
 app.addEventListener('quick-menu-view',e=>{
  const selector=panel.querySelector('#screen-review');if(selector)selector.value=e.detail||screenKey(state);
- const frame=panel.querySelector('code');if(frame)frame.textContent=e.detail==='popup:quick-add'?'퀵메뉴 항목 추가':e.detail==='popup:quick-menu'?'메뉴 즐겨찾기':name();
+ const frame=panel.querySelector('code');if(frame)frame.textContent=e.detail==='popup:quick-add'?'퀵메뉴 편집':e.detail==='popup:quick-menu'?'메뉴 즐겨찾기':name();
 });
