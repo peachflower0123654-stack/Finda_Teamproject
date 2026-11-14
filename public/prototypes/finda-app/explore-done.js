@@ -1,6 +1,8 @@
 // 탐색 완료 안내 모달: 테스터에게 "Maze로 돌아가 [다음]"을 알려 줘요.
 // 종료 지점(①홈 끝까지 스크롤 ②콘텐츠 클릭 ③퀵메뉴 편집 [완료])에서 showExploreDone(app)만 부르면 돼요.
-// 같은 화면을 다시 불러오기 전까지 한 번만 떠요. 화면선택 미리보기(force)는 언제든 띄워요.
+// 온보딩 값을 받은 개인화 홈(Home_OB_NoMD)에서만, 같은 화면을 다시 불러오기 전까지 한 번만 떠요.
+// app.js가 root.dataset.homeState에 지금 홈 상태를 넣어 둬요. 화면선택 미리보기(force)는 언제든 띄워요.
+export const EXPLORE_DONE_HOME='OB_NoMD';
 export const EXPLORE_DONE={
  title:'둘러보기를 마쳤어요',
  body:'이제 Maze 창으로 돌아가\n[다음]을 눌러 주세요.',
@@ -8,6 +10,8 @@ export const EXPLORE_DONE={
 };
 let shown=false;
 export const resetExploreDone=()=>{shown=false;};
+// ① 홈 끝까지 스크롤: 바닥에서 slack(px) 안쪽이면 끝으로 봐요.
+export const atScrollEnd=({scrollTop,clientHeight,scrollHeight},slack=4)=>scrollHeight>clientHeight&&scrollTop+clientHeight>=scrollHeight-slack;
 
 export function exploreDoneView(){
  const body=EXPLORE_DONE.body.split('\n').join('<br>');
@@ -19,7 +23,9 @@ export function exploreDoneView(){
 }
 
 export function showExploreDone(root,{force=false,onClose}={}){
- if(!root||(shown&&!force)||root.querySelector('.explore-done-overlay'))return false;
+ if(!root)return false;
+ if(!force&&root.dataset?.homeState!==EXPLORE_DONE_HOME)return false;
+ if((shown&&!force)||root.querySelector('.explore-done-overlay'))return false;
  shown=true;
  const overlay=document.createElement('div');
  overlay.className='explore-done-overlay';
