@@ -8,7 +8,7 @@ import {homeDesigns} from './home-design.js';
 import {consentScreen,toggleConsent} from './consent.js';
 import {initial,next,back,reveal,selectOwnership,filled,skipOnboarding,consentHome,openAiRate,aiRateHome,toggleAiRateConsent,shouldAutoAdvanceAiRate} from './flow.mjs';
 import {AFFILIATIONS,HOUSINGS,LOAN_COUNTS,PRESETS} from './post-data.js';
-import {recommend,profileFromAnswers,thumbStyle} from './post-personalization.js';
+import {recommend,defaultFeed,profileFromAnswers,thumbStyle} from './post-personalization.js';
 import {categoryChips,wireChipGroup} from './chip-group.js';
 import {bottomBar,applyBottomBar,wireBottomBars} from './bottom-bar.js';
 let state=initial(),bottomBarSelection='home';
@@ -86,25 +86,27 @@ function wireHomeDesign(){
  const root=shell.querySelector('.figma-home-canvas').firstElementChild;
  for(const child of [...root.children]){const id=child.dataset.nodeId;if(id==='2303:701'){applyBottomBar(child,bottomBarSelection);child.classList.add('home-pinned-bottom');shell.append(child);}if(id==='1991:4029'||id==='3172:19808'||id==='3172:19933'||id==='3172:21425'||id==='3288:16052'){child.classList.add('home-pinned-top');shell.append(child);}}
  if(state.homeState==='OB_NoMD')wirePostCard(shell.querySelector('[data-name="PostCard"]'),makeButton);
+ // 온보딩 전 홈: 핀다 기본 순서 피드. 탐색 완료 모달은 OB 홈만이라 글은 누르지 않아요.
+ if(state.homeState==='NoOB_NoMD')wirePostCard(shell.querySelector('[data-name="PostCard"]'),makeButton,{feed:defaultFeed,chipKey:'noobPostChip',rowIndex:0,onPost:null});
  // 종료 지점 ① 홈 끝까지 스크롤 (OB_NoMD만, 모달은 한 번만)
  if(state.homeState==='OB_NoMD'){const viewport=shell.querySelector('.figma-home-viewport');viewport?.addEventListener('scroll',()=>{if(atScrollEnd(viewport))showExploreDone(app);},{passive:true});}
  for(const group of shell.querySelectorAll('[data-name="PostCard"] [data-name="Chips"], [data-name="PostCard"] [data-name="cmp_Common_ChipGroup"]'))wireChipGroup(group);
 }
 
 // Figma PostCard의 칩·글 줄을 복제해 V4.0 추천 결과로 채운다. 칩을 눌러도 홈 스크롤이 유지되도록 카드만 다시 그린다.
-function wirePostCard(card,makeButton){
+function wirePostCard(card,makeButton,{feed=()=>{const {a,h,n}=postProfile();return recommend(a,h,n);},chipKey='postChip',rowIndex=2,onPost=()=>showExploreDone(app)}={}){
  if(!card)return;
  const slot=card.querySelector('[data-name="Slot"]'),list=card.children[1];
- const [selectedChip,chip]=slot.children,row=list.children[2];
+ const [selectedChip,chip]=slot.children,row=list.children[rowIndex];
  row.querySelectorAll('p')[1]?.remove();row.querySelector('img')?.remove();
  const fill=()=>{
-  const {a,h,n}=postProfile(),chips=categoryChips(recommend(a,h,n).chips);
-  const current=chips.find(c=>c.name===state.postChip)||chips[0];
+  const chips=categoryChips(feed().chips);
+  const current=chips.find(c=>c.name===state[chipKey])||chips[0];
   const group=slot.parentElement,left=group.scrollLeft;
-  slot.replaceChildren(...chips.map(c=>{const el=(c===current?selectedChip:chip).cloneNode(true);el.querySelector('p').textContent=c.name;makeButton(el,c.name+' 포스트',()=>{state.postChip=c.name;fill();slot.querySelector('[aria-pressed="true"]')?.focus({preventScroll:true});});el.setAttribute('aria-pressed',String(c===current));return el;}));
+  slot.replaceChildren(...chips.map(c=>{const el=(c===current?selectedChip:chip).cloneNode(true);el.querySelector('p').textContent=c.name;makeButton(el,c.name+' 포스트',()=>{state[chipKey]=c.name;fill();slot.querySelector('[aria-pressed="true"]')?.focus({preventScroll:true});});el.setAttribute('aria-pressed',String(c===current));return el;}));
   group.scrollLeft=left;
   // 종료 지점 ② 포스트 클릭: 글 상세 화면이 없어서 "Maze로 돌아가세요" 안내만 띄워요 (한 번만).
-  list.replaceChildren(...current.posts.map(p=>{const el=row.cloneNode(true);el.firstElementChild.setAttribute('style',thumbStyle(p));el.querySelector('p').textContent=p.t;makeButton(el,p.t,()=>showExploreDone(app));return el;}));
+  list.replaceChildren(...current.posts.map(p=>{const el=row.cloneNode(true);el.firstElementChild.setAttribute('style',thumbStyle(p));el.querySelector('p').textContent=p.t;if(onPost)makeButton(el,p.t,()=>onPost(p));return el;}));
  };
  fill();
 }
