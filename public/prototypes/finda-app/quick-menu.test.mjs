@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {existsSync} from 'node:fs';
-import {MENUS,RECOMMENDED,SECTIONS,TOAST_FIXED,TOAST_MAX,toggleMenu,sheetButton,popupExtraSlots,savePicks,getSavedPicks} from './quick-menu-edit.js';
+import {MENUS,RECOMMENDED,SECTIONS,TOAST_FIXED,TOAST_MAX,toggleMenu,sheetButton,popupExtraSlots,savePicks,getSavedPicks,popupMode} from './quick-menu-edit.js';
+import {noobPopupView,popupView} from './quick-menu-views.js';
 
 test('edit screen has seven sections and every menu has an icon file',()=>{
  assert.deepEqual(SECTIONS.map(s=>s.title),['맞춤 추천 6개','대출','카드','나의 금융 정보','사업자','부가 서비스','소식']);
@@ -47,4 +48,23 @@ test('saved picks fill the two popup slots in order',()=>{
  savePicks(['DepositCompare','RateCut','FAQ','LoanJeonse']);
  assert.deepEqual(getSavedPicks(),['DepositCompare','RateCut']);
  savePicks([]);
+});
+
+test('only onboarded homes get the personalized popup',()=>{
+ assert.equal(popupMode('OB_NoMD'),'personal');
+ assert.equal(popupMode('OB_MD'),'personal');
+ assert.equal(popupMode('NoOB_NoMD'),'noob');
+ assert.equal(popupMode('InOB_NoMD'),'noob');
+ assert.equal(popupMode(undefined),'noob');
+});
+
+test('no-onboarding popup shows the empty state and sends users to onboarding',()=>{
+ const html=noobPopupView();
+ assert.match(html,/아직 맞춤 메뉴가 없어요/);
+ assert.match(html,/data-action="start"[^>]*>1분 만에 맞춤 메뉴 받기/);
+ assert.match(html,/class="quick-menu-browse"[^>]*>먼저 둘러볼게요/);
+ assert.match(html,/class="quick-menu-close"/);
+ assert.doesNotMatch(html,/quick-menu-item|편집하기/);
+ assert.ok(existsSync(new URL('assets/ic-quick-menu.svg',import.meta.url)));
+ assert.match(popupView([]),/편집하기/);
 });

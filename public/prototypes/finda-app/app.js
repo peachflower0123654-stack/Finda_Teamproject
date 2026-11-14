@@ -2,6 +2,7 @@ import {screenSelector,screenKey,selectScreen} from './screen-catalog.js';
 import {aiRateName,aiRateIntro,aiRateConsentSheet,aiRateLoading,aiRateScreen,wireAiRate} from './ai-rate.js';
 import {quickMenuButton,wireQuickMenuButtons} from './quick-menu-button.js';
 import {closeQuickMenu,openQuickMenu} from './quick-menu-dialog.js';
+import {popupMode} from './quick-menu-edit.js';
 import {homeDesigns} from './home-design.js';
 import {consentScreen,toggleConsent} from './consent.js';
 import {initial,next,back,reveal,selectOwnership,filled,skipOnboarding,consentHome,openAiRate,aiRateHome,toggleAiRateConsent,shouldAutoAdvanceAiRate} from './flow.mjs';
@@ -44,7 +45,7 @@ function render(focus){
  if(shouldAutoAdvanceAiRate(state))aiRateTimer=setTimeout(()=>{if(shouldAutoAdvanceAiRate(state)){state=next(state);render();}},2000);
  const introScroll=app.querySelector('.ai-rate-intro .ai-rate-scroll')?.scrollTop;
  if(state.screen==='00')splashTimer=setTimeout(()=>{if(state.screen==='00'){state=next(state);render();}},1500);
- app.innerHTML=screen();app.dataset.screen=name();wireHomeDesign();wireBottomBars(app,value=>{bottomBarSelection=value;});wireQuickMenuButtons(app);wireAiRate(app,sort=>{state={...state,aiSort:sort};syncPreviewName();});
+ app.innerHTML=screen();app.dataset.screen=name();wireHomeDesign();wireBottomBars(app,value=>{bottomBarSelection=value;});app.dataset.quickMenu=popupMode(state.homeState);wireQuickMenuButtons(app);wireAiRate(app,sort=>{state={...state,aiSort:sort};syncPreviewName();});
  if(introScroll){const scroller=app.querySelector('.ai-rate-intro .ai-rate-scroll');if(scroller)scroller.scrollTop=introScroll;}
  const canNext=next(state).screen!==state.screen;
  const selected=state.screen==='10'?'result:'+state.result:state.screen==='11'?'home:'+state.homeState:'';

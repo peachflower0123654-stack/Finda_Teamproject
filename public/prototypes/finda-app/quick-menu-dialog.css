@@ -57,3 +57,13 @@
 .qm-toast[hidden]{display:none}
 .qm-toast svg{flex-shrink:0}
 .qm-toast p{font-size:var(--ds-font-size-14);line-height:var(--ds-line-height-24);white-space:pre;color:#fff}
+
+/* 온보딩 전 퀵메뉴 팝업: pop_Home_QuickMenu/Default (Figma 4509:7660) */
+.quick-menu-empty{display:flex;flex-direction:column;align-items:center;gap:var(--ds-spacing-md);padding:var(--ds-spacing-md) 0 var(--ds-spacing-sm);text-align:center}
+.quick-menu-empty img{display:block;width:56px;height:56px}
+#app .quick-menu-empty h3{margin:0;font:var(--ds-font-weight-bold) var(--ds-font-size-16)/var(--ds-line-height-24) var(--ds-font-base);color:var(--ds-text-ink)}
+#app .quick-menu-empty p{margin:0;font:var(--ds-font-weight-regular) var(--ds-font-size-14)/var(--ds-line-height-24) var(--ds-font-base);color:var(--ds-text-muted)}
+.quick-menu-actions{display:flex;flex-direction:column;align-items:center;gap:var(--ds-spacing-sm)}
+#app .quick-menu-start{width:100%}
+#app .quick-menu-browse{height:24px;padding:0;border:0;background:transparent;font:var(--ds-font-weight-regular) var(--ds-font-size-16)/var(--ds-line-height-24) var(--ds-font-base);color:var(--ds-text-body);cursor:pointer;border-radius:var(--ds-radius-sm)}
+#app :is(.quick-menu-start,.quick-menu-browse):focus-visible{outline:2px solid var(--ds-primary);outline-offset:2px}
