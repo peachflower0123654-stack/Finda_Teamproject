@@ -3,6 +3,7 @@ import {aiRateName,aiRateIntro,aiRateConsentSheet,aiRateLoading,aiRateScreen,wir
 import {quickMenuButton,wireQuickMenuButtons} from './quick-menu-button.js';
 import {closeQuickMenu,openQuickMenu} from './quick-menu-dialog.js';
 import {popupMode} from './quick-menu-edit.js';
+import {showExploreDone,atScrollEnd} from './explore-done.js';
 import {homeDesigns} from './home-design.js';
 import {consentScreen,toggleConsent} from './consent.js';
 import {initial,next,back,reveal,selectOwnership,filled,skipOnboarding,consentHome,openAiRate,aiRateHome,toggleAiRateConsent,shouldAutoAdvanceAiRate} from './flow.mjs';
@@ -45,7 +46,7 @@ function render(focus){
  if(shouldAutoAdvanceAiRate(state))aiRateTimer=setTimeout(()=>{if(shouldAutoAdvanceAiRate(state)){state=next(state);render();}},2000);
  const introScroll=app.querySelector('.ai-rate-intro .ai-rate-scroll')?.scrollTop;
  if(state.screen==='00')splashTimer=setTimeout(()=>{if(state.screen==='00'){state=next(state);render();}},1500);
- app.innerHTML=screen();app.dataset.screen=name();wireHomeDesign();wireBottomBars(app,value=>{bottomBarSelection=value;});app.dataset.quickMenu=popupMode(state.homeState);wireQuickMenuButtons(app);wireAiRate(app,sort=>{state={...state,aiSort:sort};syncPreviewName();});
+ app.innerHTML=screen();app.dataset.screen=name();wireHomeDesign();wireBottomBars(app,value=>{bottomBarSelection=value;});app.dataset.quickMenu=popupMode(state.homeState);app.dataset.homeState=state.screen==='11'?state.homeState:'';wireQuickMenuButtons(app);wireAiRate(app,sort=>{state={...state,aiSort:sort};syncPreviewName();});
  if(introScroll){const scroller=app.querySelector('.ai-rate-intro .ai-rate-scroll');if(scroller)scroller.scrollTop=introScroll;}
  const canNext=next(state).screen!==state.screen;
  const selected=state.screen==='10'?'result:'+state.result:state.screen==='11'?'home:'+state.homeState:'';
@@ -85,6 +86,8 @@ function wireHomeDesign(){
  const root=shell.querySelector('.figma-home-canvas').firstElementChild;
  for(const child of [...root.children]){const id=child.dataset.nodeId;if(id==='2303:701'){applyBottomBar(child,bottomBarSelection);child.classList.add('home-pinned-bottom');shell.append(child);}if(id==='1991:4029'||id==='3172:19808'||id==='3172:19933'||id==='3172:21425'||id==='3288:16052'){child.classList.add('home-pinned-top');shell.append(child);}}
  if(state.homeState==='OB_NoMD')wirePostCard(shell.querySelector('[data-name="PostCard"]'),makeButton);
+ // 종료 지점 ① 홈 끝까지 스크롤 (OB_NoMD만, 모달은 한 번만)
+ if(state.homeState==='OB_NoMD'){const viewport=shell.querySelector('.figma-home-viewport');viewport?.addEventListener('scroll',()=>{if(atScrollEnd(viewport))showExploreDone(app);},{passive:true});}
  for(const group of shell.querySelectorAll('[data-name="PostCard"] [data-name="Chips"], [data-name="PostCard"] [data-name="cmp_Common_ChipGroup"]'))wireChipGroup(group);
 }
 
@@ -100,7 +103,8 @@ function wirePostCard(card,makeButton){
   const group=slot.parentElement,left=group.scrollLeft;
   slot.replaceChildren(...chips.map(c=>{const el=(c===current?selectedChip:chip).cloneNode(true);el.querySelector('p').textContent=c.name;makeButton(el,c.name+' 포스트',()=>{state.postChip=c.name;fill();slot.querySelector('[aria-pressed="true"]')?.focus({preventScroll:true});});el.setAttribute('aria-pressed',String(c===current));return el;}));
   group.scrollLeft=left;
-  list.replaceChildren(...current.posts.map(p=>{const el=row.cloneNode(true);el.firstElementChild.setAttribute('style',thumbStyle(p));el.querySelector('p').textContent=p.t;return el;}));
+  // 종료 지점 ② 포스트 클릭: 글 상세 화면이 없어서 "Maze로 돌아가세요" 안내만 띄워요 (한 번만).
+  list.replaceChildren(...current.posts.map(p=>{const el=row.cloneNode(true);el.firstElementChild.setAttribute('style',thumbStyle(p));el.querySelector('p').textContent=p.t;makeButton(el,p.t,()=>showExploreDone(app));return el;}));
  };
  fill();
 }
@@ -111,7 +115,8 @@ panel.addEventListener('change',e=>{
  state=selectScreen(state,value);
  if(state.screen==='06')activeField=['count','principal','monthly'][state.revealed-1];
  render();
- if(value.startsWith('popup:'))openQuickMenu(app,app.querySelector('.quick-menu-button'),value==='popup:quick-add');
+ if(value==='popup:explore-done')showExploreDone(app,{force:true});
+ else if(value.startsWith('popup:'))openQuickMenu(app,app.querySelector('.quick-menu-button'),value==='popup:quick-add');
 });
 app.addEventListener('quick-menu-view',e=>{
  const selector=panel.querySelector('#screen-review');if(selector)selector.value=e.detail||screenKey(state);

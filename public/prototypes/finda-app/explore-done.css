@@ -1,0 +1,7 @@
+/* 탐색 완료 안내 모달 (Maze 종료 지점). 퀵메뉴 팝업과 같은 336 카드 구조를 따라요. */
+.explore-done-overlay{position:absolute;inset:0;z-index:110;display:flex;align-items:center;justify-content:center;background:rgba(1,10,38,.32)}
+#app .explore-done{width:336px;display:flex;flex-direction:column;align-items:center;gap:var(--ds-spacing-md);padding:var(--ds-spacing-xl) var(--ds-spacing-24) var(--ds-spacing-24);background:#fff;border-radius:var(--ds-radius-selection);text-align:center}
+#app .explore-done h2{margin:0;font:var(--ds-font-weight-bold) var(--ds-font-size-16)/var(--ds-line-height-24) var(--ds-font-base);color:var(--ds-text-ink)}
+#app .explore-done p{margin:0;font:var(--ds-font-weight-regular) var(--ds-font-size-14)/var(--ds-line-height-24) var(--ds-font-base);color:var(--ds-text-muted)}
+#app .explore-done-ok{width:100%;margin-top:var(--ds-spacing-md)}
+#app .explore-done-ok:focus-visible{outline:2px solid var(--ds-primary);outline-offset:2px}
