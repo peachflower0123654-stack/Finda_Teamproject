@@ -1,4 +1,10 @@
 .figma-home-shell { position:relative; width:360px; height:780px; overflow:hidden; background:#f6f6f9; }
+.home-anonymous-banner{position:relative;width:328px;height:281px;flex-shrink:0;background:var(--ds-bg-canvas);border-radius:var(--ds-radius-md)}
+.home-anonymous-banner__title{position:absolute;left:16px;right:16px;top:24px;text-align:center;font:600 20px/28px var(--ds-font-base);color:var(--ds-text-ink)}
+.home-anonymous-banner__illustration{position:absolute;left:110px;top:88px;width:108px;height:108px;object-fit:cover}
+#app .home-anonymous-banner__close{position:absolute;right:12px;top:11px;width:24px;height:24px;display:grid;place-items:center;padding:0;border:0;background:transparent}
+.home-anonymous-banner__close img{width:12px;height:12px}
+#app .home-anonymous-banner__action{position:absolute;left:16px;right:16px;top:209px;height:48px;border:0;border-radius:var(--ds-radius-full);background:var(--ds-purple-010);color:var(--ds-primary);font:700 14px/20px var(--ds-font-base)}
 .figma-home-viewport { width:360px; height:780px; overflow-y:auto; overflow-x:hidden; scrollbar-width:none; }
 .figma-home-viewport::-webkit-scrollbar { display:none; }
 .figma-home-canvas { width:360px; position:relative; }

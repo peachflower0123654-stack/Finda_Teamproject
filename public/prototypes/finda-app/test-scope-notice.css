@@ -1,0 +1,3 @@
+/* Figma Default 알림의 52px 높이·둥근 형태. 테스트 안내는 사용자 요청에 따라 검은 배경입니다. */
+#app>.test-scope-notice{position:absolute;left:50%;right:auto;top:auto;bottom:108px;z-index:210;transform:translateX(-50%);display:flex;align-items:center;justify-content:center;gap:var(--ds-spacing-md);width:max-content;max-width:calc(100% - 32px);height:52px;min-height:52px;margin:0;padding:0 24px;overflow:hidden;border:0;border-radius:var(--ds-radius-full);background:var(--ds-gray-110);color:var(--ds-bg-canvas);pointer-events:none}
+#app>.test-scope-notice>p{margin:0;font:var(--ds-font-weight-bold) var(--ds-font-size-12)/var(--ds-line-height-16) var(--ds-font-base);color:inherit;text-align:center;white-space:nowrap}

@@ -1,0 +1,54 @@
+<!doctype html><html lang="ko"><meta charset="UTF-8"><title>Scope notice regression checks</title>
+<style>body{font:13px/1.5 monospace}iframe{width:760px;height:900px;border:0}pre{white-space:pre-wrap}body[data-view]{margin:0}body[data-view] pre{display:none}</style>
+<pre id="report">RUNNING</pre><iframe title="미구현 안내 토스트 검사"></iframe>
+<script type="module">
+const frame=document.querySelector('iframe'),report=document.querySelector('#report'),checks=[];
+const doc=()=>frame.contentDocument,app=()=>doc().querySelector('#app'),wait=ms=>new Promise(r=>setTimeout(r,ms));
+const check=(pass,message)=>checks.push({pass:!!pass,message}),expected='이 테스트에서는 구현되지않았어요';
+const view=new URLSearchParams(location.search).get('view');if(view)document.body.dataset.view=view;
+async function settle(){await doc().fonts.ready;await Promise.all([...doc().images].map(i=>i.complete?Promise.resolve():new Promise(r=>{i.onload=r;i.onerror=r;})));await wait(30);}
+function select(value){const s=doc().querySelector('#screen-review');s.value=value;s.dispatchEvent(new Event('change',{bubbles:true}));}
+function toast(label){
+ const el=app().querySelector('.test-scope-notice'),a=app().getBoundingClientRect(),b=el?.getBoundingClientRect(),scale=a.width/360,css=el&&frame.contentWindow.getComputedStyle(el);
+ check(el?.textContent===expected&&!/Error|오류/.test(el.textContent),label+' friendly text');
+ check(el?.dataset.type==='Default'&&css.backgroundColor==='rgb(21, 22, 27)',label+' black Default variant');
+ check(!!b&&Math.abs(b.height/scale-52)<.2&&b.width/scale<=328.1&&b.left>=a.left&&b.right<=a.right,label+' small toast geometry');
+ check(css?.pointerEvents==='none'&&Number.parseFloat(css.borderRadius)>100,label+' rounded nonblocking toast');
+ check(app().querySelectorAll('.test-scope-notice').length===1,label+' single instance');
+}
+try{
+ await new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(Error('load timeout')),10000);frame.onload=()=>{clearTimeout(timer);resolve();};frame.src='index.html?screen=existing:all';});await settle();
+ const shortcut=app().querySelector('[data-name="cmp_All_Shortcut · 내 대출"]');shortcut.click();toast('My loan shortcut');
+ check(app().querySelector('.existing-finda-scroll').getBoundingClientRect().height===688,'shortcut does not cover or resize screen');
+ const box=app().getBoundingClientRect(),hit=doc().elementFromPoint(box.left+180,box.top+180);
+ check(!hit?.closest('.test-scope-notice'),'content remains visible below shortcut');
+ const rows=[...app().querySelectorAll('[data-name="cmp_All_MenuRow"]')].filter(el=>!['대출 받기','포인트','출석체크'].includes(el.getAttribute('aria-label')));
+ for(const row of rows){row.click();toast('All '+row.getAttribute('aria-label'));check(app().dataset.screen==='Finda_All','unknown menu stays in All');}
+ app().querySelector('[data-bottom-nav="point"]').click();check(app().dataset.screen==='Finda_Point','toast does not block bottom navigation');
+ app().querySelector('[aria-label="출석하고 5P 받기"]').click();toast('Point reward');
+ for(const [homeState,tab] of [['NoOB_NoMD','Asset'],['NoOB_NoMD','Loan'],['OB_NoMD','Asset'],['OB_NoMD','Loan']]){
+  select(`home:${tab}:${homeState}`);await settle();const cards=[...app().querySelectorAll('[data-test-scope="true"]')];
+  check(cards.length>0,'unimplemented home cards wired '+homeState+tab);
+  for(const card of cards){card.click();toast('Home '+homeState+tab);}
+ }
+ select('home:Loan:NoOB_NoMD');await settle();app().querySelector('[aria-label="대환하기"]').click();
+ app().querySelector('.asis-refinance__cta').click();toast('Refinance CTA');
+ const root=app().querySelector('.asis-refinance');root.dispatchEvent(new WheelEvent('wheel',{deltaY:80,bubbles:true,cancelable:true}));toast('Refinance wheel');
+ select('home:Loan:OB_NoMD');await settle();app().querySelector('.quick-menu-button').click();
+ const popup=app().querySelector('.quick-menu-dialog');popup.querySelector('.quick-menu-item[data-menu]').click();toast('Quick menu');
+ check(popup.isConnected,'toast keeps quick menu open');app().querySelector('.quick-menu-close').click();
+ select('existing:all');app().querySelector('[aria-label="설정"]').click();toast('Settings');
+ await wait(2600);check(!app().querySelector('.test-scope-notice'),'toast dismisses automatically');
+ app().querySelector('[aria-label="설정"]').click();await wait(1000);app().querySelector('[aria-label="설정"]').click();await wait(1600);
+ check(!!app().querySelector('.test-scope-notice'),'repeated clicks reset dismissal timer');await wait(1000);
+ check(!app().querySelector('.test-scope-notice'),'last toast dismisses');
+ frame.style.width='320px';frame.style.height='640px';frame.contentWindow.dispatchEvent(new Event('resize'));await wait(30);
+ app().querySelector('[aria-label="설정"]').click();toast('Narrow viewport');
+ check(doc().documentElement.scrollWidth<=320,'toast adds no horizontal overflow');
+}catch(error){check(false,String(error.stack||error));}
+const result={passed:checks.filter(c=>c.pass).length,failed:checks.filter(c=>!c.pass)};report.textContent=JSON.stringify(result,null,2);document.title=result.failed.length?'FAIL Scope notice':'PASS Scope notice';
+if(view){
+ frame.style.width='760px';frame.style.height='900px';frame.contentWindow.dispatchEvent(new Event('resize'));select('existing:all');
+ const show=()=>app().querySelector('[aria-label="내 대출"]').click();show();setInterval(show,1000);
+}
+</script></html>

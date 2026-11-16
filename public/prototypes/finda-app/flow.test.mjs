@@ -1,4 +1,55 @@
-import test from 'node:test';import assert from 'node:assert/strict';import {initial,next,back,reveal,selectOwnership,skipOnboarding,consentHome,openAiRate,toggleAiRateConsent,canConfirmAiRate,shouldAutoAdvanceAiRate} from './flow.mjs';import {aiRateConsentSheet,aiRateName} from './ai-rate.js';import {selectScreen,screenGroups} from './screen-catalog.js';
+import test from 'node:test';import assert from 'node:assert/strict';import {initial,next,back,reveal,selectOwnership,skipOnboarding,consentHome,openMainTab,openExistingDetail,openAiRate,toggleAiRateConsent,canConfirmAiRate,shouldAutoAdvanceAiRate} from './flow.mjs';import {aiRateConsentSheet,aiRateName} from './ai-rate.js';import {selectScreen,screenGroups,screenKey} from './screen-catalog.js';
+
+test('All opens the existing loan screen and Back preserves the To-be profile',()=>{
+ const all={...initial(),screen:'all',homeState:'OB_NoMD',tab:'Loan',count:'3',postProfile:{a:1,h:2,n:2}};
+ const loan=openExistingDetail(all,'find-loan');
+ assert.deepEqual(loan,{...all,screen:'find-loan',existingReturnTo:'all'});assert.deepEqual(back(loan),all);
+ assert.equal(screenKey(loan),'existing:find-loan');assert.equal(next(loan).screen,'find-loan');
+ assert.deepEqual(openMainTab(loan,'home'),{...all,screen:'11'});
+ assert.equal(selectScreen(all,'existing:find-loan').screen,'find-loan');
+ assert.strictEqual(openExistingDetail(all,'unknown'),all);
+});
+
+test('home loan card returns to its original home without leaking the previous All origin',()=>{
+ for(const homeState of ['NoOB_NoMD','OB_NoMD']){
+  const home={...initial(),screen:'11',homeState,tab:'Loan',postProfile:{a:1,h:2,n:2},postChip:'대출'};
+  const loan=openExistingDetail(home,'find-loan');
+  assert.equal(loan.existingReturnTo,'11');assert.deepEqual(back(loan),home);
+  const all=openMainTab(loan,'all');assert.ok(!('existingReturnTo' in all));
+  assert.deepEqual(back(openExistingDetail(all,'find-loan')),all);
+  assert.deepEqual(openMainTab(loan,'home'),home);
+ }
+});
+
+test('refinance preview and home card keep their own return path without advancing',()=>{
+ for(const homeState of ['NoOB_NoMD','OB_NoMD']){
+  const home={...initial(),screen:'11',homeState,tab:'Loan',postProfile:{a:2,h:1,n:2}};
+  const refinance=openExistingDetail(home,'refinance');
+  assert.equal(screenKey(refinance),'existing:refinance');assert.equal(next(refinance).screen,'refinance');
+  assert.deepEqual(back(refinance),home);assert.deepEqual(openMainTab(refinance,'home'),home);
+ }
+ const reviewed=selectScreen(initial(),'existing:refinance');
+ assert.equal(reviewed.screen,'refinance');assert.equal(back(reviewed).screen,'all');
+});
+
+test('home, point and all keep onboarding answers and the selected home tab',()=>{
+ for(const homeState of ['NoOB_NoMD','InOB_NoMD','OB_NoMD','OB_MD'])for(const tab of ['Asset','Loan']){
+  const home={...initial(),screen:'11',homeState,tab,count:'3',principal:'100',postProfile:{a:1,h:2,n:2},postChip:'대출'};
+  const point=openMainTab(home,'point'),all=openMainTab(point,'all');
+  assert.deepEqual(point,{...home,screen:'point'});assert.deepEqual(all,{...home,screen:'all'});
+  assert.deepEqual(openMainTab(all,'home'),home);assert.deepEqual(back(all),home);assert.deepEqual(back(point),home);
+  assert.strictEqual(openMainTab(home,'unknown'),home);assert.deepEqual(home.postProfile,{a:1,h:2,n:2});
+ }
+});
+
+test('existing screens can be reviewed without replacing To-be home state',()=>{
+ const home={...initial(),screen:'11',homeState:'OB_NoMD',tab:'Loan'};
+ for(const screen of ['point','all']){
+  const selected=selectScreen(home,'existing:'+screen);
+  assert.equal(screenKey(selected),'existing:'+screen);assert.equal(next(selected).screen,screen);
+  assert.deepEqual(back(selected),{...home,review:true});
+ }
+});
 test('splash goes directly to consent and back never opens the removed login screen',()=>{
  const consent=next(initial());assert.equal(consent.screen,'02');assert.equal(consent.homeState,'NoOB_NoMD');
  const splash=back(consent);assert.equal(splash.screen,'00');assert.equal(next(splash).screen,'02');

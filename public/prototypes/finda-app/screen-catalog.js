@@ -1,4 +1,5 @@
 export const screenGroups=[
+ ['기존 핀다 화면',[['existing:point','Finda_Point'],['existing:all','Finda_All'],['existing:find-loan','Finda_FindLoan'],['existing:refinance','Finda_대환']]],
  ['온보딩',[
   ['onboarding:00','00 · 스플래시'],['onboarding:02','02 · 약관동의'],['onboarding:03','03 · 소속 선택'],['onboarding:04','04 · 주거형태 선택'],['onboarding:05','05 · 대출 보유 여부'],
   ['onboarding:06:1','06 · 대출 건수 입력'],['onboarding:06:2','06 · 총 원금 입력'],['onboarding:06:3','06 · 월 상환액 입력'],['onboarding:07','07 · 관심 대출 선택'],['onboarding:08','08 · 희망 금액 입력'],['onboarding:09','09 · 대출 목적 선택'],
@@ -8,6 +9,7 @@ export const screenGroups=[
  ['추가 화면',[['ai-rate:intro','finda_AIRate_Intro'],['ai-rate:consent','finda_AIRate_ConsentSheet'],['ai-rate:loading','finda_AIRate_Loading'],['ai-rate:rate','finda_AIRate_Result_LowRate'],['ai-rate:limit','finda_AIRate_Result_HighLimit'],['popup:quick-menu','메뉴 즐겨찾기 팝업'],['popup:quick-add','퀵메뉴 편집'],['popup:explore-done','탐색 완료 안내']]],
 ];
 export function screenKey(state){
+ if(['point','all','find-loan','refinance'].includes(state.screen))return 'existing:'+state.screen;
  if(state.screen==='11')return `home:${state.tab}:${state.homeState}`;
  if(state.screen==='10')return 'result:'+state.result;
  if(state.screen==='ai-rate')return 'ai-rate:'+state.aiSort;
@@ -17,6 +19,7 @@ export function screenKey(state){
 export function screenSelector(state){const current=screenKey(state);return `<label for="screen-review">화면선택</label><select id="screen-review"><option value="">화면선택</option>${screenGroups.map(([group,items])=>`<optgroup label="${group}">${items.map(([value,label])=>`<option value="${value}" ${value===current?'selected':''}>${label}</option>`).join('')}</optgroup>`).join('')}</select>`;}
 export function selectScreen(state,value){
  const [kind,item,detail]=value.split(':');
+ if(kind==='existing'&&['point','all','find-loan','refinance'].includes(item))return {...state,screen:item,review:true};
  if(kind==='onboarding')return {...state,screen:item,review:true,...(item==='06'?{revealed:Number(detail),ownership:true}:{}),...(item==='07'?{ownership:true}:{}),...(['08','09'].includes(item)?{ownership:false}:{})};
  if(kind==='result')return {...state,screen:'10',result:item,review:true};
  if(kind==='home')return {...state,screen:'11',tab:item,homeState:detail,review:true};
