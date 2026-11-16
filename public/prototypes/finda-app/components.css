@@ -205,6 +205,11 @@
 
 /* ic_Common_ArrowLeft: 에셋(8×14)은 오른쪽(›) 모양이라 시안처럼 좌우 반전해서 쓴다(Figma의 -scale-x-100). 에셋 자체와 크기는 바꾸지 않는다. */
 .cmp-navbar__back img { transform: scaleX(-1); }
+/* 06~09 헤더(A안): NavBar 아래 단계 표시. 건너뛰기는 NavBar 오른쪽(.skip)에 있다. */
+.ob-stephead { display: flex; flex-direction: column; flex-shrink: 0; }
+.ob-step { display: flex; flex-direction: column; gap: var(--ds-spacing-sm); }
+.ob-step strong { font-size: var(--ds-font-size-14); line-height: var(--ds-line-height-20); color: var(--ds-text-ink); }
+.ob-step .progress { margin-top: 0; }
 
 /* cmp_Common_Keypad — Figma 2638:18273 (폭 360). 화면 아래에 붙는다.
    구성: 퀵 버튼 줄(금액 입력일 때만) → 3×4 숫자 격자 → 다음 버튼(ButtonPair, 이전 없음) → 하단 48px 여백. 전체 높이 424px(퀵 버튼 없으면 366px).
