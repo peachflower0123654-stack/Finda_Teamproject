@@ -2,6 +2,7 @@ import {asIsDesigns} from "./designs.js";
 import {extraAsIsDesigns} from "./extra-designs.js";
 import {applyBottomBar} from "../bottom-bar.js";
 import {wireAsIsPostList} from "./post-list.js";
+import {mountStudyControls,isComparisonStudy} from "../study/participant.js";
 import {asIsScreens,initialAsIs,nextAsIs,backAsIs,goAsIs,reviewAsIs,shouldAdvanceAsIs} from "./flow.mjs";
 
 const app=document.querySelector("#asis-app"), panel=document.querySelector("#asis-preview"), stage=document.querySelector("#asis-stage");
@@ -234,7 +235,7 @@ function render(focus=false){
 function fit(){
  const width=testMode?360:690;
  const height=state.screen==="refinance"?800:780;
- const scale=Math.min(1,(innerWidth-(testMode?0:32))/width,(innerHeight-(testMode?0:32))/height);
+ const scale=Math.min(1,(innerWidth-(testMode?0:32))/width,(innerHeight-(testMode?0:32)-(isComparisonStudy()?56:0))/height);
  stage.style.zoom=String(Math.max(0.1,scale));
 }
 panel.addEventListener("change",event=>{
@@ -258,4 +259,5 @@ document.addEventListener("keydown",event=>{
  }
 });
 window.addEventListener("resize",fit);
+mountStudyControls('asis');
 render();

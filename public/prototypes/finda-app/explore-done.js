@@ -3,6 +3,7 @@
 // 온보딩 값을 받은 개인화 홈(Home_OB_NoMD)에서만, 같은 화면을 다시 불러오기 전까지 한 번만 떠요.
 // app.js가 root.dataset.homeState에 지금 홈 상태를 넣어 둬요. 화면선택 미리보기(force)는 언제든 띄워요.
 export const EXPLORE_DONE_HOME='OB_NoMD';
+import {isComparisonStudy,finishStudyExperience} from './study/participant.js';
 export const EXPLORE_DONE={
  title:'둘러보기를 마쳤어요',
  body:'이제 Maze 창으로 돌아가\n[다음]을 눌러 주세요.',
@@ -27,6 +28,7 @@ export function showExploreDone(root,{force=false,onClose}={}){
  if(!force&&root.dataset?.homeState!==EXPLORE_DONE_HOME)return false;
  if((shown&&!force)||root.querySelector('.explore-done-overlay'))return false;
  shown=true;
+ if(isComparisonStudy())return finishStudyExperience('tobe');
  const overlay=document.createElement('div');
  overlay.className='explore-done-overlay';
  overlay.innerHTML=exploreDoneView();

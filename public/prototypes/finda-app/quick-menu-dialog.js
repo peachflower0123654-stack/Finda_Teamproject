@@ -2,6 +2,7 @@ import {popupView,noobPopupView,editView,sheetView} from './quick-menu-views.js'
 import {toggleMenu,getSavedPicks,savePicks,getRecommended} from './quick-menu-edit.js';
 import {sendTestEvent} from './test-data.js';
 import {showExploreDone} from './explore-done.js';
+import {showTestScopeNotice} from './test-scope-notice.js';
 const openMenus=new WeakMap();
 export function closeQuickMenu(root){openMenus.get(root)?.();}
 const TOAST_MS=2000;
@@ -54,6 +55,7 @@ export function openQuickMenu(root,trigger,startEditing=false){
   // [1분 만에 맞춤 메뉴 받기]는 data-action="start"라서 app.js가 온보딩(02 약관)으로 보내요.
   if(e.target.closest('.quick-menu-edit,.quick-menu-add')){showEdit();return;}
   if(e.target.closest('.qm-back')){showPopup('.quick-menu-edit');return;}
+  if(e.target.closest('.quick-menu-item[data-menu]')){showTestScopeNotice(root);return;}
   const item=e.target.closest('.qm-item,.qm-pick-remove');
   if(item){
    const fromSheet=item.classList.contains('qm-pick-remove');

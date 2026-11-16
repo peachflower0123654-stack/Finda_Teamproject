@@ -1,0 +1,19 @@
+/* 마크업·에셋만 공유하고 To-be 스크롤과 상태는 독립적으로 유지합니다. */
+.existing-finda-screen{position:relative;width:360px;height:780px;overflow:hidden;background:var(--ds-bg-canvas);font-family:var(--ds-font-base)}
+.existing-finda-screen>:first-child[data-node-id]{width:360px;height:780px;overflow:hidden;gap:0}
+:where(.existing-finda-screen *){border-width:0;border-style:solid}
+.existing-finda-screen [role="button"]{cursor:pointer}
+.existing-finda-screen [role="button"]:focus-visible,.existing-finda-scroll:focus-visible{outline:2px solid var(--ds-primary);outline-offset:-2px}
+.existing-finda-scroll{width:360px;height:688px;flex:0 0 688px;overflow-y:auto;overflow-x:hidden;scrollbar-width:none;background:var(--ds-bg-home)}
+.existing-finda-scroll::-webkit-scrollbar{display:none}
+.existing-finda-detail-scroll{width:360px;flex:1;min-height:0;overflow-y:auto;overflow-x:hidden;scrollbar-width:none}
+.existing-finda-detail-scroll::-webkit-scrollbar{display:none}
+.existing-finda-detail-scroll>div{flex-shrink:0}
+.existing-finda-screen[data-existing-screen="refinance"],.existing-finda-screen[data-existing-screen="refinance"]>:first-child[data-node-id]{height:800px}
+.existing-finda-screen .asis-refinance{position:relative;width:360px;overflow:hidden;background:var(--ds-bg-canvas);outline:none;touch-action:pan-y}
+.existing-finda-screen .asis-refinance__capture{position:relative;width:360px;height:800px}
+.existing-finda-screen .asis-refinance__capture>img{position:absolute;inset:0;display:block;width:360px;height:800px;max-width:none;object-fit:cover;pointer-events:none}
+.existing-finda-screen .asis-refinance__capture>button{position:absolute;z-index:1;margin:0;padding:0;border:0;background:transparent;cursor:pointer}
+.existing-finda-screen .asis-refinance__capture>button:focus-visible{outline:3px solid var(--ds-primary);outline-offset:2px}
+.existing-finda-screen .asis-refinance__back{left:8px;top:30px;width:40px;height:42px;border-radius:8px}
+.existing-finda-screen .asis-refinance__cta{left:16px;top:682px;width:328px;height:54px;border-radius:var(--ds-radius-full)}

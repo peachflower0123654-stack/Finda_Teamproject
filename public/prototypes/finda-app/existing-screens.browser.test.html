@@ -1,0 +1,89 @@
+<!doctype html><html lang="ko"><meta charset="UTF-8"><title>Existing Finda screen checks</title>
+<style>body{font:13px/1.5 monospace}iframe{width:760px;height:900px;border:0}pre{white-space:pre-wrap}</style>
+<pre id="report">RUNNING</pre><iframe title="To-be 기존 화면 연결 검사"></iframe>
+<script type="module">
+const frame=document.querySelector('iframe'),report=document.querySelector('#report'),results=[];
+const wait=ms=>new Promise(r=>setTimeout(r,ms)),check=(pass,message)=>results.push({pass:!!pass,message});
+const doc=()=>frame.contentDocument,app=()=>doc().querySelector('#app');
+const pick=id=>app().querySelector(`[data-node-id="${id}"]`);
+async function settle(){await doc().fonts.ready;await Promise.all([...doc().images].map(i=>i.complete?Promise.resolve():new Promise(r=>{i.onload=r;i.onerror=r;})));await wait(30);}
+function select(value){const select=doc().querySelector('#screen-review');select.value=value;select.dispatchEvent(new Event('change',{bubbles:true}));}
+function nav(tab){app().querySelector(`[data-bottom-nav="${tab}"]`).click();}
+const load=()=>new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(Error('load timeout')),10000);frame.onload=async()=>{await settle();clearTimeout(timer);resolve();};frame.src='index.html?screen=existing:point';});
+function near(element,expected,label){const root=app().getBoundingClientRect(),r=element.getBoundingClientRect(),scale=root.width/360,actual={x:(r.x-root.x)/scale,y:(r.y-root.y)/scale,w:r.width/scale,h:r.height/scale};check(Object.entries(expected).every(([k,v])=>Math.abs(actual[k]-v)<.2),label);}
+async function images(label){await settle();for(const image of app().querySelectorAll('img'))check(image.complete&&image.naturalWidth>0&&!image.src.includes('figma.com'),label+' local asset '+image.getAttribute('src'));}
+try{
+ await load();check(app().dataset.screen==='Finda_Point','direct point preview');
+ check(app().querySelectorAll('[data-name^="cmp_Point_MenuItem"]').length===8,'eight point menu items');
+ check(pick('4483:5998')&&app().textContent.includes('OOO'),'referenced point frame and anonymous identity');
+ near(app().querySelector('[data-name="cmp_Point_Hero"]'),{x:0,y:27,w:360,h:204},'point hero geometry');
+ near(app().querySelector('[data-name="cmp_Point_CheckInCard"]'),{x:16,y:177,w:328,h:144},'check-in geometry');
+ near(app().querySelector('[data-name="cmp_Point_MenuGrid"]'),{x:16,y:341,w:328,h:188},'point grid geometry');
+ near(app().querySelector('[data-name="cmp_Point_RewardAd"]'),{x:16,y:545,w:328,h:122},'point ad geometry');
+ near(app().querySelector('.cmp-bottom-bar'),{x:0,y:688,w:360,h:92},'point fixed navigation');
+ check(app().querySelector('[data-bottom-nav="point"]').getAttribute('aria-current')==='page','point selected state');
+ await images('point');
+ app().querySelector('[aria-label="출석하고 5P 받기"]').click();check(!!app().querySelector('[role="status"]'),'point scope notice');
+ nav('all');await images('all');check(app().dataset.screen==='Finda_All'&&pick('4483:6018'),'direct All frame');
+ const rows=[...app().querySelectorAll('[data-name="cmp_All_MenuRow"]')];check(rows.length===41,'all 41 menu rows');
+ check(app().querySelectorAll('[data-name="cmp_All_MenuSection"]').length===8,'all eight sections');
+ near(app().querySelector('.cmp-bottom-bar'),{x:0,y:688,w:360,h:92},'All fixed navigation');
+ const allScroll=app().querySelector('.existing-finda-scroll');allScroll.scrollTop=1400;
+ nav('point');nav('all');check(app().querySelector('.existing-finda-scroll').scrollTop===1400,'All scroll restored');
+ nav('all');check(app().querySelector('.existing-finda-scroll').scrollTop===0,'selected tab scrolls to top');
+ const attendance=app().querySelector('[aria-label="출석체크"]');attendance.click();
+ check(app().dataset.screen==='Finda_Point'&&doc().activeElement===app().querySelector('[data-name="cmp_Point_Button"]'),'All attendance opens Point and focuses check-in');
+ nav('all');app().querySelector('.existing-finda-scroll').scrollTop=120;
+ app().querySelector('[aria-label="대출 받기"]').click();await images('find-loan');
+ check(app().dataset.screen==='Finda_FindLoan'&&pick('4507:6766'),'All loan row opens the existing loan screen');
+ check(!app().querySelector('[role="status"]'),'opening loan does not show unavailable notice');
+ near(pick('4500:6615'),{x:0,y:0,w:360,h:28},'loan status bar geometry');
+ near(pick('4500:6616'),{x:0,y:28,w:360,h:48},'loan top bar geometry');
+ near(pick('4500:6617'),{x:0,y:76,w:360,h:606.15},'loan content geometry');
+ near(app().querySelector('.cmp-bottom-bar'),{x:0,y:688,w:360,h:92},'loan fixed navigation');
+ check(app().querySelectorAll('[data-name^="금융사 ·"]').length===16,'all 16 lender logos retained');
+ const loanScroll=app().querySelector('.existing-finda-detail-scroll');check(loanScroll.scrollHeight>loanScroll.clientHeight,'loan content scrolls');loanScroll.scrollTop=999999;
+ app().querySelector('[aria-label="신용대출 조건 비교하기"]').click();check(!!app().querySelector('[role="status"]')&&app().dataset.screen==='Finda_FindLoan','unimplemented loan application stays scoped');
+ app().querySelector('[aria-label="뒤로가기"]').click();
+ check(app().dataset.screen==='Finda_All'&&app().querySelector('.existing-finda-scroll').scrollTop===120,'loan Back restores All scroll');
+ check(doc().activeElement?.getAttribute('aria-label')==='대출 받기','loan Back restores menu focus');
+ app().querySelector('[aria-label="대출 받기"]').dispatchEvent(new KeyboardEvent('keydown',{key:'Enter',bubbles:true}));
+ check(app().dataset.screen==='Finda_FindLoan','keyboard opens loan');
+ doc().querySelector('[data-preview="back"]').click();check(app().dataset.screen==='Finda_All','preview Back returns from loan to All');
+ app().querySelector('[aria-label="신용점수"]').click();check(!!app().querySelector('[role="status"]'),'unconnected menu remains scoped');
+ for(const homeState of ['NoOB_NoMD','OB_NoMD']){
+  select(`home:Loan:${homeState}`);await settle();
+  const viewport=app().querySelector('.figma-home-viewport'),card=app().querySelector('[aria-label="대출받기"]');
+  check(!!card&&card.getAttribute('role')==='button'&&card.tabIndex===0,'home loan card is interactive '+homeState);
+  const icon=card.querySelector('[data-name="ic_home_loan_money"]');
+  const scale=app().getBoundingClientRect().width/360,iconBox=icon.getBoundingClientRect();
+  check(Math.abs(iconBox.width/scale-32)<.1&&Math.abs(iconBox.height/scale-32)<.1&&icon.querySelector('img').naturalWidth>0,'existing loan card icon retained '+homeState);
+  viewport.scrollTop=120;const homeName=app().dataset.screen;
+  card.querySelector('p').click();check(app().dataset.screen==='Finda_FindLoan','home loan card opens Finda_FindLoan '+homeState);
+  app().querySelector('[aria-label="뒤로가기"]').click();
+  check(app().dataset.screen===homeName&&app().querySelector('.figma-home-viewport').scrollTop===120,'loan back restores original home and scroll '+homeState);
+  check(doc().activeElement?.getAttribute('aria-label')==='대출받기','loan back restores home card focus '+homeState);
+  app().querySelector('[aria-label="대출받기"]').dispatchEvent(new KeyboardEvent('keydown',{key:'Enter',bubbles:true}));
+  check(app().dataset.screen==='Finda_FindLoan','keyboard opens home loan '+homeState);
+  doc().querySelector('[data-preview="back"]').click();check(app().dataset.screen===homeName,'preview back restores home origin '+homeState);
+ }
+ for(const homeState of ['NoOB_NoMD','OB_NoMD'])for(const tab of ['Asset','Loan']){
+  select(`home:${tab}:${homeState}`);await settle();const homeName=app().dataset.screen;
+  const viewport=app().querySelector('.figma-home-viewport');viewport.scrollTop=240;
+  nav('point');check(app().dataset.screen==='Finda_Point','home to point '+homeState+tab);
+  nav('all');check(app().dataset.screen==='Finda_All','point to all '+homeState+tab);
+  nav('home');check(app().dataset.screen===homeName,'original home restored '+homeState+tab);
+  check(app().querySelector('.figma-home-viewport').scrollTop===240,'home scroll restored '+homeState+tab);
+  check(app().querySelector('[data-bottom-nav="home"]').getAttribute('aria-pressed')==='true','home selection restored '+homeState+tab);
+  check(!app().querySelector('.explore-done-overlay'),'navigation does not finish test '+homeState+tab);
+ }
+ select('home:Loan:InOB_NoMD');nav('point');nav('home');check(app().dataset.screen==='scr_11_Home_Loan_InOB_NoMD','unfinished onboarding home retained');
+ select('existing:all');doc().querySelector('[data-preview="back"]').click();check(app().dataset.screen==='scr_11_Home_Loan_InOB_NoMD','preview back returns to To-be home');
+ frame.style.width='320px';frame.style.height='640px';
+ // Headless virtual time can defer iframe resize events; notify the preview explicitly.
+ frame.contentWindow.dispatchEvent(new Event('resize'));select('existing:all');await settle();
+ const mobile={app:app().getBoundingClientRect().width,document:doc().documentElement.scrollWidth,viewport:frame.contentWindow.innerWidth,zoom:doc().querySelector('#preview-stage').style.zoom};
+ check(mobile.app<=320&&mobile.document<=320,'320px viewport fits '+JSON.stringify(mobile));
+}catch(error){check(false,String(error.stack||error));}
+const summary={passed:results.filter(r=>r.pass).length,failed:results.filter(r=>!r.pass)};report.textContent=JSON.stringify(summary,null,2);document.title=summary.failed.length?'FAIL Existing screens':'PASS Existing screens';
+</script></html>

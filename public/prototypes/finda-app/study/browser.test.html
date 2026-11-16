@@ -1,0 +1,41 @@
+<!doctype html><html lang="ko"><meta charset="UTF-8"><title>Study entry checks</title><style>body{font:13px/1.5 monospace}iframe{width:760px;height:900px;border:0}pre{white-space:pre-wrap}body[data-view]{margin:0}body[data-view] pre{display:none}</style><pre id="report">RUNNING</pre><iframe title="참가자 진입 검사"></iframe><script type="module">
+const frame=document.querySelector('iframe'),report=document.querySelector('#report'),checks=[];
+const doc=()=>frame.contentDocument,check=(ok,label)=>checks.push({pass:!!ok,message:label}),wait=ms=>new Promise(r=>setTimeout(r,ms));
+const view=new URLSearchParams(location.search).get('view');if(view)document.body.dataset.view=view;
+async function load(url,ready){
+ await new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(Error('load timeout '+url)),15000);frame.onload=async()=>{if(!ready())return;await doc().fonts.ready;clearTimeout(timer);resolve();};frame.src=url;});await wait(30);
+}
+async function follow(anchor,version){
+ await new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(Error('navigation timeout')),15000);frame.onload=async()=>{if(doc().body.dataset.studyVersion!==version)return;await doc().fonts.ready;clearTimeout(timer);resolve();};anchor.click();});await wait(30);
+}
+try{
+ for(const first of ['asis','tobe']){
+  await load('index.html?first='+first,()=>!!doc().querySelector('#study-start'));
+  const start=doc().querySelector('#study-start'),expectedPath=new URL(first==='asis'?'../as-is/index.html':'../index.html',frame.contentWindow.location.href).pathname;check(new URL(start.href).pathname===expectedPath,'start selects requested version '+first);
+  await follow(start,first);check(doc().body.dataset.mode==='test','participant mode '+first);
+  const panel=doc().querySelector('#preview,#asis-preview');check(frame.contentWindow.getComputedStyle(panel).display==='none','review panel hidden '+first);
+  check(doc().querySelector('.study-toolbar small').textContent==='1 / 2','first progress '+first);
+  const app=doc().querySelector('#app,#asis-app');check(app.getBoundingClientRect().width<=360.1,'participant screen geometry '+first);
+  doc().querySelector('.study-toolbar button').click();check(app.inert,'completion keeps app inert '+first);
+  const next=doc().querySelector('[data-study-next]'),second=first==='asis'?'tobe':'asis';
+  check(!!next&&new URL(next.href).searchParams.get('first')===first,'next preserves order '+first);
+  doc().querySelector('[data-study-resume]').click();check(!app.inert&&!doc().querySelector('.study-completion'),'resume restores app '+first);
+  doc().querySelector('.study-toolbar button').click();await follow(doc().querySelector('[data-study-next]'),second);
+  check(doc().querySelector('.study-toolbar small').textContent==='2 / 2','second progress '+first);
+  doc().querySelector('.study-toolbar button').click();check(!doc().querySelector('[data-study-next]')&&doc().querySelector('.study-completion').textContent.includes('두 화면을 모두'),'two versions completed '+first);
+  check(doc().querySelector('.study-completion').textContent.includes('Maze'),'returns to Maze instructions '+first);
+ }
+ for(const version of ['asis','tobe']){
+  await load(version+'.html',()=>new URL(frame.contentWindow.location.href).searchParams.get('mode')==='test');
+  check(!doc().querySelector('.study-toolbar'),'standalone entry does not repeat both versions '+version);
+  check(frame.contentWindow.getComputedStyle(doc().querySelector('#preview,#asis-preview')).display==='none','standalone hides review '+version);
+ }
+ frame.style.width='320px';frame.style.height='640px';frame.contentWindow.dispatchEvent(new Event('resize'));await wait(30);
+ check(doc().documentElement.scrollWidth<=320,'participant has no mobile overflow');
+ await load('index.html?first=asis',()=>!!doc().querySelector('#study-start'));check(doc().documentElement.scrollWidth<=320&&doc().querySelector('main').getBoundingClientRect().width<=320,'start screen fits mobile');await follow(doc().querySelector('#study-start'),'asis');
+ check(doc().documentElement.scrollWidth<=320,'comparison fits mobile');
+ doc().querySelector('.study-toolbar button').click();check(doc().querySelector('.study-completion section').getBoundingClientRect().width<=320,'completion fits mobile');
+}catch(error){check(false,String(error.stack||error));}
+const result={passed:checks.filter(c=>c.pass).length,failed:checks.filter(c=>!c.pass)};report.textContent=JSON.stringify(result,null,2);document.title=result.failed.length?'FAIL Study entries':'PASS Study entries';
+if(view){frame.style.width='390px';frame.style.height='844px';frame.src='index.html';}
+</script></html>

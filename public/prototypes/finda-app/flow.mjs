@@ -2,6 +2,13 @@ import {emptyConsent,canContinueConsent} from './consent.js';
 // Append the third draft result once its screen is supplied. No approval rules.
 export const draftLoanResults=['HasLoanUnavailable','HasLoan'];
 export const initial=()=>({screen:'00',consent:emptyConsent(),affiliation:'',housing:'',ownership:null,count:'',principal:'',monthly:'',amount:'',interest:'',purpose:'',revealed:1,result:null,draftResultIndex:0,homeState:'NoOB_NoMD',tab:'Asset',review:false,aiConsent:false,aiSort:'rate',aiAutoAdvance:false,postProfile:null,postChip:'MY'});
+// 하단 메뉴는 온보딩 답과 홈의 개인화 상태를 그대로 유지합니다.
+export function openMainTab(s,tab){
+ if(!['home','point','all'].includes(tab))return s;
+ const {existingReturnTo,...rest}=s;
+ return {...rest,screen:tab==='home'?'11':tab};
+}
+export const openExistingDetail=(s,screen)=>['find-loan','refinance'].includes(screen)?{...s,screen,existingReturnTo:s.screen==='11'?'11':'all'}:s;
 export const filled=v=>/^\d+$/.test(v);
 // 05~09 건너뛰기: 입력값은 유지해 '이어서 입력하기'에서 재사용한다.
 export const skipOnboarding=s=>({...s,screen:'11',homeState:'InOB_NoMD',tab:'Asset',result:null,review:false});
@@ -35,4 +42,4 @@ export function next(s){
 }
 export function reveal(s){if(s.screen!=='06')return s;const fields=['count','principal','monthly'];return filled(s[fields[s.revealed-1]])?{...s,revealed:Math.min(3,s.revealed+1)}:s;}
 export function selectOwnership(s,value){return {...s,ownership:value,...(s.ownership!==value?{count:'',principal:'',monthly:'',amount:'',interest:'',purpose:'',revealed:1,result:null}: {})};}
-export function back(s){if(s.screen==='11'&&s.homeState==='OB_MD')return {...s,homeState:'OB_NoMD'};if(['ai-rate-intro','ai-rate-loading','ai-rate'].includes(s.screen))return aiRateHome(s);if(s.screen==='ai-rate-consent')return {...s,screen:'ai-rate-intro'};const map={'02':'00','03':'02','04':'03','05':'04','06':'05','07':'06','08':'05','09':'08','10':s.result==='NoLoan'?'09':'07'};return {...s,screen:map[s.screen]||s.screen};}
+export function back(s){if(['find-loan','refinance'].includes(s.screen)){const {existingReturnTo,...rest}=s;return {...rest,screen:existingReturnTo||'all'};}if(['point','all'].includes(s.screen))return openMainTab(s,'home');if(s.screen==='11'&&s.homeState==='OB_MD')return {...s,homeState:'OB_NoMD'};if(['ai-rate-intro','ai-rate-loading','ai-rate'].includes(s.screen))return aiRateHome(s);if(s.screen==='ai-rate-consent')return {...s,screen:'ai-rate-intro'};const map={'02':'00','03':'02','04':'03','05':'04','06':'05','07':'06','08':'05','09':'08','10':s.result==='NoLoan'?'09':'07'};return {...s,screen:map[s.screen]||s.screen};}

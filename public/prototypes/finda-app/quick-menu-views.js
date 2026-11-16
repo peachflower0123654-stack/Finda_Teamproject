@@ -7,9 +7,9 @@ const emptyIcon='<span class="qm-empty-icon" aria-hidden="true"></span>';
 
 // pop_Home_QuickMenu (Figma 4329:18315 / 4333:7944): 맞춤 추천 6개 + 추가 2칸 + [편집하기]
 export function popupView(saved){
- const fixed=popupRecommended().map(([id,text])=>`<span class="quick-menu-item"><img src="${MENUS[id].icon}" alt=""><span>${lines(text)}</span></span>`);
+ const fixed=popupRecommended().map(([id,text])=>`<button type="button" class="quick-menu-item" data-menu="${id}" aria-label="${MENUS[id].label}"><img src="${MENUS[id].icon}" alt=""><span>${lines(text)}</span></button>`);
  const extra=popupExtraSlots(saved).map(menu=>menu
-  ?`<span class="quick-menu-item"><img src="${menu.icon}" alt=""><span>${lines(menu.text)}</span></span>`
+  ?`<button type="button" class="quick-menu-item" data-menu="${menu.id}" aria-label="${menu.label}"><img src="${menu.icon}" alt=""><span>${lines(menu.text)}</span></button>`
   :`<button type="button" class="quick-menu-item is-empty quick-menu-add" aria-label="퀵메뉴 추가">${emptyIcon}<span>추가</span></button>`);
  const items=[...fixed,...extra];
  return `<section class="quick-menu-dialog" role="dialog" aria-modal="true" aria-label="메뉴 즐겨찾기">
