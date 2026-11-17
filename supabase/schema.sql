@@ -21,6 +21,13 @@ create table if not exists public.test_events (
 
 create index if not exists test_events_test_id_idx on public.test_events (test_id, created_at);
 
+-- 중복 방지: 앱이 이벤트마다 payload.event_id(고유 id)를 붙여요. 같은 event_id는 한 번만 저장돼요.
+--   전송이 실패해 다시 보내거나 두 번 보내져도, 두 번째는 409로 거절되고 앱은 '이미 저장됨'으로 처리해요.
+--   event_id가 없는 예전 기록은 이 규칙에서 빠져요.
+create unique index if not exists test_events_event_id_key
+  on public.test_events ((payload->>'event_id'))
+  where payload ? 'event_id';
+
 -- RLS: 켜 두면 정책으로 허용한 것만 가능해요.
 alter table public.test_events enable row level security;
 
@@ -39,3 +46,28 @@ grant insert on public.test_events to anon;
 -- 테스터별 퀵메뉴 [완료] 기록:
 --   select test_id, payload->'selected_menu_ids' as picks, created_at
 --   from public.test_events where event = 'quickmenu_done' order by created_at;
+-- 온보딩: 시도(attempt)별 마지막 상태
+--   select test_id, payload->>'attempt_id' as attempt, event, payload, created_at
+--   from public.test_events where event like 'onboarding_%' order by created_at;
+-- 첫 종료 지점 집계 (①scroll_end ②my_post_click ③quickmenu_done):
+--   select payload->>'exit_point' as exit_point, count(distinct test_id)
+--   from public.test_events where event = 'explore_done' group by 1;
+-- 테스터별 MY 글 / 다른 칩 글 첫 클릭 시각 (MY보다 다른 칩을 먼저 눌렀는지):
+--   select test_id,
+--          min(created_at) filter (where payload->>'chip' = 'MY') as my_first,
+--          min(created_at) filter (where payload->>'chip' <> 'MY') as other_first
+--   from public.test_events where event = 'post_click' group by test_id;
+-- MY 클릭률 (MY 3칸을 본 테스터 중 MY 글을 한 번이라도 누른 비율):
+--   select count(distinct c.test_id)::float / nullif(count(distinct v.test_id), 0) as my_ctr
+--   from public.test_events v
+--   left join public.test_events c on c.test_id = v.test_id and c.event = 'post_click' and c.payload->>'chip' = 'MY'
+--   where v.event = 'home_ob_view';
+-- 퀵메뉴 일치율 (관심 메뉴 6개 vs 맞춤 추천 6개, 테스터별 마지막 응답):
+--   select distinct on (test_id) test_id, (payload->>'match_count')::int / 6.0 as match_rate, created_at
+--   from public.test_events where event = 'interest_menus' order by test_id, created_at desc;
+-- 온보딩 퍼널 (테스터 수):
+--   select event, count(distinct test_id) from public.test_events
+--   where event in ('session_start','onboarding_start','onboarding_done','onboarding_skip') group by event;
+-- 건너뛴 위치 집계:
+--   select payload->>'exit_step' as step, payload->>'exit_field' as field, count(*)
+--   from public.test_events where event = 'onboarding_skip' group by 1, 2 order by 3 desc;

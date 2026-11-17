@@ -1,4 +1,4 @@
-import test from 'node:test';import assert from 'node:assert/strict';import {initial,next,back,reveal,selectOwnership,skipOnboarding,consentHome,openMainTab,openExistingDetail,openAiRate,toggleAiRateConsent,canConfirmAiRate,shouldAutoAdvanceAiRate} from './flow.mjs';import {aiRateConsentSheet,aiRateName} from './ai-rate.js';import {selectScreen,screenGroups,screenKey} from './screen-catalog.js';
+import test from 'node:test';import assert from 'node:assert/strict';import {initial,next,back,reveal,selectOwnership,skipOnboarding,consentHome,openMainTab,openExistingDetail,openAiRate,toggleAiRateConsent,canConfirmAiRate,shouldAutoAdvanceAiRate,toggleNoPlan} from './flow.mjs';import {aiRateConsentSheet,aiRateName} from './ai-rate.js';import {selectScreen,screenGroups,screenKey} from './screen-catalog.js';
 
 test('All opens the existing loan screen and Back preserves the To-be profile',()=>{
  const all={...initial(),screen:'all',homeState:'OB_NoMD',tab:'Loan',count:'3',postProfile:{a:1,h:2,n:2}};
@@ -95,4 +95,27 @@ test('02 약관동의: 필수 2개 모두 동의해야 다음 활성, 선택 약
  const partial=toggleConsent(all,'marketing');assert.equal(partial.marketing,false);assert.equal(canContinueConsent(partial),true);
  for(const item of consentItems.filter(item=>item.required))assert.equal(canContinueConsent(toggleConsent(all,item.id)),false,item.label+' 해제');
  const none=toggleConsent(all,'all');assert.ok(Object.values(none).every(v=>v===false));assert.equal(canContinueConsent(none),false);
+});
+test('onboarding back: 06 steps back one field at a time, then to the previous screen',()=>{
+ const base={...initial(),ownership:true,count:'2',principal:'100',monthly:'5'};
+ const at=(screen,extra={})=>({...base,screen,...extra});
+ const monthly=back(at('06',{revealed:3}));
+ assert.equal(monthly.screen,'06');assert.equal(monthly.revealed,2);
+ assert.equal(monthly.monthly,'5');assert.equal(monthly.principal,'100');
+ assert.equal(back(at('06',{revealed:2})).revealed,1);
+ assert.equal(back(at('06',{revealed:1})).screen,'05');
+ assert.deepEqual([back(at('07',{revealed:3})).screen,back(at('07',{revealed:3})).revealed],['06',3]);
+ assert.equal(back(at('08',{ownership:false})).screen,'05');
+ assert.equal(back(at('09',{ownership:false})).screen,'08');
+});
+
+test("08 '지금은 계획 없음' skips the purpose question and goes to the NoLoan result",()=>{
+ let s={...initial(),screen:'08',ownership:false,amount:'3000'};
+ s=toggleNoPlan(s,true);
+ assert.equal(s.amount,'');
+ const after=next(s);
+ assert.equal(after.screen,'10');assert.equal(after.result,'NoLoan');
+ assert.equal(back(after).screen,'08');
+ assert.equal(next(toggleNoPlan(s,false)).screen,'08');
+ assert.equal(selectOwnership({...s,ownership:false},true).noPlan,false);
 });

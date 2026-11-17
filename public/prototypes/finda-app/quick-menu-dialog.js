@@ -1,7 +1,7 @@
 import {popupView,noobPopupView,editView,sheetView} from './quick-menu-views.js';
 import {toggleMenu,getSavedPicks,savePicks,getRecommended} from './quick-menu-edit.js';
 import {sendTestEvent} from './test-data.js';
-import {showExploreDone} from './explore-done.js';
+import {showExploreDone,EXIT_POINTS} from './explore-done.js';
 import {showTestScopeNotice} from './test-scope-notice.js';
 const openMenus=new WeakMap();
 export function closeQuickMenu(root){openMenus.get(root)?.();}
@@ -45,7 +45,7 @@ export function openQuickMenu(root,trigger,startEditing=false){
   overlay.querySelector('.qm-sheet').innerHTML=sheetView(picks);
  };
 
- const close=({finish=false}={})=>{clearTimeout(toastTimer);document.removeEventListener('keydown',onKey,true);overlay.remove();openMenus.delete(root);if(screen)screen.inert=false;if(trigger?.isConnected)trigger.focus();announce(null);if(finish&&completed)showExploreDone(root);};
+ const close=({finish=false}={})=>{clearTimeout(toastTimer);document.removeEventListener('keydown',onKey,true);overlay.remove();openMenus.delete(root);if(screen)screen.inert=false;if(trigger?.isConnected)trigger.focus();announce(null);if(finish&&completed&&showExploreDone(root))sendTestEvent('explore_done',{exit_point:EXIT_POINTS.quickMenu,recommendation_ids:getRecommended()});};
  const onKey=e=>{
   if(e.key==='Escape'){e.preventDefault();if(overlay.classList.contains('is-editing'))showPopup('.quick-menu-edit');else close({finish:true});}
   else if(e.key==='Tab'){const buttons=[...overlay.querySelectorAll('button:not(:disabled)')];const first=buttons[0],last=buttons.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}
@@ -70,9 +70,9 @@ export function openQuickMenu(root,trigger,startEditing=false){
    savePicks(picks);
    // 종료 지점 ③ 퀵메뉴 편집 [완료]: 고른 메뉴와 그때 보여 준 맞춤 추천 6개를 Supabase로 보내요.
    sendTestEvent('quickmenu_done',{selected_menu_ids:getSavedPicks(),recommendation_ids:getRecommended()});
-   // 저장 결과를 먼저 보여 주고, 결과 팝업을 닫은 뒤 탐색 완료를 안내해요.
+   // 결과 팝업(pop_Home_QuickMenu_추가 2개 반영)은 다시 띄우지 않고 바로 닫은 뒤 탐색 완료를 안내해요.
    completed=true;
-   showPopup('.quick-menu-close');
+   close({finish:true});
   }
  });
  document.addEventListener('keydown',onKey,true);

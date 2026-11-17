@@ -5,3 +5,7 @@
 #app .explore-done p{margin:0;font:var(--ds-font-weight-regular) var(--ds-font-size-14)/var(--ds-line-height-24) var(--ds-font-base);color:var(--ds-text-muted)}
 #app .explore-done-ok{width:100%;margin-top:var(--ds-spacing-md)}
 #app .explore-done-ok:focus-visible{outline:2px solid var(--ds-primary);outline-offset:2px}
+/* 관심 메뉴 6개 고르기: 퀵메뉴 편집(.qm-*) 화면을 그대로 쓰고 안내 문구와 하단 시트 높이만 맞춰요. */
+.explore-done-overlay.is-picking{align-items:stretch;background:transparent}
+#app .interest-menus .interest-guide{flex-shrink:0;margin:0;padding:0 var(--ds-spacing-base) var(--ds-spacing-sm);font:var(--ds-font-weight-regular) var(--ds-font-size-14)/var(--ds-line-height-24) var(--ds-font-base);color:var(--ds-text-muted);text-align:center}
+#app .interest-menus .interest-sheet{height:auto;padding-bottom:var(--ds-spacing-24)}
