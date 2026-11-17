@@ -110,3 +110,14 @@ test('exit field is reported only on input screens',()=>{
  assert.equal(exitField('08','amount'),'desired_amount');
  assert.equal(exitField('04','count'),null);
 });
+
+test("08 '지금은 계획 없음' saves no_loan_plan without an amount and ends the track",()=>{
+ const draft={attempt_id:'a',answers:{has_loan:false,desired_amount:500},resume:{step:'08',field:'desired_amount'}};
+ const saved=saveStep(draft,{screen:'08',noPlan:true,amount:''},'next');
+ assert.equal(saved.answers.no_loan_plan,true);
+ assert.equal('desired_amount' in saved.answers,false);
+ assert.deepEqual(saved.resume,{step:'10',field:null});
+ const normal=saveStep(draft,{screen:'08',noPlan:false,amount:'1000'},'next');
+ assert.equal(normal.answers.desired_amount,1000);assert.equal(normal.answers.no_loan_plan,false);
+ assert.equal(normal.resume.step,'09');
+});

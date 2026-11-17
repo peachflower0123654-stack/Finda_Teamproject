@@ -273,3 +273,21 @@
   margin: 0; letter-spacing: 0.4px; color: #11182b;
   font: var(--ds-font-weight-bold) var(--ds-font-size-24)/var(--ds-line-height-36) var(--ds-font-base);
 }
+
+/* 08 희망 금액 '지금은 계획 없음' — cmp_Common_CheckCircle(4631:23500)을 입력 라벨 줄 오른쪽에 둬요. 에셋·위치 규칙은 약관(.consent-check)과 같아요. */
+#app .no-plan-wrap { position: relative; }
+#app .no-plan-check {
+  position: absolute; top: -6px; right: 0; display: flex; align-items: center; gap: var(--ds-spacing-xs); cursor: pointer;
+  color: var(--ds-text-muted); font: var(--ds-font-weight-regular) var(--ds-font-size-14)/var(--ds-line-height-20) var(--ds-font-base);
+}
+#app .no-plan-check input { position: absolute; width: 32px; height: 32px; margin: 0; opacity: 0; cursor: pointer; }
+#app .no-plan-check:has(input:checked) { color: var(--ds-primary); font-weight: var(--ds-font-weight-bold); }
+#app .no-plan-check__icon { position: relative; width: 32px; height: 32px; flex-shrink: 0; }
+#app .no-plan-check__icon img { position: absolute; display: block; max-width: none; width: auto; height: auto; }
+#app .no-plan-check__img--off { left: 4px; top: 4px; }
+#app .no-plan-check__img--on { left: 5px; top: 5px; }
+#app .no-plan-check input:focus-visible + .no-plan-check__icon { outline: 2px solid var(--ds-primary); border-radius: 50%; }
+#app .cmp-input[data-disabled] .cmp-input__field { opacity: .55; }
+#app .cmp-input[data-disabled] .cmp-input__caption { color: var(--ds-primary); }
+#app .no-plan-screen .cmp-input__caption { text-align: left; }
+#app .no-plan-screen .actions { padding: 0 var(--ds-spacing-base) var(--ds-spacing-24); }

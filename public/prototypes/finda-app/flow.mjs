@@ -1,7 +1,7 @@
 import {emptyConsent,canContinueConsent} from './consent.js';
 // Append the third draft result once its screen is supplied. No approval rules.
 export const draftLoanResults=['HasLoanUnavailable','HasLoan'];
-export const initial=()=>({screen:'00',consent:emptyConsent(),affiliation:'',housing:'',ownership:null,count:'',principal:'',monthly:'',amount:'',interest:'',purpose:'',revealed:1,result:null,draftResultIndex:0,homeState:'NoOB_NoMD',tab:'Asset',review:false,aiConsent:false,aiSort:'rate',aiAutoAdvance:false,postProfile:null,postChip:'MY'});
+export const initial=()=>({screen:'00',consent:emptyConsent(),affiliation:'',housing:'',ownership:null,count:'',principal:'',monthly:'',amount:'',noPlan:false,interest:'',purpose:'',revealed:1,result:null,draftResultIndex:0,homeState:'NoOB_NoMD',tab:'Asset',review:false,aiConsent:false,aiSort:'rate',aiAutoAdvance:false,postProfile:null,postChip:'MY'});
 // 하단 메뉴는 온보딩 답과 홈의 개인화 상태를 그대로 유지합니다.
 export function openMainTab(s,tab){
  if(!['home','point','all'].includes(tab))return s;
@@ -31,7 +31,7 @@ export function next(s){
  case '05':if(s.ownership!==null){t.screen=s.ownership?'06':'08';t.homeState='InOB_NoMD';}break;
  case '06':if([s.count,s.principal,s.monthly].every(filled)&&s.revealed===3)t.screen='07';break;
  case '07':if(s.interest){t.screen='10';t.result=draftLoanResults[s.draftResultIndex%draftLoanResults.length];t.draftResultIndex=s.draftResultIndex+1;}break; // Temporary preview rotation only.
- case '08':if(filled(s.amount))t.screen='09';break;
+ case '08':if(s.noPlan){t.screen='10';t.result='NoLoan';}else if(filled(s.amount))t.screen='09';break; // '지금은 계획 없음'이면 목적(09) 없이 결과로
  case '09':if(s.purpose){t.screen='10';t.result='NoLoan';}break;
  case 'ai-rate-intro':t.screen='ai-rate-consent';t.aiConsent=false;break;
  case 'ai-rate-consent':if(canConfirmAiRate(s)){t.screen='ai-rate-loading';t.aiAutoAdvance=true;}break;
@@ -41,6 +41,8 @@ export function next(s){
  return t;
 }
 export function reveal(s){if(s.screen!=='06')return s;const fields=['count','principal','monthly'];return filled(s[fields[s.revealed-1]])?{...s,revealed:Math.min(3,s.revealed+1)}:s;}
-export function selectOwnership(s,value){return {...s,ownership:value,...(s.ownership!==value?{count:'',principal:'',monthly:'',amount:'',interest:'',purpose:'',revealed:1,result:null}: {})};}
+export function selectOwnership(s,value){return {...s,ownership:value,...(s.ownership!==value?{count:'',principal:'',monthly:'',amount:'',noPlan:false,interest:'',purpose:'',revealed:1,result:null}: {})};}
 export function back(s){if(s.screen==='06'&&s.revealed>1)return {...s,revealed:s.revealed-1}; // 06 안에서는 한 칸씩 뒤로(입력값은 유지)
- if(['find-loan','refinance'].includes(s.screen)){const {existingReturnTo,...rest}=s;return {...rest,screen:existingReturnTo||'all'};}if(['point','all'].includes(s.screen))return openMainTab(s,'home');if(s.screen==='11'&&s.homeState==='OB_MD')return {...s,homeState:'OB_NoMD'};if(['ai-rate-intro','ai-rate-loading','ai-rate'].includes(s.screen))return aiRateHome(s);if(s.screen==='ai-rate-consent')return {...s,screen:'ai-rate-intro'};const map={'02':'00','03':'02','04':'03','05':'04','06':'05','07':'06','08':'05','09':'08','10':s.result==='NoLoan'?'09':'07'};return {...s,screen:map[s.screen]||s.screen};}
+ if(['find-loan','refinance'].includes(s.screen)){const {existingReturnTo,...rest}=s;return {...rest,screen:existingReturnTo||'all'};}if(['point','all'].includes(s.screen))return openMainTab(s,'home');if(s.screen==='11'&&s.homeState==='OB_MD')return {...s,homeState:'OB_NoMD'};if(['ai-rate-intro','ai-rate-loading','ai-rate'].includes(s.screen))return aiRateHome(s);if(s.screen==='ai-rate-consent')return {...s,screen:'ai-rate-intro'};const map={'02':'00','03':'02','04':'03','05':'04','06':'05','07':'06','08':'05','09':'08','10':s.result==='NoLoan'?(s.noPlan?'08':'09'):'07'};return {...s,screen:map[s.screen]||s.screen};}
+// 희망 금액(08)의 '지금은 계획 없음' 체크. 체크하면 입력한 금액은 지워요.
+export const toggleNoPlan=(s,checked)=>({...s,noPlan:checked,amount:checked?'':s.amount});

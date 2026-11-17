@@ -1,4 +1,4 @@
-import test from 'node:test';import assert from 'node:assert/strict';import {initial,next,back,reveal,selectOwnership,skipOnboarding,consentHome,openMainTab,openExistingDetail,openAiRate,toggleAiRateConsent,canConfirmAiRate,shouldAutoAdvanceAiRate} from './flow.mjs';import {aiRateConsentSheet,aiRateName} from './ai-rate.js';import {selectScreen,screenGroups,screenKey} from './screen-catalog.js';
+import test from 'node:test';import assert from 'node:assert/strict';import {initial,next,back,reveal,selectOwnership,skipOnboarding,consentHome,openMainTab,openExistingDetail,openAiRate,toggleAiRateConsent,canConfirmAiRate,shouldAutoAdvanceAiRate,toggleNoPlan} from './flow.mjs';import {aiRateConsentSheet,aiRateName} from './ai-rate.js';import {selectScreen,screenGroups,screenKey} from './screen-catalog.js';
 
 test('All opens the existing loan screen and Back preserves the To-be profile',()=>{
  const all={...initial(),screen:'all',homeState:'OB_NoMD',tab:'Loan',count:'3',postProfile:{a:1,h:2,n:2}};
@@ -107,4 +107,15 @@ test('onboarding back: 06 steps back one field at a time, then to the previous s
  assert.deepEqual([back(at('07',{revealed:3})).screen,back(at('07',{revealed:3})).revealed],['06',3]);
  assert.equal(back(at('08',{ownership:false})).screen,'05');
  assert.equal(back(at('09',{ownership:false})).screen,'08');
+});
+
+test("08 '지금은 계획 없음' skips the purpose question and goes to the NoLoan result",()=>{
+ let s={...initial(),screen:'08',ownership:false,amount:'3000'};
+ s=toggleNoPlan(s,true);
+ assert.equal(s.amount,'');
+ const after=next(s);
+ assert.equal(after.screen,'10');assert.equal(after.result,'NoLoan');
+ assert.equal(back(after).screen,'08');
+ assert.equal(next(toggleNoPlan(s,false)).screen,'08');
+ assert.equal(selectOwnership({...s,ownership:false},true).noPlan,false);
 });

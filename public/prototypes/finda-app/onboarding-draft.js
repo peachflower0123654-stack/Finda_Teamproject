@@ -8,12 +8,12 @@ export const DRAFT_KEYS={study:'finda.study.v1.onboardingDraft',dev:'finda.dev.v
 export const draftKey=participant=>participant?DRAFT_KEYS.study:DRAFT_KEYS.dev;
 
 // 앱 state 키 → 저장·전송에 쓰는 이름
-export const FIELD={affiliation:'affiliation',housing:'housing',ownership:'has_loan',count:'loan_count',principal:'loan_principal',monthly:'monthly_repayment',interest:'extra_loan',amount:'desired_amount',purpose:'loan_purpose'};
+export const FIELD={affiliation:'affiliation',housing:'housing',ownership:'has_loan',count:'loan_count',principal:'loan_principal',monthly:'monthly_repayment',interest:'extra_loan',amount:'desired_amount',noPlan:'no_loan_plan',purpose:'loan_purpose'};
 const STATE_KEY=Object.fromEntries(Object.entries(FIELD).map(([k,v])=>[v,k]));
 const NUMBER_KEYS=['count','principal','monthly','amount'];
 const LOAN_FIELDS=['count','principal','monthly'];
 // 대출 보유 여부가 바뀌면 그 뒤 답은 다른 트랙이라 버려요.
-const AFTER_OWNERSHIP=['count','principal','monthly','interest','amount','purpose'];
+const AFTER_OWNERSHIP=['count','principal','monthly','interest','amount','noPlan','purpose'];
 
 const safeGet=(storage,key)=>{try{return storage?.getItem(key)??null;}catch{return null;}};
 const safeSet=(storage,key,value)=>{try{storage?.setItem(key,value);}catch{}};
@@ -55,7 +55,11 @@ export function saveStep(draft,state,kind){
  }
  case '06':return withAnswers(draft,state,LOAN_FIELDS,{step:'07',field:null});
  case '07':return withAnswers(draft,state,['interest'],{step:'10',field:null});
- case '08':return withAnswers(draft,state,['amount'],{step:'09',field:null});
+ case '08':{
+  // '지금은 계획 없음': 금액 없이 no_loan_plan=true로 끝나요(목적 질문 없음).
+  if(state.noPlan){const {[FIELD.amount]:_,...answers}=draft.answers;return withAnswers({...draft,answers},state,['noPlan'],{step:'10',field:null});}
+  return withAnswers(draft,state,['amount','noPlan'],{step:'09',field:null});
+ }
  case '09':return withAnswers(draft,state,['purpose'],{step:'10',field:null});
  }
  return null;
