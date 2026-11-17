@@ -204,7 +204,7 @@
 }
 
 /* ic_Common_ArrowLeft: 에셋(8×14)은 오른쪽(›) 모양이라 시안처럼 좌우 반전해서 쓴다(Figma의 -scale-x-100). 에셋 자체와 크기는 바꾸지 않는다. */
-.cmp-navbar__back img { transform: scaleX(-1); }
+/* 뒤로 가기는 ic_Common_ArrowLeft 24 에셋(ic-common-arrow-left-24.svg)을 그대로 쓴다. */
 /* 06~09 헤더(A안): NavBar 아래 단계 표시. 건너뛰기는 NavBar 오른쪽(.skip)에 있다. */
 .ob-stephead { display: flex; flex-direction: column; flex-shrink: 0; }
 .ob-step { display: flex; flex-direction: column; gap: var(--ds-spacing-sm); }
@@ -291,3 +291,58 @@
 #app .cmp-input[data-disabled] .cmp-input__caption { color: var(--ds-primary); }
 #app .no-plan-screen .cmp-input__caption { text-align: left; }
 #app .no-plan-screen .actions { padding: 0 var(--ds-spacing-base) var(--ds-spacing-24); }
+
+/* 11.17 온보딩 업데이트 (참고: Figma 4634:17464)
+   - 배경: 위쪽 옅은 보라(#F6F6FE, 참고 화면 측정값)에서 200px 지점까지 흰색으로
+   - 질문 머리: 타이틀 → 캡션 8px, 캡션 14/20 muted, 캡션 → 아래 내용 24px(화면 기본 간격 20px + 4px)
+   - 인풋: cmp_Common_Input(Figma 4636:17443) — 입력 중에도 테두리 없이 보라 커서만, 단위 14/20 */
+#app[data-screen*="_Onboarding_"]:not([data-screen*="Splash"]) > .screen { background: linear-gradient(180deg, #f6f6fe 0, #fff 200px); }
+#app[data-screen*="_Onboarding_"] .cmp-navbar,
+#app[data-screen*="_Onboarding_"] .ob-stephead { background: transparent; }
+.ob-qhead { display: flex; flex-direction: column; gap: var(--ds-spacing-sm); margin-bottom: calc(var(--ds-spacing-24) - var(--ds-spacing-lg)); }
+.ob-caption { margin: 0; color: var(--ds-text-muted); font: var(--ds-font-weight-regular) var(--ds-font-size-14)/var(--ds-line-height-20) var(--ds-font-base); }
+#app .cmp-input[data-active] .cmp-input__field { border-color: transparent; }
+#app .cmp-input__value { caret-color: var(--ds-primary); }
+#app .cmp-input__unit { font: var(--ds-font-weight-regular) var(--ds-font-size-14)/var(--ds-line-height-20) var(--ds-font-base); }
+#app .cmp-input__caption:empty { display: none; }
+
+/* 11.17 인풋·질문 머리 업데이트 (Figma 4634:17719 — scr_06 TotalPrincipal 4634:17661 기준)
+   - 질문 타이틀 24/36 Bold ink-pure, 캡션 14/24 Regular body, 타이틀→캡션 8
+   - 넘버패드 화면(06·08): 단계 표시→타이틀 32, 캡션→인풋 16, 인풋 사이 16
+   - 인풋: 라벨 14/20 Medium muted-alt, 좌우 여백 8, 라벨→필드 4. 입력 중인 칸은 라벨을 숨김(타이틀이 대신 설명)
+   - 값: 입력을 마친 칸 muted, 입력 중 ink-pure. 단위 Bold 14/20 muted */
+#app .ob-caption { color: var(--ds-text-body); font: var(--ds-font-weight-regular) var(--ds-font-size-14)/var(--ds-line-height-24) var(--ds-font-base); }
+#app .cmp-keypad-screen .ob-qhead { margin-top: calc(var(--ds-spacing-32) - var(--ds-spacing-lg)); margin-bottom: calc(var(--ds-spacing-base) - var(--ds-spacing-lg)); }
+#app .cmp-input { gap: var(--ds-spacing-xs); }
+#app .cmp-input__label { padding: 0 var(--ds-spacing-sm); color: var(--ds-text-muted-alt); }
+#app .cmp-input[data-active] .cmp-input__label { color: var(--ds-text-muted-alt); }
+#app .cmp-input-list .cmp-input[data-active] .cmp-input__label { display: none; }
+#app .cmp-input__unit { font-weight: var(--ds-font-weight-bold); color: var(--ds-text-muted); }
+
+/* 11.17 미보유자 08 희망 금액 (Figma 4634:17912)
+   - 단계 표시→타이틀 20, 캡션→인풋 20 (06의 32/16 보정을 되돌림), 인풋 라벨 없음
+   - '지금은 계획 없음': 인풋 아래 8px, 오른쪽 정렬. CheckCircle 28 + 4 + Bold 14/20 muted-alt, 선택 시 purple/070 */
+#app .no-plan-screen .ob-qhead { margin-top: 0; margin-bottom: 0; }
+#app .no-plan-wrap { display: flex; flex-direction: column; gap: var(--ds-spacing-sm); }
+#app .no-plan-wrap .cmp-input__label { display: none; }
+#app .no-plan-check { position: static; align-self: flex-end; height: 28px; gap: var(--ds-spacing-xs); color: var(--ds-text-muted-alt); font-weight: var(--ds-font-weight-bold); }
+#app .no-plan-check:has(input:checked) { color: var(--ds-purple-070); }
+#app .no-plan-check input { width: 28px; height: 28px; }
+#app .no-plan-check__icon { width: 28px; height: 28px; }
+#app .no-plan-check__img--off { left: 2px; top: 2px; }
+#app .no-plan-check__img--on { left: 3px; top: 3px; }
+/* cmp_Common_Toast/Alert — Figma 4634:23961. gray/110 알약, 여백 12·20·12·12, 간격 8, CheckCircle(on) 28 + 14/24 흰 글자.
+   위치: [다음] 버튼(아래 여백 24 + 높이 56 = 80) 위 12px. 문구는 가운데 정렬. */
+#app > .no-plan-toast { position: absolute; left: 50%; bottom: calc(80px + var(--ds-spacing-md)); z-index: 210; transform: translateX(-50%); display: flex; align-items: center; gap: var(--ds-spacing-sm);
+  width: max-content; max-width: 345px; padding: var(--ds-spacing-md) var(--ds-spacing-lg) var(--ds-spacing-md) var(--ds-spacing-md);
+  border-radius: var(--ds-radius-full); background: var(--ds-gray-110); color: #fff; pointer-events: none; }
+#app > .no-plan-toast p { margin: 0; color: inherit; white-space: nowrap; text-align: center; font: var(--ds-font-weight-regular) var(--ds-font-size-14)/var(--ds-line-height-24) var(--ds-font-base); }
+#app > .no-plan-toast .no-plan-toast__icon { position: relative; flex-shrink: 0; width: 28px; height: 28px; }
+#app > .no-plan-toast .no-plan-toast__icon img { position: absolute; left: 3px; top: 3px; display: block; max-width: none; }
+
+/* cmp_Common_TopBar / Type=Navigation (Figma 3691:2510). 화면 안에서는 여백 16 안쪽에 328×52로 놓여요(scr_04 3663:26003 측정).
+   왼쪽: 36×36 터치 영역(화면 16, 24) 안 24 아이콘(ic_Common_ArrowLeft, #8E92A4 2px). 오른쪽: 건너뛰기는 기존 타이포(14px, muted) 그대로, 터치 영역 좌우 16·높이 44. */
+#app .cmp-navbar { margin: 0; height: 52px; }
+#app .cmp-navbar__back { width: 36px; height: 36px; }
+#app .cmp-navbar__back img { display: block; width: 24px; height: 24px; }
+#app .cmp-navbar .skip { height: 44px; padding: 0 var(--ds-spacing-base); }
