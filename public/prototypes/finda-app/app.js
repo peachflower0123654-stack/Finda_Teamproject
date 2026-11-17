@@ -2,8 +2,8 @@ import {screenSelector,screenKey,selectScreen} from './screen-catalog.js';
 import {aiRateName,aiRateIntro,aiRateConsentSheet,aiRateLoading,aiRateScreen,wireAiRate} from './ai-rate.js';
 import {quickMenuButton,wireQuickMenuButtons} from './quick-menu-button.js';
 import {closeQuickMenu,openQuickMenu} from './quick-menu-dialog.js';
-import {popupMode,setQuickMenuProfile} from './quick-menu-edit.js';
-import {showExploreDone,atScrollEnd} from './explore-done.js';
+import {popupMode,setQuickMenuProfile,getRecommended,recommendMenus} from './quick-menu-edit.js';
+import {showExploreDone,atScrollEnd,EXIT_POINTS,isExitPost,postClickPayload,MY_CHIP,homeViewPayload} from './explore-done.js';
 import {existingScreen,existingScreenName,wireExistingScreen} from './existing-screens.js';
 import {showTestScopeNotice} from './test-scope-notice.js';
 import {mountStudyControls} from './study/participant.js';
@@ -150,11 +150,17 @@ function wireHomeDesign(){
  if(nestedTabs){const spacer=document.createElement('div');spacer.style.height='60px';spacer.style.flexShrink='0';nestedTabs.replaceWith(spacer);nestedTabs.classList.add('home-ob-loan-tabs');shell.append(nestedTabs);}
  const root=shell.querySelector('.figma-home-canvas').firstElementChild;
  for(const child of [...root.children]){const id=child.dataset.nodeId;if(id==='2303:701'){applyBottomBar(child,bottomBarSelection);child.classList.add('home-pinned-bottom');shell.append(child);}if(id==='1991:4029'||id==='3172:19808'||id==='3172:19933'||id==='3172:21425'||id==='3288:16052'){child.classList.add('home-pinned-top');shell.append(child);}}
- if(state.homeState==='OB_NoMD')wirePostCard(shell.querySelector('[data-name="PostCard"]'),makeButton);
+ if(state.homeState==='OB_NoMD'){
+  const postCard=shell.querySelector('[data-name="PostCard"]');
+  wirePostCard(postCard,makeButton,{onPost:onObPost});
+  // MY 클릭률 분모: MY 3칸이 보이는 개인화 홈에 처음 들어온 순간 한 번 보내요.
+  // 퀵메뉴 추천은 이 함수 뒤에 갱신되니, 지금 프로필로 직접 계산해요.
+  if(postCard){const profile=postProfile(),{a,h,n}=profile;const view=homeViewPayload(recommend(a,h,n).chips.find(c=>c.name===MY_CHIP)?.posts.map(p=>p.id)||[],recommendMenus(profile));if(view)sendTestEvent('home_ob_view',view);}
+ }
  // 온보딩 전 홈: 핀다 기본 순서 피드. 글 상세는 미구현 안내를 표시합니다.
  if(state.homeState==='NoOB_NoMD')wirePostCard(shell.querySelector('[data-name="PostCard"]'),makeButton,{feed:defaultFeed,chipKey:'noobPostChip',rowIndex:0,onPost:()=>showTestScopeNotice(app)});
  // 종료 지점 ① 홈 끝까지 스크롤 (OB_NoMD만, 모달은 한 번만)
- if(state.homeState==='OB_NoMD'){const viewport=shell.querySelector('.figma-home-viewport');viewport?.addEventListener('scroll',()=>{if(atScrollEnd(viewport))showExploreDone(app);},{passive:true});}
+ if(state.homeState==='OB_NoMD'){const viewport=shell.querySelector('.figma-home-viewport');viewport?.addEventListener('scroll',()=>{if(atScrollEnd(viewport)&&showExploreDone(app))sendExploreDone(EXIT_POINTS.scrollEnd);},{passive:true});}
  for(const group of shell.querySelectorAll('[data-name="PostCard"] [data-name="Chips"], [data-name="PostCard"] [data-name="cmp_Common_ChipGroup"]'))wireChipGroup(group);
  const unavailableCard=element=>{
   if(!element||element.matches('[role="button"],button,a[href]')||element.querySelector('[role="button"],button,a[href],[role="tab"]'))return;
@@ -168,7 +174,16 @@ function wireHomeDesign(){
 }
 
 // Figma PostCard의 칩·글 줄을 복제해 V4.0 추천 결과로 채운다. 칩을 눌러도 홈 스크롤이 유지되도록 카드만 다시 그린다.
-function wirePostCard(card,makeButton,{feed=()=>{const {a,h,n}=postProfile();return recommend(a,h,n);},chipKey='postChip',rowIndex=2,onPost=()=>showExploreDone(app)}={}){
+// 종료 이벤트: 모달이 뜬 순간 한 번. 그때의 맞춤 퀵메뉴 6개를 함께 보내 일치율 계산에 써요.
+const sendExploreDone=(exit_point,extra={})=>sendTestEvent('explore_done',{exit_point,recommendation_ids:getRecommended(),...extra});
+// 개인화 홈 포스트 클릭: 모든 칩의 클릭을 post_click으로 남기고, MY 칩 글일 때만 종료 지점 ②(모달)로 처리해요.
+function onObPost(post,position,chip,chips){
+ const myPostIds=chips.find(c=>c.name===MY_CHIP)?.posts.map(p=>p.id)||[];
+ sendTestEvent('post_click',postClickPayload({chip:chip.name,post,position,myPostIds}));
+ if(isExitPost(chip.name)&&showExploreDone(app)){sendExploreDone(EXIT_POINTS.myPost,{post_id:post.id,position});return;}
+ showTestScopeNotice(app);
+}
+function wirePostCard(card,makeButton,{feed=()=>{const {a,h,n}=postProfile();return recommend(a,h,n);},chipKey='postChip',rowIndex=2,onPost=null}={}){
  if(!card)return;
  const slot=card.querySelector('[data-name="Slot"]'),list=card.children[1];
  const [selectedChip,chip]=slot.children,row=list.children[rowIndex];
@@ -179,8 +194,8 @@ function wirePostCard(card,makeButton,{feed=()=>{const {a,h,n}=postProfile();ret
   const group=slot.parentElement,left=group.scrollLeft;
   slot.replaceChildren(...chips.map(c=>{const el=(c===current?selectedChip:chip).cloneNode(true);el.querySelector('p').textContent=c.name;makeButton(el,c.name+' 포스트',()=>{state[chipKey]=c.name;fill();slot.querySelector('[aria-pressed="true"]')?.focus({preventScroll:true});});el.setAttribute('aria-pressed',String(c===current));return el;}));
   group.scrollLeft=left;
-  // 종료 지점 ② 포스트 클릭: 글 상세 화면이 없어서 "Maze로 돌아가세요" 안내만 띄워요 (한 번만).
-  list.replaceChildren(...current.posts.map(p=>{const el=row.cloneNode(true);el.firstElementChild.setAttribute('style',thumbStyle(p));el.querySelector('p').textContent=p.t;if(onPost)makeButton(el,p.t,()=>onPost(p));return el;}));
+  // 글 상세 화면은 없어요. onPost(글, 칸 순서 1~3, 지금 칩, 전체 칩)로 처리를 맡겨요.
+  list.replaceChildren(...current.posts.map((p,i)=>{const el=row.cloneNode(true);el.firstElementChild.setAttribute('style',thumbStyle(p));el.querySelector('p').textContent=p.t;if(onPost)makeButton(el,p.t,()=>onPost(p,i+1,current,chips));return el;}));
  };
  fill();
 }

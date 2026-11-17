@@ -30,11 +30,16 @@ finda-app의 테스트 데이터를 Supabase 무료 플랜에 저장해요. 로�
 | event | 언제 | payload |
 |---|---|---|
 | `quickmenu_done` | 퀵메뉴 편집 [완료] (종료 지점 ③) | `selected_menu_ids`(고른 추가 메뉴), `recommendation_ids`(그때 보인 맞춤 추천 6개) |
+| `explore_done` | 탐색 완료 모달이 실제로 뜬 순간 (테스터당 첫 종료 지점 1번) | `exit_point`(`scroll_end` ①홈 끝까지 스크롤 · `my_post_click` ②MY 칩 글 클릭 · `quickmenu_done` ③퀵메뉴 편집 [완료]), `recommendation_ids`(맞춤 퀵메뉴 6개), ②는 `post_id`·`position`도 |
+| `home_ob_view` | 개인화 홈(온보딩 후)에서 MY 3칸이 처음 보인 순간 (같은 MY면 한 번만) | `my_post_ids`(MY 3칸), `recommendation_ids`(맞춤 퀵메뉴 6개). MY 클릭률의 분모 |
+| `post_click` | 개인화 홈(온보딩 후)에서 포스트를 누를 때마다 (모든 칩) | `chip`(MY·정책·대출 등), `post_id`, `post_category`, `position`(칩 안 1~3번째), `my_post_ids`(그 사람의 MY 3칸) |
 | `onboarding_loan_confirmed` | 대출 보유 여부(05)에서 고른 뒤 [다음] | 임시 저장값 전체 + `track` |
 | `onboarding_done` | 보유자: 추가 대출 목적(07) [다음] / 미보유자: 대출 목적(09) [다음] | 답 전체 + `track`(`has_loan`·`no_loan`) |
 | `onboarding_skip` | 온보딩 화면(03~09)의 [건너뛰기] | 그 순간의 임시 저장값 전체 + `exit_step`, `exit_field`, `resume_step`, `resume_field` |
 
 뒤로 가기·[이전]은 보내지 않아요.
+
+종료 지점 ②는 MY 칩 글 클릭만이에요. 다른 칩 글을 누르면 모달 대신 "구현되지 않았어요" 안내만 뜨고, `post_click`만 남아요. 칩을 바꾸는 것만으로는 아무것도 보내지 않아요.
 
 모든 줄에 `test_id`, `flow_version`, `created_at`이 함께 저장되고, payload에는 `event_id`(이벤트 고유 id)와 `sent_at`(브라우저 시각)이 들어가요. 온보딩 이벤트에는 `attempt_id`도 들어가요(이어하면 같은 값, 새로 시작하면 새 값).
 

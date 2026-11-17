@@ -49,6 +49,19 @@ grant insert on public.test_events to anon;
 -- 온보딩: 시도(attempt)별 마지막 상태
 --   select test_id, payload->>'attempt_id' as attempt, event, payload, created_at
 --   from public.test_events where event like 'onboarding_%' order by created_at;
+-- 첫 종료 지점 집계 (①scroll_end ②my_post_click ③quickmenu_done):
+--   select payload->>'exit_point' as exit_point, count(distinct test_id)
+--   from public.test_events where event = 'explore_done' group by 1;
+-- 테스터별 MY 글 / 다른 칩 글 첫 클릭 시각 (MY보다 다른 칩을 먼저 눌렀는지):
+--   select test_id,
+--          min(created_at) filter (where payload->>'chip' = 'MY') as my_first,
+--          min(created_at) filter (where payload->>'chip' <> 'MY') as other_first
+--   from public.test_events where event = 'post_click' group by test_id;
+-- MY 클릭률 (MY 3칸을 본 테스터 중 MY 글을 한 번이라도 누른 비율):
+--   select count(distinct c.test_id)::float / nullif(count(distinct v.test_id), 0) as my_ctr
+--   from public.test_events v
+--   left join public.test_events c on c.test_id = v.test_id and c.event = 'post_click' and c.payload->>'chip' = 'MY'
+--   where v.event = 'home_ob_view';
 -- 건너뛴 위치 집계:
 --   select payload->>'exit_step' as step, payload->>'exit_field' as field, count(*)
 --   from public.test_events where event = 'onboarding_skip' group by 1, 2 order by 3 desc;
