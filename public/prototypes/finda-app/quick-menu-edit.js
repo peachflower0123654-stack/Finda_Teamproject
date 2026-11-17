@@ -110,6 +110,9 @@ export function sections(){
  ];
 }
 
+// 관심 메뉴 고르기(interest-menus.js): 맞춤 추천을 따로 빼지 않은 전체 메뉴 그룹
+export const allMenuSections=()=>GROUPS.map(title=>({title,items:GROUP_ITEMS[title]})).filter(s=>s.items.length);
+
 export const MAX_PICKS=2;
 // 온보딩을 마친 홈(OB_*)만 맞춤 팝업을 보여 줘요. 그 전(NoOB·InOB)에는 빈 상태 팝업이에요.
 export const popupMode=homeState=>String(homeState||'').startsWith('OB_')?'personal':'noob';

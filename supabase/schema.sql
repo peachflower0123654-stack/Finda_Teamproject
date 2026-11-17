@@ -62,6 +62,12 @@ grant insert on public.test_events to anon;
 --   from public.test_events v
 --   left join public.test_events c on c.test_id = v.test_id and c.event = 'post_click' and c.payload->>'chip' = 'MY'
 --   where v.event = 'home_ob_view';
+-- 퀵메뉴 일치율 (관심 메뉴 6개 vs 맞춤 추천 6개, 테스터별 마지막 응답):
+--   select distinct on (test_id) test_id, (payload->>'match_count')::int / 6.0 as match_rate, created_at
+--   from public.test_events where event = 'interest_menus' order by test_id, created_at desc;
+-- 온보딩 퍼널 (테스터 수):
+--   select event, count(distinct test_id) from public.test_events
+--   where event in ('session_start','onboarding_start','onboarding_done','onboarding_skip') group by event;
 -- 건너뛴 위치 집계:
 --   select payload->>'exit_step' as step, payload->>'exit_field' as field, count(*)
 --   from public.test_events where event = 'onboarding_skip' group by 1, 2 order by 3 desc;

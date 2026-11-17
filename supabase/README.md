@@ -32,12 +32,17 @@ finda-app의 테스트 데이터를 Supabase 무료 플랜에 저장해요. 로�
 | `quickmenu_done` | 퀵메뉴 편집 [완료] (종료 지점 ③) | `selected_menu_ids`(고른 추가 메뉴), `recommendation_ids`(그때 보인 맞춤 추천 6개) |
 | `explore_done` | 탐색 완료 모달이 실제로 뜬 순간 (테스터당 첫 종료 지점 1번) | `exit_point`(`scroll_end` ①홈 끝까지 스크롤 · `my_post_click` ②MY 칩 글 클릭 · `quickmenu_done` ③퀵메뉴 편집 [완료]), `recommendation_ids`(맞춤 퀵메뉴 6개), ②는 `post_id`·`position`도 |
 | `home_ob_view` | 개인화 홈(온보딩 후)에서 MY 3칸이 처음 보인 순간 (같은 MY면 한 번만) | `my_post_ids`(MY 3칸), `recommendation_ids`(맞춤 퀵메뉴 6개). MY 클릭률의 분모 |
+| `interest_menus` | 탐색 완료 모달 → 관심 메뉴 6개 고르기 [완료] | `selected_menu_ids`(고른 6개, 고른 순서), `recommendation_ids`(맞춤 퀵메뉴 6개), `match_count`(겹친 개수). 일치율 = match_count / 6 |
 | `post_click` | 개인화 홈(온보딩 후)에서 포스트를 누를 때마다 (모든 칩) | `chip`(MY·정책·대출 등), `post_id`, `post_category`, `position`(칩 안 1~3번째), `my_post_ids`(그 사람의 MY 3칸) |
+| `session_start` | 참가자 링크(`?mode=test`)로 앱을 연 순간 (새로고침마다) | `variant`(지금은 `tobe`만), `study`(비교 체험 여부), `first`(비교 체험에서 먼저 본 화면). 사람 수는 `test_id`로 세요 |
+| `onboarding_start` | 약관(02) [다음]으로 소속(03)에 들어간 순간 | 없음. 완료율·이탈률의 분모 |
 | `onboarding_loan_confirmed` | 대출 보유 여부(05)에서 고른 뒤 [다음] | 임시 저장값 전체 + `track` |
 | `onboarding_done` | 보유자: 추가 대출 목적(07) [다음] / 미보유자: 대출 목적(09) [다음] | 답 전체 + `track`(`has_loan`·`no_loan`) |
 | `onboarding_skip` | 온보딩 화면(03~09)의 [건너뛰기] | 그 순간의 임시 저장값 전체 + `exit_step`, `exit_field`, `resume_step`, `resume_field` |
 
 뒤로 가기·[이전]은 보내지 않아요.
+
+종료 지점(①②③)에서는 "둘러보기를 마쳤어요" 모달 → 관심 메뉴 6개 고르기 → "Maze로 돌아가 [다음]" 안내 순서로 떠요. 고르기 화면은 맞춤 추천이 어떤 메뉴인지 드러나지 않게 전체 메뉴를 같은 모양으로 보여 줘요.
 
 종료 지점 ②는 MY 칩 글 클릭만이에요. 다른 칩 글을 누르면 모달 대신 "구현되지 않았어요" 안내만 뜨고, `post_click`만 남아요. 칩을 바꾸는 것만으로는 아무것도 보내지 않아요.
 

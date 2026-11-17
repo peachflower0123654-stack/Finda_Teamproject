@@ -6,7 +6,7 @@ import {popupMode,setQuickMenuProfile,getRecommended,recommendMenus} from './qui
 import {showExploreDone,atScrollEnd,EXIT_POINTS,isExitPost,postClickPayload,MY_CHIP,homeViewPayload} from './explore-done.js';
 import {existingScreen,existingScreenName,wireExistingScreen} from './existing-screens.js';
 import {showTestScopeNotice} from './test-scope-notice.js';
-import {mountStudyControls} from './study/participant.js';
+import {mountStudyControls,isComparisonStudy} from './study/participant.js';
 import {homeDesigns} from './home-design.js';
 import {consentScreen,toggleConsent} from './consent.js';
 import {initial,next,back,reveal,selectOwnership,filled,skipOnboarding,consentHome,openMainTab,openExistingDetail,openAiRate,aiRateHome,toggleAiRateConsent,shouldAutoAdvanceAiRate} from './flow.mjs';
@@ -35,7 +35,10 @@ function commitStep(kind){
  writeDraft(draft,store,DRAFT_KEY);
 }
 // 화면의 [다음]·[확정]·넘버패드 마지막 [다음]. 실제로 다음 화면으로 넘어갈 때만 저장해요.
-function goNext(){const after=next(state);if(after.screen!==state.screen)commitStep('next');state=after;render();}
+function goNext(){const after=next(state);if(after.screen!==state.screen)commitStep('next');
+ // 온보딩 시작: 약관(02) [다음]으로 소속(03)에 들어간 순간. 완료율·이탈률의 분모예요.
+ if(state.screen==='02'&&after.screen==='03')sendTestEvent('onboarding_start',{});
+ state=after;render();}
 function skipNow(){
  const draft=loadDraft()||newDraft();
  if(ONBOARDING_SCREENS.includes(state.screen))sendTestEvent('onboarding_skip',eventPayload(draft,{exit_step:state.screen,exit_field:exitField(state.screen,currentField()),resume_step:draft.resume.step,resume_field:draft.resume.field}));
@@ -125,8 +128,10 @@ const requestedScreen=new URLSearchParams(location.search).get('screen');
 if(!participantMode&&['existing:point','existing:all','existing:find-loan','existing:refinance','home:Loan:NoOB_NoMD','home:Loan:OB_NoMD'].includes(requestedScreen))state=selectScreen(state,requestedScreen);
 mountStudyControls('tobe');
 render();
-// 지난 접속 때 못 보낸 테스트 이벤트를 다시 보내요.
-flushPendingTestEvents();
+// 진입: 참가자 링크(?mode=test)로 연 순간마다 보내요(새로고침 포함). 사람 수는 test_id로 세요.
+// variant는 지금 To-be만 보내요(As-is 기록은 나중에). 보내면서 지난 접속 때 못 보낸 이벤트도 같이 다시 보내요.
+if(participantMode){const params=new URLSearchParams(location.search);sendTestEvent('session_start',{variant:'tobe',study:isComparisonStudy(),first:params.get('first')});}
+else flushPendingTestEvents();
 
 app.addEventListener('change',e=>{if(e.target.dataset.consent){state={...state,consent:toggleConsent(state.consent,e.target.dataset.consent)};render();app.querySelector('[data-consent="'+e.target.dataset.consent+'"]')?.focus();}});
 
