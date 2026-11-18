@@ -361,3 +361,22 @@
 #app .options > .option small { display: none; }
 #app .options > .option[aria-pressed="true"] small:not(:empty) { display: block; color: var(--ds-text-muted-alt); font-weight: var(--ds-font-weight-regular); }
 #app .ob-qhead:has(+ .options) { margin-bottom: calc(28px - var(--ds-spacing-lg)); }
+
+/* scr_05 대출 보유 쿠션 (Figma 4675:33604): 단계 표시 없음, 타이틀 → 혜택 카드 → (빈 공간) → 안내 → 있어요/없어요(누르면 바로 다음) */
+#app .ob05 { padding-bottom: var(--ds-spacing-36); }
+#app .ob05 .ob-qhead { margin-bottom: 0; }
+#app .ob05 .ob-caption { color: var(--ds-text-muted); }
+#app .ob05-card { padding: 16px; box-shadow: inset 0 0 0 1px var(--ds-purple-010); border-radius: 16px; background: #fff; display: flex; flex-direction: column; gap: 16px; }
+#app .ob05-card h3 { margin: 0; font: 700 16px/24px var(--ds-font-base); color: #2b2b2b; }
+#app .ob05-card h3 span { color: #5a3fe6; }
+#app .ob05-card ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 12px; }
+#app .ob05-card li { display: flex; gap: 8px; align-items: flex-start; }
+#app .ob05-card i { flex-shrink: 0; width: 30px; height: 30px; border-radius: 16px; background: var(--ds-gray-010); display: grid; place-items: center; color: #7a7a7a; }
+#app .ob05-card b { display: block; font: 700 14px/20px var(--ds-font-base); color: #000; }
+#app .ob05-card small { display: block; margin-top: 4px; font: 400 12px/16px var(--ds-font-base); color: var(--ds-gray-100); }
+#app .ob05-notice { margin-top: auto; display: flex; gap: 8px; padding: 12px; border-radius: 12px; background: var(--ds-gray-010); }
+#app .ob05-notice svg { flex-shrink: 0; }
+#app .ob05-notice p { margin: 0; font: 400 14px/24px var(--ds-font-base); color: var(--ds-gray-100); }
+#app .ob05-pair { margin-top: 0; padding-bottom: 0; gap: 20px; }
+#app .ob05-pair .secondary { height: 56px; min-height: 56px; padding: 16px; border: 1px solid var(--ds-gray-020); background: #fff; color: var(--ds-text-body); font: 700 16px/24px var(--ds-font-base); }
+#app .ob05-pair .secondary[aria-pressed="true"] { border-color: var(--ds-purple-060); color: var(--ds-purple-060); }
