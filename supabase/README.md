@@ -49,7 +49,7 @@ finda-app의 테스트 데이터를 Supabase 무료 플랜에 저장해요. 로�
 모든 줄에 `test_id`, `flow_version`, `created_at`이 함께 저장되고, payload에는 `event_id`(이벤트 고유 id)와 `sent_at`(브라우저 시각)이 들어가요. 온보딩 이벤트에는 `attempt_id`도 들어가요(이어하면 같은 값, 새로 시작하면 새 값).
 
 ### 온보딩 답 이름 (payload, 테스트용 가상 응답)
-`affiliation`(소속), `housing`(주거 형태), `has_loan`(true/false), `loan_count`, `loan_principal`, `monthly_repayment`, `extra_loan`(추가 대출 목적), `desired_amount`, `loan_purpose`
+`affiliation`(소속), `housing`(주거 형태. 2026-11-18부터 '부모·가족과 함께'로 저장, 그 전엔 '부모.가족과 함께' → 분석 때 `replace(..., '.', '·')`로 합치기), `has_loan`(true/false), `loan_count`, `loan_principal`, `monthly_repayment`, `extra_loan`(추가 대출 목적), `desired_amount`, `loan_purpose`
 
 ### 브라우저 임시 저장
 - 키: 참가자 링크(`?mode=test`) `finda.study.v1.onboardingDraft` / 그 외 `finda.dev.v1.onboardingDraft`
