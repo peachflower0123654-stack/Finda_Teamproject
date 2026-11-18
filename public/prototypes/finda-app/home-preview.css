@@ -34,3 +34,5 @@
 .figma-home-shell .post-chip-group>[data-name="Slot"]>*{flex-shrink:0;white-space:nowrap}
 .figma-home-shell .post-chip-group.is-dragging,.figma-home-shell .post-chip-group.is-dragging *{cursor:grabbing}
 .figma-home-shell>.home-ob-loan-tabs{position:absolute;top:52px;left:0;width:360px;z-index:10;background:#f6f6f9}
+/* 11.18 온보딩 전(NoOB)·중간 이탈(InOB) 홈의 포스트 글 제목 = Text style "Title S" (Noto Sans KR Bold 16/24, .t-title-m), 색 primitive/gray/110 */
+#app:is([data-home-state="NoOB_NoMD"],[data-home-state="InOB_NoMD"]) [data-name="PostCard"] > :nth-child(2) p { width: 100%; color: var(--ds-gray-110); font: var(--ds-font-weight-bold) var(--ds-font-size-16)/var(--ds-line-height-24) var(--ds-font-base); } /* 디자인의 158px 고정 폭 대신 글 칸(192px)을 다 써요 */
