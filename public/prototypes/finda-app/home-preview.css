@@ -36,3 +36,19 @@
 .figma-home-shell>.home-ob-loan-tabs{position:absolute;top:52px;left:0;width:360px;z-index:10;background:#f6f6f9}
 /* 11.18 온보딩 전(NoOB)·중간 이탈(InOB) 홈의 포스트 글 제목 = Text style "Title S" (Noto Sans KR Bold 16/24, .t-title-m), 색 primitive/gray/110 */
 #app:is([data-home-state="NoOB_NoMD"],[data-home-state="InOB_NoMD"]) [data-name="PostCard"] > :nth-child(2) p { width: 100%; color: var(--ds-gray-110); font: var(--ds-font-weight-bold) var(--ds-font-size-16)/var(--ds-line-height-24) var(--ds-font-base); } /* 디자인의 158px 고정 폭 대신 글 칸(192px)을 다 써요 */
+
+/* 코호트 프리뷰 v6 카드 (cohort_v6.html 최종안) — 핀다대출 탭 맨 위, 328 폭 */
+#app .cohort-card { width: 328px; flex-shrink: 0; box-sizing: border-box; display: flex; flex-direction: column; gap: 12px; padding: 20px; background: var(--ds-bg-canvas); border-radius: 16px; box-shadow: 0 4px 16px rgba(0,0,0,.06); font-family: var(--ds-font-base); }
+#app .cohort-card__eyebrow { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 12px; line-height: 18px; color: var(--ds-text-muted); }
+#app .cohort-card__prog { flex-shrink: 0; font-size: 11px; font-weight: 500; color: var(--ds-purple-070); background: var(--ds-purple-010); border-radius: 60px; padding: 1px 8px; }
+#app .cohort-card__edit { flex-shrink: 0; padding: 0; border: 0; background: none; font: 500 12px/18px var(--ds-font-base); color: var(--ds-text-muted); cursor: pointer; }
+#app .cohort-card__title { margin: -4px 0 0; font: 700 24px/36px var(--ds-font-base); color: var(--ds-text-ink); }
+#app .cohort-card__box { position: relative; display: flex; flex-direction: column; gap: 10px; padding: 14px 16px; background: var(--ds-gray-010); border-radius: 12px; }
+#app .cohort-card__info { position: absolute; top: 10px; right: 12px; padding: 2px; border: 0; background: none; font-size: 14px; line-height: 1; color: var(--ds-gray-040); cursor: pointer; }
+#app .cohort-card__lbl { margin: 0; font-size: 13px; line-height: 18px; color: var(--ds-text-muted); }
+#app .cohort-card__num { margin: 0; font-size: 20px; line-height: 28px; font-weight: 700; color: var(--ds-text-ink); }
+#app .cohort-card__num.is-placeholder { color: var(--ds-gray-040); }
+#app .cohort-card__hr { height: 1px; background: var(--ds-gray-020); }
+#app .cohort-card__link { align-self: flex-start; padding: 0; border: 0; background: none; font: 500 13px/18px var(--ds-font-base); color: var(--ds-primary); cursor: pointer; }
+#app .cohort-card__btn { width: 100%; padding: 13px 0; border: 0; border-radius: 24px; background: var(--ds-primary); color: #fff; font: 700 15px/22px var(--ds-font-base); cursor: pointer; }
+#app .cohort-card__cap { margin: -4px 0 0; text-align: center; font-size: 11px; line-height: 16px; color: var(--ds-text-muted); }

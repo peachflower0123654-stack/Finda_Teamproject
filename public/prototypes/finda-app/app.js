@@ -6,6 +6,7 @@ import {popupMode,setQuickMenuProfile,getRecommended,recommendMenus} from './qui
 import {showExploreDone,atScrollEnd,EXIT_POINTS,isExitPost,postClickPayload,MY_CHIP,homeViewPayload} from './explore-done.js';
 import {existingScreen,existingScreenName,wireExistingScreen} from './existing-screens.js';
 import {showTestScopeNotice} from './test-scope-notice.js';
+import {cohortCard,cohortView} from './cohort-card.js';
 import {mountStudyControls,isComparisonStudy} from './study/participant.js';
 import {homeDesigns} from './home-design.js';
 import {consentScreen,toggleConsent} from './consent.js';
@@ -172,11 +173,31 @@ function stripHomeTitle(shell){
  for(const id of HOME_TITLE_BLOCKS[state.tab]||[]){const el=shell.querySelector(`[data-node-id="${id}"]`);if(!el)continue;const gap=parseFloat(getComputedStyle(el.parentElement).rowGap)||0;removed+=el.offsetHeight+gap;el.remove();}
  if(canvas&&removed)canvas.style.height=(parseFloat(canvas.style.height)-removed)+'px';
 }
+// 코호트 프리뷰 v6(cohort-card.js): 모든 홈의 핀다대출 탭 맨 위. 온보딩 전 = ①, 중간 이탈 = 임시 저장 위치별, 완료 = 답 기준.
+function cohortInput(){
+ if(state.homeState==='NoOB_NoMD')return {stage:'none'};
+ if(state.homeState==='InOB_NoMD'){const d=loadDraft();return {stage:'draft',answers:d?.answers||{},resumeStep:d?.resume?.step};}
+ const p=postProfile();
+ return {stage:'done',answers:{affiliation:state.affiliation||AFFILIATIONS[p.a],housing:state.housing||HOUSINGS[p.h],has_loan:state.ownership??p.n>0,loan_count:state.count||(p.n===2?3:1),extra_loan:state.interest,loan_purpose:state.purpose,no_loan_plan:state.noPlan,desired_amount:state.amount}};
+}
+function placeCohortCard(shell){
+ if(state.tab!=='Loan')return;
+ const anchor=shell.querySelector('[data-node-id="3172:21110"]'),column=shell.querySelector('[data-node-id="3172:19811"]');
+ const holder=document.createElement('div');holder.innerHTML=cohortView(cohortCard(cohortInput()));const card=holder.firstElementChild;
+ if(anchor)anchor.before(card);else if(column)column.prepend(card);else return;
+ const canvas=shell.querySelector('.figma-home-canvas');const gap=parseFloat(getComputedStyle(card.parentElement).rowGap)||0;
+ if(canvas)canvas.style.height=(parseFloat(canvas.style.height)+card.offsetHeight+gap)+'px';
+ card.addEventListener('click',e=>{const b=e.target.closest('[data-cohort]');if(!b)return;const k=b.dataset.cohort;
+  if(k==='start'){state.screen='02';state.review=false;render();}
+  else if(k==='resume'||k==='loanInfo')resumeOnboarding();
+  else if(k==='rate'){state=openAiRate(state);render();}
+  else showTestScopeNotice(app);});
+}
 function wireHomeDesign(){
  // 간단한 HTML 홈(InOB 등)의 배너 버튼도 테스트 범위 안내로 연결해요.
  for(const button of app.querySelectorAll('.screen.home .home-anonymous-banner button'))button.addEventListener('click',()=>showTestScopeNotice(app));
  const shell=app.querySelector('.figma-home-shell');if(!shell)return;
- stripHomeTitle(shell);placeHomeBanner(shell);
+ stripHomeTitle(shell);placeHomeBanner(shell);placeCohortCard(shell);
  const starSlot=shell.querySelector('[data-name="material-symbols:star"]')?.parentElement;
  if(starSlot)starSlot.innerHTML=quickMenuButton();
  const makeButton=(element,label,action)=>{if(!element)return;element.setAttribute('role','button');element.setAttribute('tabindex','0');element.setAttribute('aria-label',label);element.classList.add('home-design-action');element.addEventListener('click',action);element.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();action();}});};
