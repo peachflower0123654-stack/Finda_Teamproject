@@ -53,7 +53,9 @@ test('existing screens can be reviewed without replacing To-be home state',()=>{
 test('splash goes directly to consent and back never opens the removed login screen',()=>{
  const consent=next(initial());assert.equal(consent.screen,'02');assert.equal(consent.homeState,'NoOB_NoMD');
  const splash=back(consent);assert.equal(splash.screen,'00');assert.equal(next(splash).screen,'02');
- assert.equal(next({...consent,consent:{...consent.consent,service:true,privacy:true}}).screen,'03');
+ let slide=consent;for(let i=0;i<3;i++){slide=next(slide);assert.equal(slide.screen,'02');}assert.equal(slide.introSlide,3);
+ assert.equal(next(slide).screen,'02','약관 동의 전에는 넘어가지 않아요');assert.equal(back(slide).introSlide,2);
+ assert.equal(next({...slide,consent:{...slide.consent,service:true,privacy:true}}).screen,'03');
  assert.ok(!screenGroups.some(([,items])=>items.some(([key])=>key==='onboarding:01')));
 });
 test('NO route reaches NoLoan then OB_NoMD home',()=>{let s={...initial(),screen:'05'};s=next(selectOwnership(s,false));assert.equal(s.screen,'08');s=next({...s,amount:'50000000'});assert.equal(s.screen,'09');s=next({...s,purpose:'전월세 보증금'});assert.equal(s.result,'NoLoan');s=next(s);assert.equal(s.screen,'11');assert.equal(s.homeState,'OB_NoMD');});
@@ -88,8 +90,9 @@ test('02 약관동의: 필수 2개 모두 동의해야 다음 활성, 선택 약
   const consent={service,privacy,marketing},enabled=service&&privacy;
   const label=JSON.stringify(consent);
   assert.equal(canContinueConsent(consent),enabled,label);
-  assert.equal(next({...initial(),screen:'02',consent}).screen,enabled?'03':'02',label);
-  assert.equal(/data-action="next" disabled/.test(consentScreen(consent)),!enabled,label);
+  assert.equal(next({...initial(),screen:'02',introSlide:3,consent}).screen,enabled?'03':'02',label);
+  assert.equal(/data-action="next" disabled/.test(consentScreen(consent,3)),!enabled,label);
+  assert.equal(/data-action="next" disabled/.test(consentScreen(consent,0)),false,'소개 장은 늘 다음 가능');
  }
  const all=toggleConsent(empty,'all');assert.ok(consentItems.every(i=>all[i.id]));assert.equal(canContinueConsent(all),true);
  const partial=toggleConsent(all,'marketing');assert.equal(partial.marketing,false);assert.equal(canContinueConsent(partial),true);
