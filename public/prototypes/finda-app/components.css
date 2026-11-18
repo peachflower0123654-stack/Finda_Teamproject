@@ -346,3 +346,18 @@
 #app .cmp-navbar__back { width: 36px; height: 36px; }
 #app .cmp-navbar__back img { display: block; width: 24px; height: 24px; }
 #app .cmp-navbar .skip { height: 44px; padding: 0 var(--ds-spacing-base); }
+
+/* cmp_OB_ListItem 업데이트 (Figma 4670:25730 선택 / 4670:25789 기본) — 03·04·07·09
+   - 기본: 흰 배경, 1px gray/020, 제목 Bold 16/24 body, 설명 숨김. 328×56, 여백 16·20, 모서리 12
+   - 선택: 배경 그대로, 1.5px purple/060, 제목 purple/060, 설명 12/16 Regular muted-alt (제목 아래 4)
+   - 선택지 사이 12, 질문 머리→선택지 28 (화면 기본 간격 20 + 8) */
+#app .options { gap: var(--ds-spacing-md); }
+#app .options > .option,
+#app .options > .option[aria-pressed="true"] { padding: var(--ds-spacing-base) var(--ds-spacing-lg); border-radius: 12px; background: var(--ds-bg-canvas); }
+#app .options > .option::after { border: 1px solid var(--ds-gray-020); }
+#app .options > .option[aria-pressed="true"]::after { border: 1.5px solid var(--ds-purple-060); }
+#app .options > .option strong { color: var(--ds-text-body); }
+#app .options > .option[aria-pressed="true"] strong { color: var(--ds-purple-060); }
+#app .options > .option small { display: none; }
+#app .options > .option[aria-pressed="true"] small:not(:empty) { display: block; color: var(--ds-text-muted-alt); font-weight: var(--ds-font-weight-regular); }
+#app .ob-qhead:has(+ .options) { margin-bottom: calc(28px - var(--ds-spacing-lg)); }
