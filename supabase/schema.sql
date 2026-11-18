@@ -68,6 +68,10 @@ grant insert on public.test_events to anon;
 -- 온보딩 퍼널 (테스터 수):
 --   select event, count(distinct test_id) from public.test_events
 --   where event in ('session_start','onboarding_start','onboarding_done','onboarding_skip') group by event;
+-- 주거 답(housing) 합치기: 2026-11-18부터 '부모.가족과 함께'를 '부모·가족과 함께'(가운뎃점)로 저장해요.
+--   그 전 기록과 같은 답으로 세려면 replace로 합쳐요.
+--   select replace(payload->>'housing', '.', '·') as housing, count(distinct test_id)
+--   from public.test_events where event = 'onboarding_done' group by 1;
 -- 건너뛴 위치 집계:
 --   select payload->>'exit_step' as step, payload->>'exit_field' as field, count(*)
 --   from public.test_events where event = 'onboarding_skip' group by 1, 2 order by 3 desc;
