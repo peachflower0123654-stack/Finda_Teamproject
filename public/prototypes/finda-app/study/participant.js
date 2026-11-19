@@ -1,7 +1,9 @@
 import {studyContext,studyURL} from './plan.mjs';
+import {isTestEntry} from './entry-navigation.mjs';
 
 let current=null,returnFocus=null;
-export const isComparisonStudy=()=>new URLSearchParams(globalThis.location?.search||'').get('study')==='1';
+const independentEntry=()=>isTestEntry('asis')||isTestEntry('tobe');
+export const isComparisonStudy=()=>!independentEntry()&&new URLSearchParams(globalThis.location?.search||'').get('study')==='1';
 export function finishStudyExperience(version=current?.version){
  const context=studyContext(version);
  if(!context)return false;
@@ -27,6 +29,7 @@ export function finishStudyExperience(version=current?.version){
  return true;
 }
 export function mountStudyControls(version){
+ if(independentEntry())return;
  current=studyContext(version);if(!current)return;
  document.title=current.label+' · 핀다 화면 체험';
  document.body.dataset.study='comparison';document.body.dataset.studyVersion=version;

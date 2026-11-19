@@ -25,6 +25,7 @@ export default defineConfig(({ command, mode, isPreview }) => {
 			minify: !emitSourcemaps,
 		},
 		plugins: [
+			findaTestEntries(),
 			react(),
 			figmaSiteConfiguration(siteConfiguration),
 			figmaErrorOverlayReplay(),
@@ -52,6 +53,22 @@ export default defineConfig(({ command, mode, isPreview }) => {
 		},
 	};
 });
+
+// Public HTML is copied as-is for Pages. In dev, Vite needs the explicit file
+// internally so its SPA fallback does not redirect /asis/ or /tobe/ to the root.
+function findaTestEntries(): Plugin {
+	return {
+		name: 'finda-test-entry-paths',
+		configureServer(server) {
+			server.middlewares.use((req, _res, next) => {
+				const url = new URL(req.url || '/', 'http://localhost');
+				const entry = /^\/(asis|tobe)\/?$/.exec(url.pathname);
+				if (entry) req.url = '/' + entry[1] + '/index.html' + url.search;
+				next();
+			});
+		},
+	};
+}
 
 type FigmaSiteConfiguration = {
 	title?: string;

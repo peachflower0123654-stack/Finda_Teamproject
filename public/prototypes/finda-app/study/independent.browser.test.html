@@ -1,0 +1,104 @@
+<!doctype html><html lang="ko"><meta charset="UTF-8"><link rel="icon" href="data:,"><title>Independent entry checks</title>
+<style>body{margin:0;font:12px/1.5 monospace}iframe{width:760px;height:900px;border:0}pre{white-space:pre-wrap}</style>
+<iframe title="독립 테스트 진입 검사"></iframe><pre id="report">RUNNING</pre><script type="module">
+const frame=document.querySelector('iframe'),checks=[],runtimeErrors=[];
+const doc=()=>frame.contentDocument,win=()=>frame.contentWindow;
+const root=()=>doc().querySelector('#app,#asis-app');
+const route=()=>new URL(win().location.href).searchParams.get('screen');
+const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+const stored=()=>JSON.stringify(Object.keys(localStorage).sort().map(key=>[key,localStorage.getItem(key)]));
+function check(ok,label){checks.push({pass:!!ok,label});if(!ok)throw new Error(label);}
+async function until(fn,label){for(let i=0;i<500;i++){if(fn())return;await wait(20);}throw new Error('Timeout: '+label);}
+const urls=Object.fromEntries(['asis','tobe'].map(version=>[version,new URL('../../../'+version+'/',location.href)]));
+const requestedVariant=new URLSearchParams(location.search).get('variant');
+const variants=['asis','tobe'].includes(requestedVariant)?[requestedVariant]:['asis','tobe'];
+async function load(url){
+ await new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(new Error('Load timeout')),20000);frame.onload=()=>{clearTimeout(timer);resolve();};frame.src=url;});
+ await until(()=>doc().body.dataset.entryReady==='true','entry ready');
+ win().addEventListener('error',e=>runtimeErrors.push(e.message||'resource error'));
+ win().addEventListener('unhandledrejection',e=>runtimeErrors.push(String(e.reason)));
+ await doc().fonts.ready;
+}
+async function reload(){
+ await new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(new Error('Reload timeout')),20000);frame.onload=()=>{clearTimeout(timer);resolve();};win().location.reload();});
+ await until(()=>doc().body.dataset.entryReady==='true','reload ready');await doc().fonts.ready;
+}
+async function images(label){
+ await Promise.all([...doc().images].map(image=>image.decode().catch(()=>{})));
+ check([...doc().images].every(image=>image.naturalWidth>0),label+' images');
+ const missing=win().performance.getEntriesByType('resource').filter(resource=>resource.responseStatus>=400&&!resource.name.endsWith('/supabase-config.js'));
+ check(missing.length===0,label+' resources');
+}
+function click(selector){const target=root().querySelector(selector);check(!!target,'control '+selector);target.click();}
+try{
+ for(const version of variants){
+  const before=stored();
+  const start=new URL(urls[version]);start.search='lwt=true&study=1&first=asis';await load(start);
+  check(route()==='home',version+' begins at home');
+  check(doc().body.dataset.mode==='test',version+' participant mode');
+  check(!doc().querySelector('.study-toolbar,[data-study-next]'),version+' never enters combined comparison');
+  const panel=doc().querySelector('#preview,#asis-preview');
+  check(win().getComputedStyle(panel).display==='none',version+' review hidden');
+  check(win().location.pathname===urls[version].pathname,version+' public URL retained');
+  check(new URL(win().location.href).searchParams.get('lwt')==='true',version+' Maze parameter retained');
+  check(win().history.state.findaTestEntry.variant===version,version+' history snapshot isolated');
+  await images(version+' home');
+  click('[data-bottom-nav="all"]');check(route()==='all',version+' All URL');await images(version+' all');
+  click('[aria-label="대출 받기"]');check(route()==='find-loan',version+' loan URL');await images(version+' loan');
+  win().history.back();await until(()=>route()==='all',version+' browser Back');
+  check(!!root().querySelector('[data-bottom-nav="all"]'),version+' Back restores screen');
+  win().history.forward();await until(()=>route()==='find-loan',version+' browser Forward');
+  await reload();check(route()==='find-loan',version+' Reload retains screen');await images(version+' reloaded loan');
+  click('[aria-label="뒤로가기"]');check(route()==='all',version+' app Back retains origin');
+  click('[data-bottom-nav="point"]');check(route()==='point',version+' Point URL');await images(version+' point');
+  await reload();check(route()==='point',version+' Point reload');
+  click('[data-bottom-nav="home"]');check(route()==='home',version+' home return');
+  check(!root().querySelector('a[href*="/asis/"],a[href*="/tobe/"]'),version+' no cross-version app links');
+  if(version==='asis')check(stored()===before,'As-is does not create or change collection storage');
+ }
+ const participant=localStorage.getItem('finda.testId'),beforePosts=stored();
+ if(variants.includes('tobe'))check(!!participant,'existing To-be participant ID created');
+ if(variants.includes('asis')){
+ await load(new URL('?screen=posts',urls.asis));await images('As-is direct posts');
+ check(route()==='posts'&&!!root().querySelector('.asis-post-scroll'),'As-is posts direct access');
+ const chips=root().querySelectorAll('.asis-post-category-slot [role="button"]');
+ check(chips.length>1,'As-is category chips');chips[1].click();
+ check(root().querySelectorAll('[data-post-id]').length>0,'As-is category content');
+ click('[aria-label="뒤로가기"]');check(route()==='all','As-is posts returns to All');
+ check(stored()===beforePosts,'As-is preserves the To-be participant ID, draft and queue');
+ }
+ if(variants.includes('tobe')){
+ await load(new URL('?screen=home-loan',urls.tobe));
+ check(!!root().querySelector('.cohort-card'),'To-be cohort home unchanged');
+ click('[aria-label="대출받기"]');check(route()==='find-loan','To-be home loan card');
+ await reload();click('[aria-label="뒤로가기"]');check(route()==='home-loan','To-be home origin survives reload');
+ await load(new URL('?screen=onboarding-02',urls.tobe));
+ check(!!root().querySelector('[data-action="next"]'),'To-be direct intro');
+ click('[data-action="next"]');click('[data-action="next"]');click('[data-action="next"]');
+ check(!!root().querySelector('[data-consent="service"]'),'To-be consent sheet after three slides');
+ await load(new URL('?screen=result-NoLoan',urls.tobe));click('[data-action="next"]');
+ check(root().dataset.homeState==='OB_NoMD','To-be result reaches personalized home');
+ click('.quick-menu-button');check(!!root().querySelector('.quick-menu-edit'),'To-be quick menu');
+ click('.quick-menu-edit');check(!!root().querySelector('.qm-done'),'To-be quick menu editor');
+ }
+ if(variants.includes('asis')){
+ await load(new URL('?screen=../../tobe/',urls.asis));check(route()==='home','invalid route falls back to As-is home');
+ }
+ if(variants.includes('tobe')){
+ await load(new URL('?screen=refinance',urls.tobe));await images('To-be direct refinance');
+ }
+ frame.style.width='320px';frame.style.height='640px';win().dispatchEvent(new Event('resize'));await wait(30);
+ if(variants.includes('tobe'))check(doc().documentElement.scrollWidth<=320,'To-be mobile width');
+ if(variants.includes('asis')){await load(urls.asis);check(doc().documentElement.scrollWidth<=320,'As-is mobile width');}
+ if(variants.includes('tobe')){
+ check(localStorage.getItem('finda.testId')===participant,'participant ID unchanged across both versions');
+ const sessions=JSON.parse(localStorage.getItem('finda.pendingTestEvents')||'[]').filter(row=>row.event==='session_start');
+ check(sessions.length>0&&sessions.every(row=>row.payload.variant==='tobe'&&row.payload.study===false),'existing session event contract retained');
+ }
+ check(runtimeErrors.length===0,'no observed runtime errors');
+}catch(error){checks.push({pass:false,label:String(error.stack||error)});}
+const result={passed:checks.filter(c=>c.pass).length,failed:checks.filter(c=>!c.pass),runtimeErrors};
+document.querySelector('#report').textContent=JSON.stringify(result,null,2);
+document.title=result.failed.length?'FAIL Independent entries':'PASS Independent entries';
+if(new URLSearchParams(location.search).has('view')){frame.style.width='390px';frame.style.height='844px';frame.src=urls[new URLSearchParams(location.search).get('view')==='tobe'?'tobe':'asis'];}
+</script></html>
