@@ -211,19 +211,25 @@
 .ob-step strong { font-size: var(--ds-font-size-14); line-height: var(--ds-line-height-20); color: var(--ds-text-ink); }
 .ob-step .progress { margin-top: 0; }
 
-/* cmp_Common_Keypad — Figma 2638:18273 (폭 360). 화면 아래에 붙는다.
-   구성: 퀵 버튼 줄(금액 입력일 때만) → 3×4 숫자 격자 → 다음 버튼(ButtonPair, 이전 없음) → 하단 48px 여백. 전체 높이 424px(퀵 버튼 없으면 366px).
+/* cmp_Common_Keypad — Figma 4739:23818·23819 (폭 360). 화면 아래에 붙는다.
+   퀵 버튼 58 → 숫자 격자 230 → 간격 16 → 다음 버튼 56 → 간격 16 → 하단 슬롯 48.
+   본문 높이 370에는 슬롯 뒤 잔여 4px가 포함된다(Figma의 424px 프레임 밖 4px까지 표시).
    격자 선 색 #e5e5e5는 시안이 토큰 없이 직접 지정한 값이다. */
-.cmp-keypad { display: flex; flex-direction: column; align-self: stretch; margin: auto -16px -16px; background: var(--ds-bg-canvas); }
-.cmp-keypad__quick { display: flex; align-items: center; gap: var(--ds-spacing-sm); padding: var(--ds-spacing-sm) var(--ds-spacing-base); background: var(--ds-surface-alt); }
+.cmp-keypad { display: flex; flex: 0 0 auto; flex-direction: column; align-self: stretch; margin: auto -16px -16px; background: var(--ds-bg-canvas); }
+.cmp-keypad__quick { display: flex; flex: 0 0 58px; align-items: center; gap: var(--ds-spacing-sm); padding: var(--ds-spacing-sm) var(--ds-spacing-md); background: var(--ds-surface-alt); }
 .cmp-keypad__chip {
   flex-shrink: 0; white-space: nowrap; text-align: center; cursor: pointer;
   padding: var(--ds-spacing-sm) var(--ds-spacing-base) var(--ds-spacing-md);
   border: 1px solid var(--ds-line-hairline); border-radius: var(--ds-radius-full); background: var(--ds-bg-canvas);
   color: var(--ds-text-muted); font: 600 var(--ds-font-size-14)/normal var(--ds-font-base);
 }
-.cmp-keypad__body { display: flex; flex-direction: column; gap: var(--ds-spacing-base); background: var(--ds-bg-canvas); }
-.cmp-keypad__body::after { content: ""; display: block; height: 48px; }
+.cmp-keypad__chip[data-add="100000000"] { width: var(--ds-spacing-section); }
+.cmp-keypad__chip[data-add="10000000"] { width: 88px; }
+.cmp-keypad__chip:is([data-add="5000000"], [data-add="1000000"]) { width: 80px; }
+.cmp-keypad__chip:is([data-add="500000"], [data-add="100000"]) { width: 72px; }
+.cmp-keypad__body { display: flex; flex: 0 0 370px; flex-direction: column; gap: var(--ds-spacing-base); padding-bottom: var(--ds-spacing-xs); background: var(--ds-bg-canvas); }
+.cmp-keypad__body > * { flex-shrink: 0; }
+.cmp-keypad__body::after { content: ""; display: block; flex: 0 0 var(--ds-spacing-xxl); }
 .cmp-keypad__keys {
   display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); grid-template-rows: repeat(4, minmax(0, 1fr)); height: 230px;
   border-top: 1px solid #e5e5e5; border-left: 1px solid #e5e5e5;
@@ -233,6 +239,9 @@
   background: var(--ds-bg-canvas); color: var(--ds-text-ink-pure); letter-spacing: 0.4px;
   font: var(--ds-font-weight-bold) var(--ds-font-size-24)/var(--ds-line-height-36) var(--ds-font-base);
 }
+.cmp-keypad__key > span { transform: translateY(3.5px); }
+.cmp-keypad__key[data-key="00"] > span { transform: translateY(1.5px); }
+.cmp-keypad__key > img { width: 32px; height: 32px; }
 .cmp-keypad__action { margin-top: 0; padding: 0 var(--ds-spacing-base); }
 .cmp-keypad .actions { padding-bottom: 0; }
 
@@ -422,8 +431,7 @@
 @keyframes intro-fade { from { opacity: 0; } to { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { #app .intro-dim, #app .intro-sheet { animation: none; } }
 
-/* 06·08 키패드를 내렸을 때: 하단에 [다음]만 (키패드의 버튼 영역과 같은 여백) */
-#app .cmp-keypad-cta { margin-top: auto; padding-bottom: var(--ds-spacing-36); background: transparent; } /* 다른 온보딩 화면 CTA와 같은 아래 36 */
+/* Figma 4739:23818·23819: 버튼 뒤 간격 16 + 하단 슬롯 48 + 본문 잔여 4.
+   키패드를 닫아도 [다음]의 위치는 유지한다. */
+#app .cmp-keypad-cta { margin-top: auto; padding-bottom: calc(var(--ds-spacing-base) + var(--ds-spacing-xxl) + var(--ds-spacing-xs)); background: transparent; }
 #app .cmp-keypad-cta .actions { margin-top: 0; padding: 0 var(--ds-spacing-base); }
-/* 키패드 열림·닫힘 모두 [다음] 아래 간격 36 (키패드 본문 간격 16 + 아래 여백 20) */
-#app .cmp-keypad__body::after { height: calc(var(--ds-spacing-36) - var(--ds-spacing-base)); }
