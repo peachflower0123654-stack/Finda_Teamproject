@@ -9,6 +9,7 @@ import {showExploreDone,atScrollEnd,EXIT_POINTS,isExitPost,postClickPayload,MY_C
 import {existingScreen,existingScreenName,wireExistingScreen} from './existing-screens.js';
 import {showTestScopeNotice} from './test-scope-notice.js';
 import {cohortCard,cohortView} from './cohort-card.js';
+import {openCohortSheet,sourceSheetView,ageSheetView,editSheetView,AGE_AFF} from './cohort-sheet.js';
 import {mountStudyControls,isComparisonStudy} from './study/participant.js';
 import {homeDesigns} from './home-design.js';
 import {consentScreen,toggleConsent} from './consent.js';
@@ -205,7 +206,7 @@ function cohortInput(){
  if(state.homeState==='NoOB_NoMD')return {stage:'none'};
  if(state.homeState==='InOB_NoMD'){const d=loadDraft();return {stage:'draft',answers:d?.answers||{},resumeStep:d?.resume?.step};}
  const p=postProfile();
- return {stage:'done',answers:{affiliation:state.affiliation||AFFILIATIONS[p.a],housing:state.housing||HOUSINGS[p.h],has_loan:state.ownership??p.n>0,loan_count:state.count||(p.n===2?3:1),extra_loan:state.interest,loan_purpose:state.purpose,no_loan_plan:state.noPlan,desired_amount:state.amount}};
+ return {stage:'done',age:state.cohortAge,answers:{affiliation:state.affiliation||AFFILIATIONS[p.a],housing:state.housing||HOUSINGS[p.h],has_loan:state.ownership??p.n>0,loan_count:state.count||(p.n===2?3:1),extra_loan:state.interest,loan_purpose:state.purpose,no_loan_plan:state.noPlan,desired_amount:state.amount}};
 }
 function placeCohortCard(shell){
  if(state.tab!=='Loan')return;
@@ -218,7 +219,31 @@ function placeCohortCard(shell){
   if(k==='start'){state.screen='02';state.review=false;render();}
   else if(k==='resume'||k==='loanInfo')resumeOnboarding();
   else if(k==='rate'){state=openAiRate(state);render();}
+  else if(k==='info')openCohortSheet(app,sourceSheetView(cohortCard(cohortInput()),b.dataset.num),{trigger:b});
+  else if(k==='age')openAgeSheet(b);
+  else if(k==='edit')openEditSheet(b);
   else showTestScopeNotice(app);});
+}
+// 코호트 바텀시트(cohort-sheet.js). 시트를 닫을 때 홈을 다시 그려 카드에 바뀐 값을 반영해요(스크롤 위치는 그대로).
+function rerenderHome(){const v=app.querySelector('.figma-home-viewport');if(v)homeScroll[state.tab]=v.scrollTop;render();}
+function openAgeSheet(trigger){
+ openCohortSheet(app,ageSheetView(state.cohortAge||''),{trigger,onClose:rerenderHome,onAction:(b,api)=>{if(b.dataset.cs!=='age')return;state={...state,cohortAge:b.dataset.value};api.close();}});
+}
+function editAnswers(){const {answers:a}=cohortInput();return {...a,principal:state.principal,monthly:state.monthly,age:state.cohortAge||''};}
+function openEditSheet(trigger){
+ let open=null;
+ const view=()=>editSheetView(editAnswers(),open);
+ const sheet=openCohortSheet(app,view(),{trigger,onAction:b=>handlers[b.dataset.cs]?.(b),onClose:rerenderHome});
+ const redraw=focus=>sheet.show(view(),{focus});
+ // 소속·주거·대출 모두 칩을 누르는 즉시 저장하고 펼친 상태는 유지해요(줄을 다시 눌러 닫음). 온보딩 화면으로는 보내지 않아요.
+ const handlers={
+  row(b){const r=b.dataset.row;if(r==='age'){handlers.age=x=>{state={...state,cohortAge:x.dataset.value};open=null;redraw('[data-row="age"]');};sheet.show(ageSheetView(state.cohortAge||''),{focus:'[aria-checked="true"]'});return;}open=open===r?null:r;redraw(`[data-row="${r}"]`);},
+  pick(b){const r=b.dataset.row,v=b.dataset.value,pp=state.postProfile;
+   if(r==='aff'){const i=AFFILIATIONS.indexOf(v);state={...state,affiliation:v,postProfile:pp?{...pp,a:i}:null,cohortAge:AGE_AFF.includes(v)?state.cohortAge:''};}
+   else if(r==='house'){const i=HOUSINGS.indexOf(v);state={...state,housing:v,postProfile:pp?{...pp,h:i}:null};}
+   else if(r==='loan'){const has=v==='있음';if(has!==editAnswers().has_loan)state={...selectOwnership(state,has),postProfile:pp?{...pp,n:has?(pp.n||1):0}:null};}
+   redraw(`[data-cs="pick"][data-row="${r}"][aria-pressed="true"]`);},
+ };
 }
 function wireHomeDesign(){
  // 간단한 HTML 홈(InOB 등)의 배너 버튼도 테스트 범위 안내로 연결해요.

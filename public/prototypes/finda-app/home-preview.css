@@ -39,12 +39,13 @@
 
 /* 코호트 프리뷰 v6 카드 (cohort_v6.html 최종안) — 핀다대출 탭 맨 위, 328 폭 */
 #app .cohort-card { width: 328px; flex-shrink: 0; box-sizing: border-box; display: flex; flex-direction: column; gap: 12px; padding: 20px; background: var(--ds-bg-canvas); border-radius: 16px; box-shadow: 0 4px 16px rgba(0,0,0,.06); font-family: var(--ds-font-base); }
-#app .cohort-card__eyebrow { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 12px; line-height: 18px; color: var(--ds-text-muted); }
-#app .cohort-card__prog { flex-shrink: 0; font-size: 11px; font-weight: 500; color: var(--ds-purple-070); background: var(--ds-purple-010); border-radius: 60px; padding: 1px 8px; }
-#app .cohort-card__edit { flex-shrink: 0; padding: 0; border: 0; background: none; font: 500 12px/18px var(--ds-font-base); color: var(--ds-text-muted); cursor: pointer; }
-#app .cohort-card__title { margin: -4px 0 0; font: 700 24px/36px var(--ds-font-base); color: var(--ds-text-ink); }
-#app .cohort-card__box { position: relative; display: flex; flex-direction: column; gap: 10px; padding: 14px 16px; background: var(--ds-gray-010); border-radius: 12px; }
-#app .cohort-card__info { position: absolute; top: 10px; right: 12px; padding: 2px; border: 0; background: none; font-size: 14px; line-height: 1; color: var(--ds-gray-040); cursor: pointer; }
+#app .cohort-card__head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 8px; } /* 카드 gap 12 + 8 = 제목과 통계 상자 사이 20 */
+#app .cohort-card__prog { flex-shrink: 0; margin-top: 6px; font-size: 11px; font-weight: 500; color: var(--ds-purple-070); background: var(--ds-purple-010); border-radius: 60px; padding: 1px 8px; }
+#app .cohort-card__edit { flex-shrink: 0; margin-top: 4px; padding: 0; border: 0; background: none; font: 500 12px/18px var(--ds-font-base); color: var(--ds-text-muted); cursor: pointer; }
+#app .cohort-card__title { margin: 0; font: 700 24px/36px var(--ds-font-base); color: var(--ds-text-ink); }
+#app .cohort-card__box { display: flex; flex-direction: column; gap: 10px; padding: 14px 16px; background: var(--ds-gray-010); border-radius: 12px; }
+#app .cohort-card__val { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
+#app .cohort-card__info { display: flex; flex-shrink: 0; padding: 0; border: 0; background: none; color: var(--ds-gray-040); cursor: pointer; }
 #app .cohort-card__lbl { margin: 0; font-size: 13px; line-height: 18px; color: var(--ds-text-muted); }
 #app .cohort-card__num { margin: 0; font-size: 20px; line-height: 28px; font-weight: 700; color: var(--ds-text-ink); }
 #app .cohort-card__num.is-placeholder { color: var(--ds-gray-040); }
@@ -52,3 +53,42 @@
 #app .cohort-card__link { align-self: flex-start; padding: 0; border: 0; background: none; font: 500 13px/18px var(--ds-font-base); color: var(--ds-primary); cursor: pointer; }
 #app .cohort-card__btn { width: 100%; padding: 13px 0; border: 0; border-radius: 24px; background: var(--ds-primary); color: #fff; font: 700 15px/22px var(--ds-font-base); cursor: pointer; }
 #app .cohort-card__cap { margin: -4px 0 0; text-align: center; font-size: 11px; line-height: 16px; color: var(--ds-text-muted); }
+
+/* 코호트 프리뷰 v6 바텀시트 (cohort-sheet.js, cohort_v6.html 5. 바텀시트) — #app 위 딤 + 아래 시트 / 가운데 팝업 */
+#app .cohort-sheet-overlay { position: absolute; inset: 0; z-index: 100; display: flex; flex-direction: column; justify-content: flex-end; font-family: var(--ds-font-base); }
+#app .cohort-sheet-dim { position: absolute; inset: 0; padding: 0; border: 0; border-radius: 0; background: rgba(1,10,38,.4); cursor: pointer; animation: intro-fade .2s ease-out; }
+#app .cohort-sheet { position: relative; max-height: 88%; overflow-y: auto; padding: 12px 20px 24px; background: var(--ds-bg-canvas); border-radius: 20px 20px 0 0; box-shadow: 0 -4px 20px rgba(0,0,0,.08); }
+#app .cohort-sheet.is-entering { animation: intro-up .25s ease-out; }
+#app .cohort-sheet.is-popup { align-self: center; margin: auto; width: 300px; padding: 22px 20px 16px; border-radius: 16px; box-shadow: 0 8px 30px rgba(0,0,0,.15); }
+#app .cohort-sheet__grab { display: block; width: 36px; height: 4px; margin: 0 auto 16px; border-radius: 2px; background: var(--ds-gray-030); }
+#app .cohort-sheet__title { margin: 0; font: 700 20px/30px var(--ds-font-base); color: var(--ds-text-ink); letter-spacing: 0; }
+#app .cohort-sheet__sub { margin: 4px 0 0; font-size: 14px; line-height: 20px; color: var(--ds-text-body); }
+#app .cohort-sheet__sub.is-next { margin-top: 0; }
+#app .cohort-sheet__divider { height: 1px; margin: 20px 0 16px; background: var(--ds-gray-020); }
+#app .cohort-sheet__kv { display: grid; grid-template-columns: 72px 1fr; gap: 10px 12px; margin: 16px 0 0; font-size: 14px; line-height: 20px; }
+#app .cohort-sheet__kv dt { color: var(--ds-text-muted); }
+#app .cohort-sheet__kv dd { margin: 0; color: var(--ds-text-ink); }
+#app .cohort-sheet__kv small { font-size: 12px; color: var(--ds-text-muted); }
+#app .cohort-sheet__line { display: block; width: 100%; height: auto; margin-top: 14px; }
+#app .cohort-sheet__explain { margin-top: 16px; padding: 12px 14px; border-radius: 12px; background: var(--ds-gray-010); font-size: 13px; line-height: 1.6; color: var(--ds-text-body); }
+#app .cohort-sheet__cta { width: 100%; height: 52px; margin-top: 20px; border: 0; border-radius: 999px; background: var(--ds-primary); color: #fff; font: 700 16px/24px var(--ds-font-base); }
+#app .cohort-sheet__rows { display: flex; flex-direction: column; margin-top: 8px; }
+#app .cohort-sheet__row { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 0; padding: 14px 0; border: 0; border-bottom: 1px solid var(--ds-gray-020); border-radius: 0; background: none; text-align: left; color: var(--ds-text-ink); }
+#app .cohort-sheet__row:last-child, #app .cohort-sheet__row.is-open { border-bottom: 0; }
+#app .cohort-sheet__row.is-open { padding-bottom: 8px; }
+#app .cohort-sheet__k { flex-shrink: 0; font-size: 14px; color: var(--ds-text-muted); }
+#app .cohort-sheet__v { font-size: 16px; font-weight: 500; text-align: right; }
+#app .cohort-sheet__v i { font-style: normal; color: var(--ds-text-muted); }
+#app .cohort-sheet__v small { display: block; font-size: 12px; font-weight: 400; color: var(--ds-text-muted); }
+#app .cohort-sheet__chips { display: flex; flex-wrap: wrap; gap: 6px; padding: 4px 0 14px; border-bottom: 1px solid var(--ds-gray-020); }
+#app .cohort-sheet__chip { min-height: 0; padding: 6px 12px; border: 1px solid var(--ds-gray-020); border-radius: 60px; background: #fff; font-size: 13px; line-height: 18px; color: var(--ds-text-body); }
+#app .cohort-sheet__chip[aria-pressed="true"] { border-color: var(--ds-purple-010); background: var(--ds-purple-010); color: var(--ds-purple-070); font-weight: 700; }
+#app .cohort-sheet__opts { display: flex; flex-direction: column; margin-top: 8px; }
+#app .cohort-sheet__opt { display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 13px 0; border: 0; border-bottom: 1px solid var(--ds-gray-020); border-radius: 0; background: none; font-size: 16px; text-align: left; color: var(--ds-text-ink); }
+#app .cohort-sheet__opt:last-child { border-bottom: 0; }
+#app .cohort-sheet__opt small { margin-left: 6px; font-size: 12px; color: var(--ds-text-muted); font-weight: 400; }
+#app .cohort-sheet__opt[aria-checked="true"] { color: var(--ds-primary); font-weight: 700; }
+#app .cohort-sheet__radio { flex-shrink: 0; box-sizing: border-box; width: 22px; height: 22px; border: 2px solid var(--ds-gray-030); border-radius: 50%; }
+#app .cohort-sheet__opt[aria-checked="true"] .cohort-sheet__radio { border: 7px solid var(--ds-primary); }
+#app .cohort-sheet__cap { margin: 10px 0 0; text-align: center; font-size: 11px; line-height: 16px; color: var(--ds-text-muted); }
+@media (prefers-reduced-motion: reduce) { #app .cohort-sheet-dim, #app .cohort-sheet.is-entering { animation: none; } }
