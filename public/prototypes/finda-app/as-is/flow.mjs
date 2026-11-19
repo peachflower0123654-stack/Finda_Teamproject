@@ -9,7 +9,7 @@ export const asIsScreens = [
  ["consent", "Finda_OB_05", "4418:4262"],
  ["verify", "Finda_OB_06", "4418:4263"],
  ["signing", "Finda_OB_07", "4418:4264"],
- ["home", "Finda_Home", "4418:4265"],
+ ["home", "Finda_Home", "4753:23787"],
  ["point", "Finda_Point", "4418:4270"],
  ["all", "Finda_All", "4418:4271"],
  ["find-loan", "Finda_FindLoan", "4500:6614"],
