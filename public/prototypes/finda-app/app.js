@@ -1,4 +1,6 @@
 import {screenSelector,screenKey,selectScreen} from './screen-catalog.js';
+import {isTestEntry,createTestNavigation} from './study/entry-navigation.mjs';
+import {toBeRoute,toBeState} from './study/tobe-entry.mjs';
 import {aiRateName,aiRateIntro,aiRateConsentSheet,aiRateLoading,aiRateScreen,wireAiRate} from './ai-rate.js';
 import {quickMenuButton,wireQuickMenuButtons} from './quick-menu-button.js';
 import {closeQuickMenu,openQuickMenu} from './quick-menu-dialog.js';
@@ -18,11 +20,13 @@ import {bottomBar,applyBottomBar,wireBottomBars} from './bottom-bar.js';
 import {sendTestEvent,flushPendingTestEvents} from './test-data.js';
 import {draftKey,readDraft,writeDraft,clearDraft,newDraft,saveStep,trackOf,eventPayload,restoreState,exitField} from './onboarding-draft.js';
 let state=initial(),bottomBarSelection='home';
+let testNavigation=null;
 let lastIntroSlide=-1;
 let keypadOpen=true,keypadScreen=''; // 06·08 키패드 열림 상태(화면이 바뀌면 다시 열림) // 02 약관 시트는 처음 열릴 때만 올라오는 애니메이션
 let homeScroll={Asset:0,Loan:0},existingScroll={point:0,all:0};
 const app=document.querySelector('#app'),panel=document.querySelector('#preview');
-const participantMode=new URLSearchParams(location.search).get('mode')==='test';
+const isolatedEntry=isTestEntry('tobe');
+const participantMode=isolatedEntry||new URLSearchParams(location.search).get('mode')==='test';
 document.body.dataset.mode=participantMode?'test':'review';
 // 온보딩 임시 저장: 참가자 링크는 finda.study.v1, 그 외는 finda.dev.v1 키를 써요.
 const DRAFT_KEY=draftKey(participantMode),store=(()=>{try{return localStorage;}catch{return null;}})();
@@ -131,6 +135,7 @@ function render(focus){if(state.screen!==keypadScreen){keypadScreen=state.screen
  const selected=state.screen==='10'?'result:'+state.result:state.screen==='11'?'home:'+state.homeState:'';
  panel.innerHTML=`<code>${name()}</code><label for="state-review">상태선택</label><select id="state-review"><option value="">상태선택</option><optgroup label="결과">${['HasLoan','HasLoanUnavailable','NoLoan'].map(v=>'<option value="result:'+v+'" '+(selected==='result:'+v?'selected':'')+'>'+v+'</option>').join('')}</optgroup><optgroup label="홈">${['NoOB_NoMD','InOB_NoMD','OB_NoMD','OB_MD'].map(v=>'<option value="home:'+v+'" '+(selected==='home:'+v?'selected':'')+'>'+v+'</option>').join('')}</optgroup></select>${screenSelector(state)}<div class="preview-navigation"><button data-preview="back" ${(state.screen==='00'||(state.screen==='11'&&state.homeState!=='OB_MD'))?'disabled':''}>이전</button><button data-preview="continue" ${canNext?'':'disabled'}>다음</button></div><div><button data-preview="reset">처음부터</button></div>${postControls()}`;
  if(focus)app.querySelector(`[data-field="${focus}"]`)?.focus();
+ testNavigation?.record(state);
 }
 
 let activeField='count';
@@ -151,15 +156,6 @@ function closeAiRateSheet(){state=back(state);render();app.querySelector('.ai-ra
 function syncPreviewName(){app.dataset.screen=name();const frame=panel.querySelector('code');if(frame)frame.textContent=name();const selector=panel.querySelector('#screen-review');if(selector)selector.value=screenKey(state);}
 panel.addEventListener('change',e=>{if(e.target.dataset.post){state={...state,postProfile:{...postProfile(),[e.target.dataset.post]:Number(e.target.value)}};render();panel.querySelector('#post-'+e.target.dataset.post)?.focus();}});
 panel.addEventListener('change',e=>{if(e.target.id==='state-review'&&e.target.value){const [kind,value]=e.target.value.split(':');state=kind==='home'?{...state,screen:'11',homeState:value,tab:'Asset',review:true}:{...state,screen:'10',result:value,review:!(state.screen==='07'&&state.interest)};render();}});
-const requestedScreen=new URLSearchParams(location.search).get('screen');
-if(!participantMode&&['existing:point','existing:all','existing:find-loan','existing:refinance','home:Loan:NoOB_NoMD','home:Loan:OB_NoMD'].includes(requestedScreen))state=selectScreen(state,requestedScreen);
-mountStudyControls('tobe');
-render();
-// 진입: 참가자 링크(?mode=test)로 연 순간마다 보내요(새로고침 포함). 사람 수는 test_id로 세요.
-// variant는 지금 To-be만 보내요(As-is 기록은 나중에). 보내면서 지난 접속 때 못 보낸 이벤트도 같이 다시 보내요.
-if(participantMode){const params=new URLSearchParams(location.search);sendTestEvent('session_start',{variant:'tobe',study:isComparisonStudy(),first:params.get('first')});}
-else flushPendingTestEvents();
-
 app.addEventListener('change',e=>{if(e.target.hasAttribute('data-no-plan')){state=toggleNoPlan(state,e.target.checked);render(state.noPlan?null:'amount');if(state.noPlan)showNoPlanToast();else app.querySelector(':scope > .no-plan-toast')?.remove();app.querySelector('[data-no-plan]')?.focus();return;}if(e.target.dataset.consent){state={...state,consent:toggleConsent(state.consent,e.target.dataset.consent)};render();app.querySelector('[data-consent="'+e.target.dataset.consent+'"]')?.focus();}});
 
 // cmp_Home_Banner(Figma 3172:19812, "OOO님, 대출이 있는데 안보이나요?")는 모든 홈의 MY금융 탭에서만 내용 맨 위에 보여요(11.18).
@@ -289,3 +285,19 @@ app.addEventListener('quick-menu-view',e=>{
  const selector=panel.querySelector('#screen-review');if(selector)selector.value=e.detail||screenKey(state);
  const frame=panel.querySelector('code');if(frame)frame.textContent=e.detail==='popup:quick-add'?'퀵메뉴 편집':e.detail==='popup:quick-menu'?'메뉴 즐겨찾기':name();
 });
+
+// Initialize after the home helpers/constants above: the independent entry starts at home.
+const requestedScreen=new URLSearchParams(location.search).get('screen');
+if(!participantMode&&['existing:point','existing:all','existing:find-loan','existing:refinance','home:Loan:NoOB_NoMD','home:Loan:OB_NoMD'].includes(requestedScreen))state=selectScreen(state,requestedScreen);
+if(isolatedEntry){
+ const home={...initial(),screen:'11',homeState:loadDraft()?'InOB_NoMD':'NoOB_NoMD',tab:'Asset'};
+ testNavigation=createTestNavigation({variant:'tobe',routeOf:toBeRoute,stateFor:route=>toBeState(route,home),onRestore:s=>{
+  state=s;if(state.screen==='06')activeField=['count','principal','monthly'][state.revealed-1];render();
+ }});
+ state=testNavigation.initial();
+}
+mountStudyControls('tobe');
+render();
+// Existing collection contract: only To-be sends session_start, with the same payload.
+if(participantMode){const params=new URLSearchParams(location.search);sendTestEvent('session_start',{variant:'tobe',study:isComparisonStudy(),first:params.get('first')});}
+else flushPendingTestEvents();
