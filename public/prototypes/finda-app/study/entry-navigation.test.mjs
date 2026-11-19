@@ -21,6 +21,29 @@ const allowed=new Set(['home','all','find-loan']);
 const routeOf=state=>allowed.has(state.screen)?state.screen:null;
 const stateFor=route=>({...home,screen:allowed.has(route)?route:'home'});
 
+test('As-is starts onboarding by default and retains progress on Reload and Back/Forward',()=>{
+ const browser=fakeBrowser('https://example.github.io/Finda_Teamproject/asis/?lwt=true');
+ const screens=new Set(['splash','intro','security','home']);
+ let navigation,state;
+ const options={variant:'asis',defaultRoute:'splash',browser,
+  routeOf:s=>screens.has(s.screen)?s.screen:null,
+  stateFor:screen=>({screen:screens.has(screen)?screen:'home',history:[],review:false}),
+  onRestore:s=>{state=s;navigation.record(s);},
+ };
+ navigation=createTestNavigation(options);state=navigation.initial();
+ assert.equal(state.screen,'splash');
+ assert.equal(browser.location.searchParams.get('lwt'),'true');
+ state={screen:'intro',history:['splash'],review:false};navigation.record(state);
+ navigation.record({screen:'security',history:['splash','intro'],review:false});
+ browser.history.back();assert.equal(state.screen,'intro');
+ browser.history.forward();assert.equal(state.screen,'security');
+ navigation.destroy();navigation=createTestNavigation(options);
+ assert.deepEqual(navigation.initial(),{screen:'security',history:['splash','intro'],review:false});
+ const direct=fakeBrowser('https://example.test/asis/?screen=home');
+ const explicit=createTestNavigation({...options,browser:direct});
+ assert.equal(explicit.initial().screen,'home');
+});
+
 test('direct screen URLs stay in the entry and preserve Maze query parameters',()=>{
  const browser=fakeBrowser('https://example.github.io/Finda_Teamproject/tobe/?lwt=true&screen=all');
  const navigation=createTestNavigation({variant:'tobe',routeOf,stateFor,onRestore(){},browser});
