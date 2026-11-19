@@ -265,7 +265,7 @@ document.addEventListener("keydown",event=>{
 window.addEventListener("resize",fit);
 if(isolatedEntry){
  const allowed=new Set(asIsScreens.map(([key])=>key));
- testNavigation=createTestNavigation({variant:'asis',routeOf:s=>allowed.has(s.screen)?s.screen:null,
+ testNavigation=createTestNavigation({variant:'asis',defaultRoute:'splash',routeOf:s=>allowed.has(s.screen)?s.screen:null,
   stateFor:route=>({...initialAsIs(),screen:allowed.has(route)?route:'home'}),onRestore:s=>{state=s;render(true);}});
  state=testNavigation.initial();
 }

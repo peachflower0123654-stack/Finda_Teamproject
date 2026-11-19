@@ -34,7 +34,17 @@ try{
  for(const version of variants){
   const before=stored();
   const start=new URL(urls[version]);start.search='lwt=true&study=1&first=asis';await load(start);
-  check(route()==='home',version+' begins at home');
+  if(version==='asis'){
+   check(route()==='splash','As-is begins at splash');
+   await until(()=>route()==='intro','As-is splash advances to onboarding');
+   click('[aria-label="시작하기"]');check(route()==='security','As-is onboarding starts');
+   click('[aria-label="악성앱 찾기"]');check(route()==='security-consent','As-is security consent');
+   click('[data-node-id="I4516:6643;4438:6396"]');check(route()==='assets','As-is assets intro');
+   await reload();check(route()==='assets','As-is onboarding progress survives reload');
+   win().history.back();await until(()=>route()==='security-consent','As-is onboarding browser Back');
+   win().history.forward();await until(()=>route()==='assets','As-is onboarding browser Forward');
+   click('[aria-label="다음에"]');check(route()==='home','As-is skip assets reaches home');
+  }else check(route()==='home',version+' begins at home');
   check(doc().body.dataset.mode==='test',version+' participant mode');
   check(!doc().querySelector('.study-toolbar,[data-study-next]'),version+' never enters combined comparison');
   const panel=doc().querySelector('#preview,#asis-preview');
@@ -59,6 +69,15 @@ try{
  const participant=localStorage.getItem('finda.testId'),beforePosts=stored();
  if(variants.includes('tobe'))check(!!participant,'existing To-be participant ID created');
  if(variants.includes('asis')){
+ await load(new URL('?screen=assets',urls.asis));
+ click('[aria-label="자산 연결하기"]');check(route()==='connect','As-is asset connection');
+ click('[aria-label="한 번에 불러오기"]');check(route()==='consent','As-is connection consent');
+ click('[aria-label="동의하고 연결하기"]');check(route()==='verify','As-is certificate guide');
+ click('[aria-label="카카오 인증서로 인증하기"]');check(route()==='signing','As-is signing');
+ await until(()=>route()==='home','As-is signing reaches home');
+ await load(new URL('?screen=connect',urls.asis));
+ click('[aria-label="자산 직접 선택"]');check(route()==='asset-select','As-is direct asset selection');
+ click('[data-direct-action="continue"]');check(route()==='consent','As-is direct selection consent');
  await load(new URL('?screen=posts',urls.asis));await images('As-is direct posts');
  check(route()==='posts'&&!!root().querySelector('.asis-post-scroll'),'As-is posts direct access');
  const chips=root().querySelectorAll('.asis-post-category-slot [role="button"]');

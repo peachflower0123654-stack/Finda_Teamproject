@@ -4,10 +4,10 @@ export const isTestEntry=(variant,body=globalThis.document?.body)=>body?.dataset
 
 // history.state keeps this tab's answers and return origin across Back/Forward/Reload.
 // It is namespaced by variant and never writes answers to the URL or localStorage.
-export function createTestNavigation({variant,routeOf,stateFor,onRestore,browser=globalThis.window}){
+export function createTestNavigation({variant,routeOf,stateFor,onRestore,defaultRoute='home',browser=globalThis.window}){
  if(!['asis','tobe'].includes(variant))throw new TypeError('Unknown test variant');
  let activeRoute=null,restoring=false;
- const requested=()=>new URL(browser.location.href).searchParams.get('screen')||'home';
+ const requested=()=>new URL(browser.location.href).searchParams.get('screen')||defaultRoute;
  const read=()=>{
   const route=requested(),saved=browser.history.state?.findaTestEntry;
   if(saved?.version===1&&saved.variant===variant&&saved.route===route&&saved.state&&routeOf(saved.state)===route)return saved.state;
