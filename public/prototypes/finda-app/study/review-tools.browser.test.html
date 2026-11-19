@@ -1,0 +1,33 @@
+<!doctype html><html lang="ko"><meta charset="utf-8"><title>To-be review tools checks</title>
+<style>iframe{width:760px;height:900px;border:0}pre{white-space:pre-wrap}</style>
+<iframe title="To-be 검토 도구 표시 검사"></iframe><pre id="report">RUNNING</pre><script type="module">
+const frame=document.querySelector('iframe'),checks=[],runtimeErrors=[];
+const doc=()=>frame.contentDocument,win=()=>frame.contentWindow;
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+function check(ok,label){checks.push({pass:!!ok,label});if(!ok)throw Error(label);}
+async function until(fn,label){for(let i=0;i<400;i++){if(fn())return;await wait(20);}throw Error('Timeout: '+label);}
+async function load(url){await new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(Error('Load timeout')),15000);frame.onload=()=>{clearTimeout(timer);resolve();};frame.src=url;});await until(()=>doc().querySelector('#app')?.dataset.screen&&doc().querySelector('#preview-stage')&&(!doc().body.dataset.testVariant||doc().body.dataset.entryReady==='true'),'app ready');win().addEventListener('error',e=>runtimeErrors.push(e.message));await doc().fonts.ready;}
+function hidden(label){
+ check(doc().querySelectorAll('#preview select,#preview button').length===0,label+' no review controls in DOM');
+ check(win().getComputedStyle(doc().querySelector('#preview')).display==='none',label+' panel hidden');
+ check(Math.abs(parseFloat(win().getComputedStyle(doc().querySelector('#preview-stage')).width)-360)<0.1,label+' app-only stage');
+}
+try{
+ for(const query of ['', '?lwt=true', '?screen=existing:point','?mode=test']){
+  await load('../index.html'+query);hidden('legacy '+query);
+  if(!query){await until(()=>!!doc().querySelector('[data-action="next"]'),'intro');doc().querySelector('[data-action="next"]').click();hidden('legacy after app navigation');}
+ }
+ await load('../index.html?mode=review&screen=existing:point');
+ check(win().getComputedStyle(doc().querySelector('#preview')).display!=='none','explicit review panel visible');
+ check(!!doc().querySelector('#screen-review'),'explicit screen dropdown available');
+ const select=doc().querySelector('#screen-review');select.value='onboarding:03';select.dispatchEvent(new (win().Event)('change',{bubbles:true}));
+ check(doc().querySelector('#app').dataset.screen.startsWith('scr_03_'),'explicit review navigation works');
+ await load('../../../tobe/?mode=review&screen=onboarding-02');hidden('independent participant entry ignores review request');
+ doc().querySelector('[data-action="next"]').click();hidden('independent after app navigation');
+ frame.style.width='320px';frame.style.height='640px';await load('../index.html?lwt=true');
+ check(doc().documentElement.scrollWidth<=320,'legacy Maze URL fits mobile');hidden('mobile legacy');
+ check(runtimeErrors.length===0,'no runtime errors');
+}catch(error){checks.push({pass:false,label:String(error.stack||error)});}
+const result={passed:checks.filter(c=>c.pass).length,failed:checks.filter(c=>!c.pass),runtimeErrors};
+document.querySelector('#report').textContent=JSON.stringify(result,null,2);document.title=result.failed.length?'FAIL review tools':'PASS review tools';
+</script></html>

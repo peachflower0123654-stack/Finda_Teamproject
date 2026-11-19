@@ -17,7 +17,7 @@ function toast(label){
  check(app().querySelectorAll('.test-scope-notice').length===1,label+' single instance');
 }
 try{
- await new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(Error('load timeout')),10000);frame.onload=()=>{clearTimeout(timer);resolve();};frame.src='index.html?screen=existing:all';});await settle();
+ await new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(Error('load timeout')),10000);frame.onload=()=>{clearTimeout(timer);resolve();};frame.src='index.html?mode=review&screen=existing:all';});await settle();
  const shortcut=app().querySelector('[data-name="cmp_All_Shortcut · 내 대출"]');shortcut.click();toast('My loan shortcut');
  check(app().querySelector('.existing-finda-scroll').getBoundingClientRect().height===688,'shortcut does not cover or resize screen');
  const box=app().getBoundingClientRect(),hit=doc().elementFromPoint(box.left+180,box.top+180);
