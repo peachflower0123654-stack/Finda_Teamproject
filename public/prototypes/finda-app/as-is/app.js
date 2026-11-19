@@ -4,14 +4,17 @@ import {applyBottomBar} from "../bottom-bar.js";
 import {wireAsIsPostList} from "./post-list.js";
 import {mountStudyControls,isComparisonStudy} from "../study/participant.js";
 import {asIsScreens,initialAsIs,nextAsIs,backAsIs,goAsIs,reviewAsIs,shouldAdvanceAsIs} from "./flow.mjs";
+import {isTestEntry,createTestNavigation} from "../study/entry-navigation.mjs";
 
 const app=document.querySelector("#asis-app"), panel=document.querySelector("#asis-preview"), stage=document.querySelector("#asis-stage");
 const params=new URLSearchParams(location.search);
-const testMode=params.get("mode")==="test";
+const isolatedEntry=isTestEntry('asis');
+const testMode=isolatedEntry||params.get("mode")==="test";
 const asIsAsset=src=>src;
 Object.assign(asIsDesigns,extraAsIsDesigns);
 document.body.dataset.mode=testMode?"test":"review";
 let state=initialAsIs(),timer,toastTimer;
+let testNavigation=null;
 let tabScrollPositions={home:0,point:0,all:0};
 if(params.has("screen")&&!testMode)state=reviewAsIs(state,params.get("screen"));
 const pick=id=>app.querySelector(`[data-node-id="${id}"]`);
@@ -231,6 +234,7 @@ function render(focus=false){
  if(shouldAdvanceAsIs(state))timer=setTimeout(advance,state.screen==="splash"?1500:2000);
  if(focus&&!["consent","security-consent"].includes(state.screen))app.focus({preventScroll:true});
  fit();
+ testNavigation?.record(state);
 }
 function fit(){
  const width=testMode?360:690;
@@ -259,5 +263,11 @@ document.addEventListener("keydown",event=>{
  }
 });
 window.addEventListener("resize",fit);
+if(isolatedEntry){
+ const allowed=new Set(asIsScreens.map(([key])=>key));
+ testNavigation=createTestNavigation({variant:'asis',routeOf:s=>allowed.has(s.screen)?s.screen:null,
+  stateFor:route=>({...initialAsIs(),screen:allowed.has(route)?route:'home'}),onRestore:s=>{state=s;render(true);}});
+ state=testNavigation.initial();
+}
 mountStudyControls('asis');
 render();
