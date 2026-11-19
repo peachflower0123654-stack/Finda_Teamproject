@@ -1,7 +1,7 @@
 @font-face{font-family:"Noto Sans KR";src:local("Noto Sans KR"),url("../as-is/assets/NotoSansKR-VF.ttf") format("truetype");font-style:normal;font-weight:100 900;font-display:swap}
-body[data-mode="test"]{display:block;margin:0;padding:0;background:white;overflow-x:hidden;font-family:var(--ds-font-base)}
-body[data-mode="test"] #preview{display:none}
-body[data-mode="test"] #preview-stage{width:360px;gap:0;margin:0 auto}
+body[data-mode="test"],body[data-review="false"]{display:block;margin:0;padding:0;background:white;overflow-x:hidden;font-family:var(--ds-font-base)}
+body[data-mode="test"] #preview,body[data-review="false"] #preview{display:none}
+body[data-mode="test"] #preview-stage,body[data-review="false"] #preview-stage{width:360px;gap:0;margin:0 auto}
 body[data-study="comparison"]{padding-top:56px}
 .study-toolbar{position:fixed;z-index:90;left:50%;top:0;transform:translateX(-50%);display:flex;align-items:center;justify-content:space-between;width:min(100%,420px);height:56px;padding:8px 16px;border-bottom:1px solid var(--ds-blue-010);background:white;color:var(--ds-text-ink);font-family:var(--ds-font-base)}
 .study-toolbar>span{display:flex;align-items:center;gap:12px;font-size:14px}.study-toolbar small{font-size:12px;color:var(--ds-text-muted)}

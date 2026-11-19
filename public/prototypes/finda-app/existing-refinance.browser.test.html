@@ -12,7 +12,7 @@ function near(el,values,label){const a=app().getBoundingClientRect(),r=el.getBou
 async function open(homeState='NoOB_NoMD',keyboard=false){select(`home:Loan:${homeState}`);await settle();app().querySelector('.figma-home-viewport').scrollTop=120;const card=app().querySelector('[aria-label="대환하기"]');if(keyboard)card.dispatchEvent(new KeyboardEvent('keydown',{key:'Enter',bubbles:true}));else card.querySelector('img').click();await settle();return app().querySelector('.asis-refinance');}
 function touch(root,type,y){const event=new Event(type,{bubbles:true,cancelable:true});Object.defineProperty(event,'touches',{value:[{clientX:100,clientY:y}]});root.dispatchEvent(event);return event;}
 try{
- await new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(Error('load timeout')),10000);frame.onload=()=>{clearTimeout(timer);resolve();};frame.src='index.html?screen=home:Loan:NoOB_NoMD';});await settle();
+ await new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(Error('load timeout')),10000);frame.onload=()=>{clearTimeout(timer);resolve();};frame.src='index.html?mode=review&screen=home:Loan:NoOB_NoMD';});await settle();
  for(const homeState of ['NoOB_NoMD','OB_NoMD']){
   let root=await open(homeState);check(app().dataset.screen==='Finda_대환'&&root.dataset.nodeId==='4562:15589','right card opens target frame '+homeState);
   check(!note(),'no notice on entry '+homeState);

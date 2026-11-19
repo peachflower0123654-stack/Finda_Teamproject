@@ -11,6 +11,19 @@ As-is와 To-be는 각각 `codex/maze-asis-entry`, `codex/maze-tobe-entry` 브랜
 - GitHub Pages: 저장소 base 아래 `https://peachflower0123654-stack.github.io/Finda_Teamproject/asis/`, `…/tobe/`입니다.
 - 두 주소에서는 비교 체험 툴바·다른 버전으로 이동하는 완료 링크·개발 검토 패널을 표시하지 않습니다. 순서와 질문은 Maze에서 구성합니다.
 
+기존 To-be 주소인 `prototypes/finda-app/index.html`도 기본적으로 검토 드롭다운과 버튼을 생성하지 않습니다. 개발 검토 도구는 해당 주소에 `?mode=review`를 명시한 경우에만 표시하며, `/tobe/` 참가자 주소에서는 이 옵션도 무시합니다. 기존 주소의 온보딩 시작 방식과 참가자·개발 저장 구분은 그대로 유지합니다.
+
+### Maze에 등록할 온보딩 시작 주소
+
+두 버전의 온보딩부터 테스트할 때는 아래 주소를 Website Test의 시작 URL로 등록합니다.
+
+- As-is: `https://peachflower0123654-stack.github.io/Finda_Teamproject/asis/`
+- To-be: `https://peachflower0123654-stack.github.io/Finda_Teamproject/tobe/?screen=onboarding-00`
+
+`/asis/?screen=point`는 포인트 화면부터 시작하고 `/tobe/`는 홈부터 시작하므로 온보딩 전체를 진행하는 테스트의 시작 주소와 구분합니다. To-be의 기존 임시 저장·이어하기 규칙은 그대로 적용됩니다. 회차별 초기화 정책은 이 변경에서 추가하지 않습니다.
+
+PR 병합 후 GitHub Pages 배포 성공을 확인하고 위 두 주소와 Maze 미리보기에서 검토 드롭다운 없이 지정한 시작 화면이 열리는지 확인합니다. Maze에 등록된 시작 URL은 코드 배포로 자동 변경되지 않으므로 Maze 설정에서 별도로 반영해야 합니다.
+
 주요 화면은 같은 진입점의 `screen` 쿼리로 구분됩니다. 예: `/asis/?screen=posts`, `/tobe/?screen=all`, `/tobe/?screen=find-loan`, `/tobe/?screen=home-loan`. `lwt` 등 기존 쿼리는 유지합니다. 입력 답변은 URL에 넣지 않습니다.
 
 각 화면을 그린 뒤 브라우저 `history.state.findaTestEntry`에 버전별 탐색 상태를 보관합니다. 브라우저 뒤로/앞으로 가기와 같은 탭의 새로고침에서 답변·상세 화면의 복귀 위치를 복원합니다. URL을 새 탭에 붙여넣는 경우 화면은 열리지만 다른 탭의 입력 답변까지 전달하지는 않습니다. 퀵메뉴 팝업·입력칸 변경 등 모든 UI 조작에 별도 URL을 만들지는 않습니다.

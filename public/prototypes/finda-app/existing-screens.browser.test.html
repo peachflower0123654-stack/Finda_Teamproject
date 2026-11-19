@@ -9,7 +9,7 @@ const pick=id=>app().querySelector(`[data-node-id="${id}"]`);
 async function settle(){await doc().fonts.ready;await Promise.all([...doc().images].map(i=>i.complete?Promise.resolve():new Promise(r=>{i.onload=r;i.onerror=r;})));await wait(30);}
 function select(value){const select=doc().querySelector('#screen-review');select.value=value;select.dispatchEvent(new Event('change',{bubbles:true}));}
 function nav(tab){app().querySelector(`[data-bottom-nav="${tab}"]`).click();}
-const load=()=>new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(Error('load timeout')),10000);frame.onload=async()=>{await settle();clearTimeout(timer);resolve();};frame.src='index.html?screen=existing:point';});
+const load=()=>new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(Error('load timeout')),10000);frame.onload=async()=>{await settle();clearTimeout(timer);resolve();};frame.src='index.html?mode=review&screen=existing:point';});
 function near(element,expected,label){const root=app().getBoundingClientRect(),r=element.getBoundingClientRect(),scale=root.width/360,actual={x:(r.x-root.x)/scale,y:(r.y-root.y)/scale,w:r.width/scale,h:r.height/scale};check(Object.entries(expected).every(([k,v])=>Math.abs(actual[k]-v)<.2),label);}
 async function images(label){await settle();for(const image of app().querySelectorAll('img'))check(image.complete&&image.naturalWidth>0&&!image.src.includes('figma.com'),label+' local asset '+image.getAttribute('src'));}
 try{

@@ -27,7 +27,10 @@ let homeScroll={Asset:0,Loan:0},existingScroll={point:0,all:0};
 const app=document.querySelector('#app'),panel=document.querySelector('#preview');
 const isolatedEntry=isTestEntry('tobe');
 const participantMode=isolatedEntry||new URLSearchParams(location.search).get('mode')==='test';
+const reviewMode=!participantMode&&new URLSearchParams(location.search).get('mode')==='review';
 document.body.dataset.mode=participantMode?'test':'review';
+document.body.dataset.review=String(reviewMode);
+panel.hidden=!reviewMode;
 // 온보딩 임시 저장: 참가자 링크는 finda.study.v1, 그 외는 finda.dev.v1 키를 써요.
 const DRAFT_KEY=draftKey(participantMode),store=(()=>{try{return localStorage;}catch{return null;}})();
 const loadDraft=()=>readDraft(store,DRAFT_KEY);
@@ -136,9 +139,11 @@ function render(focus){if(state.screen!==keypadScreen){keypadScreen=state.screen
  app.innerHTML=screen();app.dataset.screen=name();wireHomeDesign();wireExistingScreen(app,{screen:state.screen,onNavigate:navigateMainTab,onOpen:openExistingMenu,onBack:backExistingMenu,scrollTop:existingScroll[state.screen]||0});wireBottomBars(app,navigateMainTab);setQuickMenuProfile(postProfile());app.dataset.quickMenu=popupMode(state.homeState);app.dataset.homeState=state.screen==='11'?state.homeState:'';wireQuickMenuButtons(app);wireAiRate(app,sort=>{state={...state,aiSort:sort};syncPreviewName();});
  const homeViewport=app.querySelector('.figma-home-viewport');if(homeViewport)homeViewport.scrollTop=homeScroll[state.tab]||0;
  if(introScroll){const scroller=app.querySelector('.ai-rate-intro .ai-rate-scroll');if(scroller)scroller.scrollTop=introScroll;}
+ if(reviewMode){
  const afterNext=next(state),canNext=afterNext.screen!==state.screen||afterNext.introSlide!==state.introSlide; // 02 소개 장 넘김도 '다음'
  const selected=state.screen==='10'?'result:'+state.result:state.screen==='11'?'home:'+state.homeState:'';
  panel.innerHTML=`<code>${name()}</code><label for="state-review">상태선택</label><select id="state-review"><option value="">상태선택</option><optgroup label="결과">${['HasLoan','HasLoanUnavailable','NoLoan'].map(v=>'<option value="result:'+v+'" '+(selected==='result:'+v?'selected':'')+'>'+v+'</option>').join('')}</optgroup><optgroup label="홈">${['NoOB_NoMD','InOB_NoMD','OB_NoMD','OB_MD'].map(v=>'<option value="home:'+v+'" '+(selected==='home:'+v?'selected':'')+'>'+v+'</option>').join('')}</optgroup></select>${screenSelector(state)}<div class="preview-navigation"><button data-preview="back" ${(state.screen==='00'||(state.screen==='11'&&state.homeState!=='OB_MD'))?'disabled':''}>이전</button><button data-preview="continue" ${canNext?'':'disabled'}>다음</button></div><div><button data-preview="reset">처음부터</button></div>${postControls()}`;
+ }
  if(focus)app.querySelector(`[data-field="${focus}"]`)?.focus();
  testNavigation?.record(state);
 }
