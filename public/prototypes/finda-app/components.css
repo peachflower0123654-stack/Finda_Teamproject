@@ -290,7 +290,7 @@
 #app .cmp-input[data-disabled] .cmp-input__field { opacity: .55; }
 #app .cmp-input[data-disabled] .cmp-input__caption { color: var(--ds-primary); }
 #app .no-plan-screen .cmp-input__caption { text-align: left; }
-#app .no-plan-screen .actions { padding: 0 var(--ds-spacing-base) var(--ds-spacing-24); }
+#app .no-plan-screen > .actions { padding: 0 var(--ds-spacing-base) var(--ds-spacing-36); } /* 계획 없음일 때 [다음]만: 다른 온보딩과 같은 아래 36 */
 
 /* 11.17 온보딩 업데이트 (참고: Figma 4634:17464)
    - 배경: 위쪽 옅은 보라(#F6F6FE, 참고 화면 측정값)에서 200px 지점까지 흰색으로
@@ -332,8 +332,8 @@
 #app .no-plan-check__img--off { left: 2px; top: 2px; }
 #app .no-plan-check__img--on { left: 3px; top: 3px; }
 /* cmp_Common_Toast/Alert — Figma 4634:23961. gray/110 알약, 여백 12·20·12·12, 간격 8, CheckCircle(on) 28 + 14/24 흰 글자.
-   위치: [다음] 버튼(아래 여백 24 + 높이 56 = 80) 위 12px. 문구는 가운데 정렬. */
-#app > .no-plan-toast { position: absolute; left: 50%; bottom: calc(80px + var(--ds-spacing-md)); z-index: 210; transform: translateX(-50%); display: flex; align-items: center; gap: var(--ds-spacing-sm);
+   위치: [다음] 버튼(아래 여백 36 + 높이 56) 위 12px. 문구는 가운데 정렬. */
+#app > .no-plan-toast { position: absolute; left: 50%; bottom: calc(var(--ds-spacing-36) + 56px + var(--ds-spacing-md)); /* [다음](아래 36 + 높이 56) 위 12 */ z-index: 210; transform: translateX(-50%); display: flex; align-items: center; gap: var(--ds-spacing-sm);
   width: max-content; max-width: 345px; padding: var(--ds-spacing-md) var(--ds-spacing-lg) var(--ds-spacing-md) var(--ds-spacing-md);
   border-radius: var(--ds-radius-full); background: var(--ds-gray-110); color: #fff; pointer-events: none; }
 #app > .no-plan-toast p { margin: 0; color: inherit; white-space: nowrap; text-align: center; font: var(--ds-font-weight-regular) var(--ds-font-size-14)/var(--ds-line-height-24) var(--ds-font-base); }
@@ -421,3 +421,9 @@
 @keyframes intro-up { from { transform: translateY(100%); } to { transform: none; } }
 @keyframes intro-fade { from { opacity: 0; } to { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { #app .intro-dim, #app .intro-sheet { animation: none; } }
+
+/* 06·08 키패드를 내렸을 때: 하단에 [다음]만 (키패드의 버튼 영역과 같은 여백) */
+#app .cmp-keypad-cta { margin-top: auto; padding-bottom: var(--ds-spacing-36); background: transparent; } /* 다른 온보딩 화면 CTA와 같은 아래 36 */
+#app .cmp-keypad-cta .actions { margin-top: 0; padding: 0 var(--ds-spacing-base); }
+/* 키패드 열림·닫힘 모두 [다음] 아래 간격 36 (키패드 본문 간격 16 + 아래 여백 20) */
+#app .cmp-keypad__body::after { height: calc(var(--ds-spacing-36) - var(--ds-spacing-base)); }
