@@ -46,7 +46,7 @@ const specs={
  consent:[["4438:10087",{x:0,y:386,w:360,h:371}]],
  verify:[["4442:4436",{x:0,y:195.35,w:360,h:432.766}],["4442:4439",{x:16,y:629.115,w:328,h:56}]],
  signing:[["4417:4259",{x:0,y:0,w:360,h:800}]],
- home:[["4453:5190",{x:16,y:88,w:328,h:274}],["4426:16426",{x:0,y:688,w:360,h:92}]],
+ home:[["4753:23829",{x:20,y:49,w:56,h:17.6}],["4753:23845",{x:16,y:147,w:160,h:106}],["4753:23856",{x:184,y:147,w:160,h:106}],["4452:6407",{x:16,y:262,w:328,h:170}],["2303:701",{x:0,y:688,w:360,h:92}]],
  point:[["4468:11687",{x:0,y:27,w:360,h:204}],["4468:11625",{x:16,y:177,w:328,h:144}],["4468:11660",{x:16,y:341,w:328,h:188}],["4468:11700",{x:16,y:545,w:328,h:122}],["4466:11944",{x:0,y:688,w:360,h:92}]],
  all:[["4462:6513",{x:0,y:32,w:360,h:72}],["4462:6568",{x:36,y:132,w:288,h:104}],["4462:6529",{x:0,y:332,w:360,h:44}],["4426:16446",{x:0,y:688,w:360,h:92}]],
  "find-loan":[["4500:6615",{x:0,y:0,w:360,h:28}],["4500:6616",{x:0,y:28,w:360,h:48}],["4500:6617",{x:0,y:76,w:360,h:606.15}],["4500:6620",{x:0,y:688,w:360,h:92}]],
@@ -93,11 +93,15 @@ try{
    check(standalone?image.src.startsWith("data:image/"):image.src.startsWith(new URL("assets/",frame.src).href),"local image "+key);
   }
   if(key==="home"){
-   const scroller=pick("4453:5120");
-   check(scroller.scrollHeight>=2290,"full home content retained");
+   const scroller=app().querySelector('[data-home-scroll]');
+   check(scroller.scrollHeight===2817,"new home full source height retained");
+   check(app().querySelector('.asis-home-greeting').textContent==='테스터님을 위해 준비했어요','home tester greeting');
+   check(app().querySelector('.asis-home-point-value').textContent.includes('****P'),'home point balance masked');
+   check(app().querySelectorAll('[data-name^="cmp_Home_LoanMenuItem"]').length===8,'home all eight loan menu items retained');
+   check(app().querySelectorAll('[aria-label="연결하기"]').length===3,'home all three connection actions');
    scroller.scrollTop=9999;
    check(scroller.scrollTop>1500,"home scrolls to bottom");
-   near("4426:16426",{y:688,h:92});
+   near("2303:701",{y:688,h:92});
   }
   if(key==="all"){
    check(app().querySelectorAll('[data-name="cmp_All_MenuSection"]').length===8,"all 8 categories retained");
@@ -121,13 +125,14 @@ try{
    }
   }
  }
- await load("home");pick("4453:5120").scrollTop=250;
- app().querySelector('[data-name="cmp_Home_LoanActionCard · 대출 받기"]').click();check(app().dataset.screen==="find-loan","home loan card opens loan intro");click("뒤로가기");check(app().dataset.screen==="home"&&pick("4453:5120").scrollTop===250,"loan back restores home position");
+ await load("home");app().querySelector('[data-home-scroll]').scrollTop=250;
+ app().querySelector('[aria-label="대출 받기"]').click();check(app().dataset.screen==="find-loan","home loan card opens loan intro");click("뒤로가기");check(app().dataset.screen==="home"&&app().querySelector('[data-home-scroll]').scrollTop===250,"loan back restores home position");
+ app().querySelector('[data-home-scroll]').scrollTop=480;app().querySelector('[aria-label="연결하기"]').click();check(app().dataset.screen==='connect','home connection opens existing connection flow');click('뒤로가기');check(app().dataset.screen==='home'&&app().querySelector('[data-home-scroll]').scrollTop===480,'connection back returns home and restores scroll');
  await load("all");app().querySelector(".asis-tab-scroll").scrollTop=200;
  for(const [label,screen] of [["대출 받기","find-loan"],["금리인하 자동신청","rate-cut"]]){app().querySelector('[data-name="cmp_All_MenuRow"][aria-label="'+label+'"]').click();check(app().dataset.screen===screen,"all entry "+screen);click("뒤로가기");check(app().dataset.screen==="all"&&app().querySelector(".asis-tab-scroll").scrollTop===200,"detail back restores all "+screen);}
  await load("home");
  const tab=name=>{const button=app().querySelector(`[data-bottom-nav="${name}"]`);check(!!button,"tab exists "+name);button?.click();check(app().dataset.screen===name,"tab navigation "+name);};
- pick("4453:5120").scrollTop=500;tab("point");tab("all");app().querySelector(".asis-tab-scroll").scrollTop=1900;tab("home");check(pick("4453:5120").scrollTop===500,"home scroll restored");tab("all");check(app().querySelector(".asis-tab-scroll").scrollTop===1900,"all scroll restored");
+ app().querySelector('[data-home-scroll]').scrollTop=500;tab("point");tab("all");app().querySelector(".asis-tab-scroll").scrollTop=1900;tab("home");check(app().querySelector('[data-home-scroll]').scrollTop===500,"home scroll restored");tab("all");check(app().querySelector(".asis-tab-scroll").scrollTop===1900,"all scroll restored");
  app().querySelector('[data-name="cmp_All_MenuRow"][aria-label="포인트"]').click();check(app().dataset.screen==="point","all point row opens point");
  const balance=pick("4468:11698").textContent;click("출석하고 5P 받기");check(pick("4468:11698").textContent===balance,"no fabricated point rewards");
  tab("all");app().querySelector('[data-name="cmp_All_MenuRow"][aria-label="출석체크"]').click();check(app().dataset.screen==="point","all check-in row opens point");check(frame.contentDocument.activeElement===pick("4468:11623"),"check-in action focused");

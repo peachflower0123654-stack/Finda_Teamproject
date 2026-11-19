@@ -1,0 +1,15 @@
+/* Figma 4753:23787: 360px source canvas, with the existing fixed app navigation. */
+.asis-home-shell{display:flex;flex-direction:column;background:var(--ds-bg-home)}
+.asis-home-scroll{position:relative;flex:1;min-height:0;width:360px;overflow:auto;overflow-x:hidden;scrollbar-width:none;outline:none}
+.asis-home-scroll::-webkit-scrollbar{display:none}
+.asis-home-canvas{position:relative;width:360px;height:2817px;background:var(--ds-bg-home)}
+.asis-home-greeting{position:absolute;left:28px;top:36px;margin:0;color:#111;font:700 16px/24px var(--ds-font-base)}
+.asis-home-source-top,.asis-home-source-points-left,.asis-home-source-points-right,.asis-home-source-bottom{position:absolute;overflow:hidden}
+.asis-home-source-top{left:0;top:0;width:360px;height:145px}
+.asis-home-source-points-left{left:0;top:145px;width:206px;height:27px}
+.asis-home-source-points-right{left:270px;top:145px;width:90px;height:27px}
+.asis-home-source-bottom{left:0;top:172px;width:360px;height:1729px}
+.asis-home-point-value{position:absolute;left:206px;top:145px;width:64px;height:27px;background:white;color:#202226;white-space:nowrap;font:500 18px/24px var(--ds-font-base)}
+.asis-home-point-value>span{color:var(--ds-text-muted);font-size:22px}
+.asis-home-hit{position:absolute;z-index:2;margin:0;padding:0;border:0;background:transparent;cursor:pointer;border-radius:var(--ds-radius-md)}
+.asis-home-hit:focus-visible{outline:3px solid var(--ds-purple-030);outline-offset:2px}

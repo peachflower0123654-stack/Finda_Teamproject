@@ -1,6 +1,7 @@
 import {asIsDesigns} from "./designs.js";
 import {extraAsIsDesigns} from "./extra-designs.js";
-import {applyBottomBar} from "../bottom-bar.js";
+import {applyBottomBar,bottomBar} from "../bottom-bar.js";
+import {asIsHomeDesign} from "./home-design.js";
 import {wireAsIsPostList} from "./post-list.js";
 import {mountStudyControls,isComparisonStudy} from "../study/participant.js";
 import {asIsScreens,initialAsIs,nextAsIs,backAsIs,goAsIs,reviewAsIs,shouldAdvanceAsIs} from "./flow.mjs";
@@ -12,6 +13,7 @@ const isolatedEntry=isTestEntry('asis');
 const testMode=isolatedEntry||params.get("mode")==="test";
 const asIsAsset=src=>src;
 Object.assign(asIsDesigns,extraAsIsDesigns);
+asIsDesigns['4753:23787']={...asIsHomeDesign,html:`<div class="asis-home-shell" data-node-id="4753:23787" data-name="Finda_Home"><div class="asis-home-scroll" data-home-scroll tabindex="0" aria-label="홈 콘텐츠"><div class="asis-home-canvas">${asIsHomeDesign.html}</div></div>${bottomBar('home')}</div>`};
 document.body.dataset.mode=testMode?"test":"review";
 let state=initialAsIs(),timer,toastTimer;
 let testNavigation=null;
@@ -37,7 +39,7 @@ const previous=()=>{
  if(closingSecurity&&state.screen==="security")pick("4428:4366").focus({preventScroll:true});
 };
 const open=screen=>{state=goAsIs(state,screen);render(true);};
-const tabScroller=()=>state.screen==="home"?pick("4453:5120"):app.querySelector(".asis-tab-scroll");
+const tabScroller=()=>state.screen==="home"?app.querySelector("[data-home-scroll]"):app.querySelector(".asis-tab-scroll");
 function switchTab(screen){
  const scroller=tabScroller();
  if(scroller)tabScrollPositions[state.screen]=scroller.scrollTop;
@@ -123,16 +125,19 @@ function wireConsent(){
  dialog.focus({preventScroll:true});
 }
 function wireHome(){
- const scroller=pick("4453:5120");
- scroller.setAttribute("tabindex","0");
- scroller.setAttribute("aria-label","홈 콘텐츠");
- action(pick("I4453:5190;3531:3235"),"대출 혜택 배너 닫기",()=>pick("4453:5190").remove());
- action(pick("I4453:5190;3819:19977"),"지금 받아보기",unavailable);
- const headerLabels=["즐겨찾기","보안","알림"];
- [...app.querySelectorAll('[data-name^="Touch Area"]')].forEach((element,index)=>action(element,headerLabels[index],unavailable));
- for(const element of app.querySelectorAll('[data-name^="cmp_Home_LoanActionCard"], [data-name^="cmp_Home_LoanMenuItem"]')){
-  const destination=element.dataset.nodeId==="4453:5214"?"refinance":element.dataset.name.endsWith("대출 받기")?"find-loan":null;
-  action(element,element.textContent.trim(),destination?()=>openDetail(destination):unavailable);
+ action(pick('4753:23845'),'대출 받기',()=>openDetail('find-loan'));
+ action(pick('4753:23856'),'대출 갈아타기',()=>openDetail('refinance'));
+ action(pick('1986:3764'),'알림',unavailable);
+ for(const element of app.querySelectorAll('[data-name^="cmp_Home_LoanMenuItem"]'))action(element,element.textContent.trim(),unavailable);
+ for(const element of app.querySelectorAll('[data-node-id="3531:2798"]'))action(element,'연결하기',()=>openDetail('connect'));
+ for(const [label,x,y,width,height,run] of [
+  ['포인트',238,38,32,36,()=>switchTab('point')],['보안',273,38,32,36,unavailable],
+  ['내 신용점수 확인하기',16,876,158,115,unavailable],['내 포인트',186,876,158,115,()=>switchTab('point')],
+  ['핀다 소식',20,1059,340,242,unavailable],['광고 안내',16,1328,328,1230,unavailable],['내 금액, 정보 숨기기',100,2590,160,48,unavailable],
+ ]){
+  const hit=document.createElement('button');hit.type='button';hit.className='asis-home-hit';hit.setAttribute('aria-label',label);
+  Object.assign(hit.style,{left:x+'px',top:y+'px',width:width+'px',height:height+'px'});
+  hit.addEventListener('click',run);app.querySelector('.asis-home-canvas').append(hit);
  }
 }
 function wireBottomBar(selected=state.screen){
