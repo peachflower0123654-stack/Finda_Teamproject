@@ -19,6 +19,17 @@ finda-app의 테스트 데이터를 Supabase 무료 플랜에 저장해요. 로�
 3. **넣으면 안 되는 것:** secret 키(`sb_secret_...`), `service_role` 키, DB 비밀번호. 실수로 넣으면 앱이 전송을 거부하고 콘솔에 경고를 띄워요.
 4. `supabase-config.js`는 `.gitignore`에 들어 있어서 GitHub에 올라가지 않아요. 커밋 전에 `git status`에 이 파일이 안 보이는지 확인해요.
 
+## 3-1. 배포 사이트(GitHub Pages)에 키 넣기
+
+배포 사이트에는 `supabase-config.js`가 올라가지 않아서, 그대로면 공개 링크의 기록이 Supabase로 가지 않고 참가자 브라우저 대기열에만 남아요.
+배포할 때 GitHub Actions가 Secrets에서 이 파일을 만들어 넣어요(`.github/workflows/deploy.yml`의 `Write Supabase config` 단계).
+
+1. GitHub 저장소 > **Settings > Secrets and variables > Actions > New repository secret**
+2. `SUPABASE_URL` = Project URL (`https://xxxx.supabase.co`)
+3. `SUPABASE_PUBLISHABLE_KEY` = publishable 키(`sb_publishable_...` 또는 `anon public`). secret/service_role 키는 절대 넣지 마세요(넣으면 배포가 멈춰요).
+4. **Actions > Deploy to GitHub Pages > Run workflow**로 다시 배포하거나 main에 머지하면 적용돼요.
+5. 확인: `…/Finda_Teamproject/prototypes/finda-app/supabase-config.js`가 열리면 연결된 거예요. publishable 키는 원래 브라우저에 보이는 공개용 키라 괜찮아요(RLS로 추가만 허용).
+
 ## 4. 동작 확인
 1. 앱에서 퀵메뉴 편집 → 메뉴 고르기 → [완료]를 눌러요.
 2. 대시보드 **Table Editor → test_events**에 `quickmenu_done` 줄이 생기면 성공이에요.
