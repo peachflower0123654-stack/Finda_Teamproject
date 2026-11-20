@@ -2,6 +2,9 @@ import {asIsDesigns} from "./designs.js";
 import {extraAsIsDesigns} from "./extra-designs.js";
 import {applyBottomBar,bottomBar} from "../bottom-bar.js";
 import {asIsHomeDesign} from "./home-design.js";
+import {findLoanDesign} from "./find-loan-design.js";
+import {viewportSize,watchViewport} from "../viewport-fit.mjs";
+import {applyPrototypeContent} from "../prototype-content.js";
 import {wireAsIsPostList} from "./post-list.js";
 import {mountStudyControls,isComparisonStudy} from "../study/participant.js";
 import {asIsScreens,initialAsIs,nextAsIs,backAsIs,goAsIs,reviewAsIs,shouldAdvanceAsIs} from "./flow.mjs";
@@ -13,7 +16,8 @@ const isolatedEntry=isTestEntry('asis');
 const testMode=isolatedEntry||params.get("mode")==="test";
 const asIsAsset=src=>src;
 Object.assign(asIsDesigns,extraAsIsDesigns);
-asIsDesigns['4753:23787']={...asIsHomeDesign,html:`<div class="asis-home-shell" data-node-id="4753:23787" data-name="Finda_Home"><div class="asis-home-scroll" data-home-scroll tabindex="0" aria-label="홈 콘텐츠"><div class="asis-home-canvas">${asIsHomeDesign.html}</div></div>${bottomBar('home')}</div>`};
+asIsDesigns['4500:6614']=findLoanDesign;
+asIsDesigns['4769:25524']={...asIsHomeDesign,html:`<div class="asis-home-shell" data-node-id="4769:25524" data-name="Finda_Home"><div class="asis-home-scroll" data-home-scroll tabindex="0" aria-label="홈 콘텐츠"><div class="asis-home-canvas">${asIsHomeDesign.html}</div></div>${bottomBar('home')}</div>`};
 document.body.dataset.mode=testMode?"test":"review";
 let state=initialAsIs(),timer,toastTimer;
 let testNavigation=null;
@@ -125,20 +129,23 @@ function wireConsent(){
  dialog.focus({preventScroll:true});
 }
 function wireHome(){
- action(pick('4753:23845'),'대출 받기',()=>openDetail('find-loan'));
- action(pick('4753:23856'),'대출 갈아타기',()=>openDetail('refinance'));
- action(pick('1986:3764'),'알림',unavailable);
- for(const element of app.querySelectorAll('[data-name^="cmp_Home_LoanMenuItem"]'))action(element,element.textContent.trim(),unavailable);
+ action(pick('4769:25528'),'대출 받기',()=>openDetail('find-loan'));
+ action(pick('4769:25529'),'대출 갈아타기',()=>openDetail('refinance'));
+ action(app.querySelector('[data-name="Touch Area · ic_Common_QuickMenu"]'),'포인트',()=>switchTab('point'));
+ action(app.querySelector('[data-name="Touch Area · ic_Common_Security"]'),'보안',unavailable);
+ action(app.querySelector('[data-name="Touch Area · ic_Common_Alarm"]'),'알림',unavailable);
+ const menu=pick('4769:25530');
+ ['핀다카드','사업자대출','주택담보대출','전세대출','우수대부','신용카드 찾기','차 구매대출','차 리스렌트'].forEach((label,index)=>{
+  const hit=document.createElement('button');hit.type='button';hit.className='asis-home-hit';hit.dataset.name='cmp_Home_LoanMenuItem_'+index;hit.setAttribute('aria-label',label);
+  Object.assign(hit.style,{left:(index%4*82)+'px',top:(index<4?0:84)+'px',width:'82px',height:'84px'});
+  hit.addEventListener('click',unavailable);menu.append(hit);
+ });
  for(const element of app.querySelectorAll('[data-node-id="3531:2798"]'))action(element,'연결하기',()=>openDetail('connect'));
- for(const [label,x,y,width,height,run] of [
-  ['포인트',238,38,32,36,()=>switchTab('point')],['보안',273,38,32,36,unavailable],
-  ['내 신용점수 확인하기',16,876,158,115,unavailable],['내 포인트',186,876,158,115,()=>switchTab('point')],
-  ['핀다 소식',20,1059,340,242,unavailable],['광고 안내',16,1328,328,1230,unavailable],['내 금액, 정보 숨기기',100,2590,160,48,unavailable],
- ]){
-  const hit=document.createElement('button');hit.type='button';hit.className='asis-home-hit';hit.setAttribute('aria-label',label);
-  Object.assign(hit.style,{left:x+'px',top:y+'px',width:width+'px',height:height+'px'});
-  hit.addEventListener('click',run);app.querySelector('.asis-home-canvas').append(hit);
- }
+ action(pick('4769:25577'),'내 신용점수 확인하기',unavailable);
+ action(pick('4769:25581'),'내 포인트',()=>switchTab('point'));
+ action(pick('4769:25586'),'핀다 소식',unavailable);
+ for(const id of ['4769:25595','4769:25601','4769:25611','4769:25616','4769:25628','4769:25633'])action(pick(id),'광고 안내',unavailable);
+ action(pick('4769:25647'),'내 금액, 정보 숨기기',unavailable);
 }
 function wireBottomBar(selected=state.screen){
  const nav=app.querySelector('[data-name="cmp_Common_BottomBar"]');
@@ -227,6 +234,7 @@ function render(focus=false){
  app.dataset.screen=state.screen;
  app.dataset.frame=name;
  app.innerHTML=asIsDesigns[id].html;
+ applyPrototypeContent(app,state.screen);
  if(state.screen==="splash")app.querySelector("img").alt="finda";
  wireOnboarding();
  if(state.screen==="home")wireHome();
@@ -244,7 +252,8 @@ function render(focus=false){
 function fit(){
  const width=testMode?360:690;
  const height=state.screen==="refinance"?800:780;
- const scale=Math.min(1,(innerWidth-(testMode?0:32))/width,(innerHeight-(testMode?0:32)-(isComparisonStudy()?56:0))/height);
+ const viewport=viewportSize();
+ const scale=Math.min(1,(viewport.width-(testMode?0:32))/width,(viewport.height-(testMode?0:32)-(isComparisonStudy()?56:0))/height);
  stage.style.zoom=String(Math.max(0.1,scale));
 }
 panel.addEventListener("change",event=>{
@@ -267,7 +276,7 @@ document.addEventListener("keydown",event=>{
   else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
  }
 });
-window.addEventListener("resize",fit);
+watchViewport(fit);
 if(isolatedEntry){
  const allowed=new Set(asIsScreens.map(([key])=>key));
  testNavigation=createTestNavigation({variant:'asis',defaultRoute:'splash',routeOf:s=>allowed.has(s.screen)?s.screen:null,

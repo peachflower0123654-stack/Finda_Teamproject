@@ -1,9 +1,9 @@
-/* Figma 4753:23787: 360px source canvas, with the existing fixed app navigation. */
+/* Figma 4769:25524: 360px content canvas and the existing fixed 92px navigation. */
 .asis-home-shell{display:flex;flex-direction:column;background:var(--ds-bg-home)}
 .asis-home-scroll{position:relative;flex:1;min-height:0;width:360px;overflow:auto;overflow-x:hidden;scrollbar-width:none;outline:none}
 .asis-home-scroll::-webkit-scrollbar{display:none}
-.asis-home-canvas{position:relative;width:360px;height:2817px;background:var(--ds-bg-home)}
-.asis-home-greeting{position:absolute;left:28px;top:36px;margin:0;color:#111;font:700 16px/24px var(--ds-font-base)}
+.asis-home-canvas{position:relative;width:360px;height:2709px;background:var(--ds-bg-home)}
+.asis-home-greeting{margin:0}
 .asis-home-source-top,.asis-home-source-points-left,.asis-home-source-points-right,.asis-home-source-bottom{position:absolute;overflow:hidden}
 .asis-home-source-top{left:0;top:0;width:360px;height:145px}
 .asis-home-source-points-left{left:0;top:145px;width:206px;height:27px}
