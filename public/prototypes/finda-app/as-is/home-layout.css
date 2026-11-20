@@ -13,3 +13,6 @@
 .asis-home-point-value>span{color:var(--ds-text-muted);font-size:22px}
 .asis-home-hit{position:absolute;z-index:2;margin:0;padding:0;border:0;background:transparent;cursor:pointer;border-radius:var(--ds-radius-md)}
 .asis-home-hit:focus-visible{outline:3px solid var(--ds-purple-030);outline-offset:2px}
+/* 11.20 Figma 4821:29246 핀다 상단 바: 화면 맨 위 고정(360×85). 상단 바는 자체 배경(#F6F6F9)이 있어 아래 글이 비치지 않아요. */
+.asis-home-shell{position:relative}
+.asis-home-shell>.asis-home-topbar-fixed{position:absolute;top:0;left:0;z-index:5}

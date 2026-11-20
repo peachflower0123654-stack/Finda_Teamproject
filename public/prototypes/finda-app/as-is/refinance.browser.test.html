@@ -14,7 +14,7 @@ try{
  check(img.complete&&img.naturalWidth>0&&img.src.endsWith("/assets/refinance.png"),"original local source loaded");
  check(Math.abs(b.width/s-360)<.1&&Math.abs(b.height/s-800)<.1,"exact 360x800 source geometry");
  const cta=app().querySelector(".asis-refinance__cta"),cb=cta.getBoundingClientRect(),a=app().getBoundingClientRect();
- check(Math.abs((cb.x-a.x)/s-16)<.1&&Math.abs((cb.y-a.y)/s-682)<.1&&Math.abs(cb.width/s-328)<.1&&Math.abs(cb.height/s-54)<.1,"CTA matches image slot");
+ check(Math.abs((cb.x-a.x)/s-16)<.1&&Math.abs((cb.y-a.y)/s-649)<.1&&Math.abs(cb.width/s-328)<.1&&Math.abs(cb.height/s-54)<.1,"CTA matches image slot");
  check(!note(),"no notice before interaction");cta.click();
  check(note()==="이 테스트에서는 구현되지 않았습니다.","CTA shows exact scope notice");
  check(app().dataset.screen==="refinance","CTA does not start an application");
@@ -29,7 +29,7 @@ try{
  await load("refinance");app().querySelector(".asis-refinance").dispatchEvent(new KeyboardEvent("keydown",{key:"PageDown",bubbles:true,cancelable:true}));
  check(note()==="이 테스트에서는 구현되지 않았습니다.","keyboard scroll attempt shows scope notice");
  await load("home");const scroll=app().querySelector('[data-home-scroll]');scroll.scrollTop=260;
- app().querySelector('[data-node-id="4769:25529"]').click();check(app().dataset.screen==="refinance","exact requested Home card opens refinance");
+ app().querySelector('[data-node-id="4821:29264"]').click();check(app().dataset.screen==="refinance","exact requested Home card opens refinance");
  app().querySelector(".asis-refinance__back").click();check(app().dataset.screen==="home"&&app().querySelector('[data-home-scroll]').scrollTop===260,"back restores Home scroll");
  await load("refinance");app().querySelector(".asis-refinance__back").click();check(app().dataset.screen==="home","direct review back falls back to Home");
  frame.style.width="320px";frame.style.height="640px";await load("refinance");

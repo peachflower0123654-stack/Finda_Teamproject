@@ -17,9 +17,9 @@ try{
   let root=await open(homeState);check(app().dataset.screen==='Finda_대환'&&root.dataset.nodeId==='4562:15589','right card opens target frame '+homeState);
   check(!note(),'no notice on entry '+homeState);
   const image=root.querySelector('img');check(image.complete&&image.naturalWidth===1080&&image.naturalHeight===2400&&image.src.endsWith('/as-is/assets/refinance.png'),'exact original local image '+homeState);
-  near(image,{x:0,y:0,w:360,h:800},'360x800 image '+homeState);
-  near(root.querySelector('.asis-refinance__cta'),{x:16,y:682,w:328,h:54},'CTA geometry '+homeState);
-  near(root.querySelector('.asis-refinance__back'),{x:8,y:30,w:40,h:42},'back geometry '+homeState);
+  near(image,{x:0,y:-33,w:360,h:800},'360x800 image '+homeState);
+  near(root.querySelector('.asis-refinance__cta'),{x:16,y:649,w:328,h:54},'CTA geometry '+homeState);
+  near(root.querySelector('.asis-refinance__back'),{x:8,y:0,w:40,h:42},'back geometry '+homeState);
   root.querySelector('.asis-refinance__cta').click();check(note()===expected&&app().dataset.screen==='Finda_대환','CTA notice without further navigation '+homeState);
   root.querySelector('.asis-refinance__back').click();check(app().dataset.screen===`scr_11_Home_Loan_${homeState}`&&app().querySelector('.figma-home-viewport').scrollTop===120,'back restores original home and scroll '+homeState);
   check(doc().activeElement?.getAttribute('aria-label')==='대환하기','back restores card focus '+homeState);
