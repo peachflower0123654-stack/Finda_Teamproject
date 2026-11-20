@@ -298,7 +298,7 @@ function wireHomeDesign(){
  }
  // 온보딩 전 홈: 핀다 기본 순서 피드. 글 상세는 미구현 안내를 표시합니다.
  if(state.homeState==='NoOB_NoMD'||state.homeState==='InOB_NoMD')wirePostCard(shell.querySelector('[data-name="PostCard"]'),makeButton,{feed:defaultFeed,chipKey:'noobPostChip',rowIndex:0,onPost:()=>showTestScopeNotice(app)});
- // 종료 지점 ① 홈 끝까지 스크롤 (OB_NoMD만, 모달은 한 번만) — 60초 이상 머물렀거나 5번 이상 누른 뒤에만
+ // 종료 지점 ① 홈 끝까지 스크롤 (OB_NoMD만, 모달은 한 번만) — 60초 이상 머물렀거나 10번 이상 누른 뒤에만
  if(state.homeState==='OB_NoMD'){const viewport=shell.querySelector('.figma-home-viewport');viewport?.addEventListener('scroll',()=>{if(atScrollEnd(viewport)&&explore.scrollEndReady()&&showExploreDone(app))sendExploreDone(EXIT_POINTS.scrollEnd);},{passive:true});}
  for(const group of shell.querySelectorAll('[data-name="PostCard"] [data-name="Chips"], [data-name="PostCard"] [data-name="cmp_Common_ChipGroup"]'))wireChipGroup(group);
  const unavailableCard=element=>{
@@ -315,7 +315,7 @@ function wireHomeDesign(){
 // Figma PostCard의 칩·글 줄을 복제해 V4.0 추천 결과로 채운다. 칩을 눌러도 홈 스크롤이 유지되도록 카드만 다시 그린다.
 // 종료 이벤트: 모달이 뜬 순간 한 번. 그때의 맞춤 퀵메뉴 6개를 함께 보내 일치율 계산에 써요.
 const sendExploreDone=(exit_point,extra={})=>sendTestEvent('explore_done',{exit_point,recommendation_ids:getRecommended(),...explore.stats(),...extra});
-// 11.20 개인화 홈 탐색 종료 조건(explore-trigger.js): 누름 5번이면 바로 종료(퀵메뉴·포스트 예외), 60초 이상 머문 뒤 끝까지 스크롤해도 종료.
+// 11.20 개인화 홈 탐색 종료 조건(explore-trigger.js): 누름 10번이면 바로 종료(퀵메뉴·포스트 예외), 60초 이상 머문 뒤 끝까지 스크롤해도 종료.
 // explore_done에 click_count(누른 횟수)·dwell_sec(머문 초)를 함께 보내요. 페이지를 새로 열 때까지 이어서 세요.
 const explore=createExploreTrigger();
 const onObHome=()=>app.dataset.homeState==='OB_NoMD';
