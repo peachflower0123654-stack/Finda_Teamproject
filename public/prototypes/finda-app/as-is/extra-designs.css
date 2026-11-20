@@ -347,3 +347,10 @@
 .asis-post-65{position:absolute;inset:9px 6px}
 .asis-post-66{position:absolute;display:flex;inset:0;align-items:center;justify-content:center}
 .asis-post-67{transform:rotate(-90deg);flex:none;height:100cqw;width:100cqh}
+/* 11.20 포인트·전체·대출받기·대환하기 화면 맨 위의 캡처된 시스템 바(시간·배터리)는 지우고, 그 높이만큼 내용을 위로 올려요. As-is·To-be(기존 핀다 화면) 공통. */
+[data-node-id="4462:6557"],[data-node-id="4500:6615"],[data-node-id="4466:11814"]{display:none}
+[data-name="cmp_Point_Screen"]:has(>[data-node-id="4466:11814"]){margin-top:-27px}
+/* 대환하기는 한 장짜리 화면 캡처라, 위 33px(시스템 바)만큼 그림과 버튼을 올려요 */
+:is(#asis-app,.existing-finda-screen) .asis-refinance__capture[data-node-id="4536:17505"]>img{top:-33px}
+:is(#asis-app,.existing-finda-screen) .asis-refinance__capture[data-node-id="4536:17505"]>.asis-refinance__back{top:0}
+:is(#asis-app,.existing-finda-screen) .asis-refinance__capture[data-node-id="4536:17505"]>.asis-refinance__cta{top:649px}
