@@ -47,7 +47,7 @@ export function consentScreen(values,slide=0,enter=true){
 <div class="consent-rows">${row('all','모두 동의',all,false)}${consentItems.map(item=>row(item.id,item.label,values[item.id],false)).join('')}</div>
 <button class="primary intro-sheet__cta" data-action="next" ${canContinueConsent(values)?'':'disabled'}>다음</button></section>`:'';
  return `<div class="screen consent intro" data-slide="${slide}">
-<div class="intro-top"${sheet?' inert':''}><button class="cmp-navbar__back" data-action="back" aria-label="이전"><img src="assets/ic-common-arrow-left-24.svg" alt="" width="24" height="24"></button><button class="intro-close" data-action="consent-home" aria-label="닫고 홈으로">✕</button></div>
+<div class="intro-top"${sheet?' inert':''}><button class="cmp-navbar__back" data-action="back" aria-label="이전"><img src="assets/ob05-arrow.svg" alt="" width="8" height="14"></button><button class="intro-close" data-action="consent-home" aria-label="닫고 홈으로">✕</button></div>
 <div class="intro-bar" aria-label="${page+1} / ${PAGES}">${bar}</div>
 <div class="intro-stage"><div class="intro-preview" aria-hidden="true">${[postPreview,menuPreview,cohortPreview][page]()}</div></div>
 <div class="intro-copy"><h2>${t}</h2><p>${d}</p></div>

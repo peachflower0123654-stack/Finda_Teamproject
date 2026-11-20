@@ -29,7 +29,7 @@ try{
  await load("refinance");app().querySelector(".asis-refinance").dispatchEvent(new KeyboardEvent("keydown",{key:"PageDown",bubbles:true,cancelable:true}));
  check(note()==="이 테스트에서는 구현되지 않았습니다.","keyboard scroll attempt shows scope notice");
  await load("home");const scroll=app().querySelector('[data-home-scroll]');scroll.scrollTop=260;
- app().querySelector('[data-node-id="4753:23856"]').click();check(app().dataset.screen==="refinance","exact requested Home card opens refinance");
+ app().querySelector('[data-node-id="4769:25529"]').click();check(app().dataset.screen==="refinance","exact requested Home card opens refinance");
  app().querySelector(".asis-refinance__back").click();check(app().dataset.screen==="home"&&app().querySelector('[data-home-scroll]').scrollTop===260,"back restores Home scroll");
  await load("refinance");app().querySelector(".asis-refinance__back").click();check(app().dataset.screen==="home","direct review back falls back to Home");
  frame.style.width="320px";frame.style.height="640px";await load("refinance");
