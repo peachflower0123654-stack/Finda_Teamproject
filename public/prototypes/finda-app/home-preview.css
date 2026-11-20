@@ -15,6 +15,9 @@
 .figma-home-shell>.home-pinned-bottom { z-index:20; }
 .figma-home-shell>.home-pinned-top { z-index:10; }
 .figma-home-shell [data-node-id="1986:3913"] { justify-content:space-between; }
+.figma-home-shell [data-node-id$=";1986:3913"] { justify-content:space-between; }
+/* 11.20 온보딩 전 홈: tobbar_fixed = Fixed(stay in place). 안의 cmp_Common_TopBar·cmp_Home_Tab은 Scroll with parent. Figma 값: 세로 정렬·가운데, 간격 12, 360×108, left 0 · top 0 */
+.figma-home-shell>.home-topbar-fixed { display:flex; flex-direction:column; align-items:center; padding:0; gap:12px; position:absolute; width:360px; height:108px; left:0; top:0; }
 .figma-home-shell img:not([src]) { visibility:hidden; }
 #app .home-nav-icons{display:flex;align-items:center;gap:var(--ds-spacing-md)}#app .home-nav-icons>img{width:32px;height:32px;display:block}
 
@@ -34,15 +37,18 @@
 .figma-home-shell .post-chip-group>[data-name="Slot"]>*{flex-shrink:0;white-space:nowrap}
 .figma-home-shell .post-chip-group.is-dragging,.figma-home-shell .post-chip-group.is-dragging *{cursor:grabbing}
 .figma-home-shell>.home-ob-loan-tabs{position:absolute;top:52px;left:0;width:360px;z-index:10;background:#f6f6f9}
-/* 11.18 온보딩 전(NoOB)·중간 이탈(InOB) 홈의 포스트 글 제목 = Text style "Title S" (Noto Sans KR Bold 16/24, .t-title-m), 색 primitive/gray/110 */
-#app:is([data-home-state="NoOB_NoMD"],[data-home-state="InOB_NoMD"]) [data-name="PostCard"] > :nth-child(2) p { width: 100%; color: var(--ds-gray-110); font: var(--ds-font-weight-bold) var(--ds-font-size-16)/var(--ds-line-height-24) var(--ds-font-base); } /* 디자인의 158px 고정 폭 대신 글 칸(192px)을 다 써요 */
+/* 온보딩 전(NoOB)·중간 이탈(InOB) 홈 포스트 글 제목 (사용팁~금융사고 칩 공통) */
+#app:is([data-home-state="NoOB_NoMD"],[data-home-state="InOB_NoMD"]) [data-name="PostCard"] > :nth-child(2) p { flex: none; width: 158px; height: 40px; overflow: hidden; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; color: #000000; font-family: 'Noto Sans KR', sans-serif; font-style: normal; font-weight: 500; font-size: 14px; line-height: 20px; } /* 11.20 글 제목 = 158×40, Noto Sans KR Medium 14/20, #000000. 두 줄을 넘으면 말줄임 */
 
 /* 코호트 프리뷰 v6 카드 (cohort_v6.html 최종안) — 핀다대출 탭 맨 위, 328 폭 */
 #app .cohort-card { width: 328px; flex-shrink: 0; box-sizing: border-box; display: flex; flex-direction: column; gap: 12px; padding: 20px; background: var(--ds-bg-canvas); border-radius: 16px; box-shadow: 0 4px 16px rgba(0,0,0,.06); font-family: var(--ds-font-base); }
 #app .cohort-card__head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 8px; } /* 카드 gap 12 + 8 = 제목과 통계 상자 사이 20 */
 #app .cohort-card__prog { flex-shrink: 0; margin-top: 6px; font-size: 11px; font-weight: 500; color: var(--ds-purple-070); background: var(--ds-purple-010); border-radius: 60px; padding: 1px 8px; }
 #app .cohort-card__edit { flex-shrink: 0; margin-top: 4px; padding: 0; border: 0; background: none; font: 500 12px/18px var(--ds-font-base); color: var(--ds-text-muted); cursor: pointer; }
-#app .cohort-card__title { margin: 0; font: 700 24px/36px var(--ds-font-base); color: var(--ds-text-ink); }
+/* 11.20 cmp_Home_CohortPreview_v6 title = 288×72, Noto Sans KR SemiBold 24/36, 자간 0.4px, #000000, 폭은 카드 안쪽 가득(stretch) */
+#app .cohort-card__title { flex: none; align-self: stretch; width: 288px; height: 72px; margin: 0; font-family: 'Noto Sans KR', sans-serif; font-style: normal; font-weight: 600; font-size: 24px; line-height: 36px; letter-spacing: 0.4px; color: #000000; }
+/* 제목 오른쪽에 '수정 ›'·진행률이 있는 카드는 그만큼 제목 폭을 줄여요 */
+#app .cohort-card__head > .cohort-card__title:not(:only-child) { flex: 1 1 0; width: auto; min-width: 0; }
 #app .cohort-card__box { display: flex; flex-direction: column; gap: 10px; padding: 14px 16px; background: var(--ds-gray-010); border-radius: 12px; }
 #app .cohort-card__val { display: flex; align-items: center; gap: 8px; margin-top: 4px; }
 #app .cohort-card__info { display: flex; flex-shrink: 0; padding: 0; border: 0; background: none; color: var(--ds-gray-040); cursor: pointer; }
@@ -92,3 +98,23 @@
 #app .cohort-sheet__opt[aria-checked="true"] .cohort-sheet__radio { border: 7px solid var(--ds-primary); }
 #app .cohort-sheet__cap { margin: 10px 0 0; text-align: center; font-size: 11px; line-height: 16px; color: var(--ds-text-muted); }
 @media (prefers-reduced-motion: reduce) { #app .cohort-sheet-dim, #app .cohort-sheet.is-entering { animation: none; } }
+/* 11.20 cmp_Home_Post 제목 '요즘 인기있는 포스트예요' = #000000, Noto Sans KR SemiBold, 행간 16, 자간 0% (MY금융·핀다대출 공통, 크기 16 그대로) */
+.figma-home-shell [data-name="cmp_Home_Post"] > p { color: #000000; font-family: 'Noto Sans KR', sans-serif; font-weight: 600; line-height: 16px; letter-spacing: 0; }
+/* 11.20 같은 타이포(SemiBold, 행간 16, 자간 0%): 상환일정 · 신용점수 확인하기 · 핀다소식 · 한번에 자산관리를 하고 싶다면? · 더 정확하게 자산관리를 하고 싶다면? (색도 #000000) */
+.figma-home-shell :is([data-node-id$=";3819:21303"], [data-node-id$=";2804:3434"], [data-node-id$=";3819:21207"], [data-node-id="4797:31807"], [data-node-id$=";2804:4892"]) { color: #000000; font-family: 'Noto Sans KR', sans-serif; font-weight: 600; line-height: 16px; letter-spacing: 0; }
+/* 11.20 cmp_Home_FindaNews 크기 324×276 고정 (MY금융·핀다대출 공통) */
+.figma-home-shell [data-name="cmp_Home_FindaNews"] { width: 324px; height: 276px; flex-shrink: 0; }
+/* 11.20 cmp_Home_Banner 문구 '테스터 님, / 대출이 있는데 안보이나요?' = 222×56, Noto Sans KR SemiBold 20/28, 가운데, #000000 (배너가 들어가는 모든 MY금융 탭) */
+.figma-home-shell [data-name="cmp_Home_Banner"] [data-node-id$=";3531:3231"] { flex: none; width: 222px; height: 56px; z-index: 0; color: #000000; font-family: 'Noto Sans KR', sans-serif; font-style: normal; font-weight: 600; font-size: 20px; line-height: 28px; text-align: center; white-space: normal; }
+/* 줄은 원래대로 두 줄. 이 화면의 글꼴이 Figma보다 조금 넓어 222px을 넘는 줄도 꺾지 않고 가운데에 둬요 */
+.figma-home-shell [data-name="cmp_Home_Banner"] [data-node-id$=";3531:3231"] { display: flex; flex-direction: column; align-items: center; }
+.figma-home-shell [data-name="cmp_Home_Banner"] [data-node-id$=";3531:3231"] p { flex: none; line-height: 28px; white-space: nowrap; }
+/* 11.20 cmp_Home_Card(한번에 자산관리) 아래 탭 글자 대출·카드·투자·보험 = 30×24, Noto Sans KR SemiBold 16/24, 가운데, #5B6176 */
+.figma-home-shell [data-node-id$="3531:2985"] > :is([data-node-id$="3531:2986"], [data-node-id$="3531:2989"], [data-node-id$="3531:2992"], [data-node-id$="3531:2995"]) { flex: none; width: 30px; height: 24px; color: #5B6176; font-family: 'Noto Sans KR', sans-serif; font-style: normal; font-weight: 600; font-size: 16px; line-height: 24px; text-align: center; white-space: nowrap; }
+/* 11.20 cmp_Common_TopBar ic_area: Touch Area · ic_Common_Security / ic_Common_Alarm = 44×44, 가로 정렬·가운데, 패딩 0 (순서 1·2)
+   아이콘은 지금 앱 파일(0d970·7faef, 32×32 안에 여백 포함)을 늘리지 않고 원래 크기 그대로 가운데에 둬요 */
+.figma-home-shell :is([data-name="Touch Area · ic_Common_Security"], [data-name="Touch Area · ic_Common_Alarm"]) { display: flex; flex-direction: row; justify-content: center; align-items: center; padding: 0; width: 44px; height: 44px; flex: none; flex-grow: 0; }
+.figma-home-shell [data-name="Touch Area · ic_Common_Security"] { order: 1; }
+.figma-home-shell [data-name="Touch Area · ic_Common_Alarm"] { order: 2; }
+.figma-home-shell :is([data-name="Touch Area · ic_Common_Security"], [data-name="Touch Area · ic_Common_Alarm"]) > [data-name="Icon"] { width: 32px; height: 32px; overflow: visible; }
+.figma-home-shell :is([data-name="Touch Area · ic_Common_Security"], [data-name="Touch Area · ic_Common_Alarm"]) [data-name="icon_content"] { inset: 0; width: 32px; height: 32px; translate: none; transform: none; }

@@ -191,18 +191,19 @@ panel.addEventListener('change',e=>{if(e.target.dataset.post){state={...state,po
 panel.addEventListener('change',e=>{if(e.target.id==='state-review'&&e.target.value){const [kind,value]=e.target.value.split(':');state=kind==='home'?{...state,screen:'11',homeState:value,tab:'Asset',review:true}:{...state,screen:'10',result:value,review:!(state.screen==='07'&&state.interest)};render();}});
 app.addEventListener('change',e=>{if(e.target.hasAttribute('data-no-plan')){state=toggleNoPlan(state,e.target.checked);render(state.noPlan?null:'amount');if(state.noPlan)showNoPlanToast();else app.querySelector(':scope > .no-plan-toast')?.remove();app.querySelector('[data-no-plan]')?.focus();return;}if(e.target.dataset.consent){state={...state,consent:toggleConsent(state.consent,e.target.dataset.consent)};render();app.querySelector('[data-consent="'+e.target.dataset.consent+'"]')?.focus();}});
 
-// cmp_Home_Banner(Figma 3172:19812, "OOO님, 대출이 있는데 안보이나요?")는 모든 홈의 MY금융 탭에서만 내용 맨 위에 보여요(11.18).
-// 원본은 온보딩 전 핀다대출 탭 디자인에 들어 있어서, 거기서 한 번 꺼내 MY금융 디자인 맨 앞에 넣고 핀다대출 탭에서는 빼요.
-const HOME_BANNER_ID='3172:19812',HOME_BANNER_SPACE=281+32; // 배너 높이 281 + 목록 간격 32
+// cmp_Home_Banner(Figma 4797:31497, "테스터 님, 대출이 있는데 안보이나요?")는 모든 홈의 MY금융 탭에서만 내용 맨 위에 보여요(11.18).
+// 원본은 온보딩 전 MY금융 디자인(11.20 Figma 4797:31803)에 들어 있어서, 온보딩 후 MY금융 디자인에는 거기서 꺼내 맨 앞에 넣어요.
+const HOME_BANNER_ID='4797:31497';
 const HOME_ASSET_COLUMNS='[data-node-id="3172:19610"],[data-node-id="3172:21240"]'; // MY금융 내용 목록(온보딩 전 / 후)
 let homeBannerCache=null;
-function homeBannerHTML(){if(homeBannerCache===null){const t=document.createElement('template');t.innerHTML=homeDesigns.Loan.html;homeBannerCache=t.content.querySelector(`[data-node-id="${HOME_BANNER_ID}"]`)?.outerHTML||'';}return homeBannerCache;}
+function homeBannerHTML(){if(homeBannerCache===null){const t=document.createElement('template');t.innerHTML=homeDesigns.Asset.html;homeBannerCache=t.content.querySelector(`[data-node-id="${HOME_BANNER_ID}"]`)?.outerHTML||'';}return homeBannerCache;}
 function placeHomeBanner(shell){
  const canvas=shell.querySelector('.figma-home-canvas'),banner=shell.querySelector(`[data-node-id="${HOME_BANNER_ID}"]`);
  const resize=d=>{if(canvas)canvas.style.height=(parseFloat(canvas.style.height)+d)+'px';};
- if(state.tab!=='Asset'){if(banner){banner.remove();resize(-HOME_BANNER_SPACE);}return;}
+ const space=el=>el.offsetHeight+(parseFloat(getComputedStyle(el.parentElement).rowGap)||0);
+ if(state.tab!=='Asset'){if(banner){resize(-space(banner));banner.remove();}return;}
  const column=shell.querySelector(HOME_ASSET_COLUMNS);
- if(!banner&&column){column.insertAdjacentHTML('afterbegin',homeBannerHTML());resize(HOME_BANNER_SPACE);}
+ if(!banner&&column){column.insertAdjacentHTML('afterbegin',homeBannerHTML());resize(space(column.firstElementChild));}
 }
 // 홈 맨 위의 질문 영역은 모든 홈에서 빼요(11.18).
 // MY금융: Title Section·정보 입력 버튼(온보딩 전) / Title Section(온보딩 후). 핀다대출(온보딩 후): 타이틀·CohortPreview·AI 금리 버튼.
@@ -219,13 +220,17 @@ function cohortInput(){
  const p=postProfile();
  return {stage:'done',age:state.cohortAge,answers:{affiliation:state.affiliation||AFFILIATIONS[p.a],housing:state.housing||HOUSINGS[p.h],has_loan:state.ownership??p.n>0,loan_count:state.count||(p.n===2?3:1),extra_loan:state.interest,loan_purpose:state.purpose,no_loan_plan:state.noPlan,desired_amount:state.amount}};
 }
+const COHORT_LOANS_GAP=8; // 코호트 카드 ↔ 대출받기·대환하기 카드 간격
 function placeCohortCard(shell){
  if(state.tab!=='Loan')return;
+ const placeholder=shell.querySelector('[data-name="cmp_Home_CohortPreview_v6"]'); // 11.20 온보딩 전 디자인 안의 시안 카드
  const anchor=shell.querySelector('[data-node-id="3172:21110"]'),column=shell.querySelector('[data-node-id="3172:19811"]');
  const holder=document.createElement('div');holder.innerHTML=cohortView(cohortCard(cohortInput()));const card=holder.firstElementChild;
- if(anchor)anchor.before(card);else if(column)column.prepend(card);else return;
- const canvas=shell.querySelector('.figma-home-canvas');const gap=parseFloat(getComputedStyle(card.parentElement).rowGap)||0;
- if(canvas)canvas.style.height=(parseFloat(canvas.style.height)+card.offsetHeight+gap)+'px';
+ const canvas=shell.querySelector('.figma-home-canvas'),grow=d=>{if(canvas)canvas.style.height=(parseFloat(canvas.style.height)+d)+'px';};
+ if(placeholder){const before=placeholder.offsetHeight;placeholder.replaceWith(card);grow(card.offsetHeight-before);}
+ else if(anchor){ // 온보딩 후 홈: 대출받기·대환하기 카드(3172:21110) 바로 위. 둘 사이는 온보딩 전 홈(cmp_card_loans)과 같이 8px
+  anchor.before(card);const gap=parseFloat(getComputedStyle(card.parentElement).rowGap)||0;anchor.style.marginTop=(COHORT_LOANS_GAP-gap)+'px';grow(card.offsetHeight+COHORT_LOANS_GAP);}
+ else if(column){column.prepend(card);grow(card.offsetHeight+(parseFloat(getComputedStyle(card.parentElement).rowGap)||0));}
  card.addEventListener('click',e=>{const b=e.target.closest('[data-cohort]');if(!b)return;const k=b.dataset.cohort;
   if(k==='start'){state.screen='02';state.review=false;render();}
   else if(k==='resume'||k==='loanInfo')resumeOnboarding();
@@ -261,7 +266,7 @@ function wireHomeDesign(){
  for(const button of app.querySelectorAll('.screen.home .home-anonymous-banner button'))button.addEventListener('click',()=>showTestScopeNotice(app));
  const shell=app.querySelector('.figma-home-shell');if(!shell)return;
  stripHomeTitle(shell);placeHomeBanner(shell);placeCohortCard(shell);
- const starSlot=shell.querySelector('[data-name="material-symbols:star"]')?.parentElement;
+ const starSlot=shell.querySelector('[data-name="Touch Area · ic_Common_QuickMenu"]')||shell.querySelector('[data-name="material-symbols:star"]')?.parentElement;
  if(starSlot)starSlot.innerHTML=quickMenuButton();
  const makeButton=(element,label,action)=>{if(!element)return;element.setAttribute('role','button');element.setAttribute('tabindex','0');element.setAttribute('aria-label',label);element.classList.add('home-design-action');element.addEventListener('click',action);element.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();action();}});};
  const pick=id=>shell.querySelector('[data-node-id="'+id+'"]');
@@ -278,6 +283,10 @@ function wireHomeDesign(){
  const nestedTabs=pick('3172:21104');
  if(nestedTabs){const spacer=document.createElement('div');spacer.style.height='60px';spacer.style.flexShrink='0';nestedTabs.replaceWith(spacer);nestedTabs.classList.add('home-ob-loan-tabs');shell.append(nestedTabs);}
  const root=shell.querySelector('.figma-home-canvas').firstElementChild;
+ // 11.20 온보딩 전 홈: tobbar_fixed는 Fixed(stay in place) — 화면 맨 위에 고정. 안의 cmp_Common_TopBar·cmp_Home_Tab은 Scroll with parent라 이 틀과 함께 고정돼요.
+ // 원래 자리에는 같은 높이의 빈 칸을 남겨 아래 내용이 그대로 132px부터 시작해요.
+ const topBar=root.querySelector('[data-name="tobbar_fixed"]');
+ if(topBar){const spacer=document.createElement('div');spacer.style.cssText=`height:${topBar.offsetHeight}px;flex-shrink:0`;topBar.replaceWith(spacer);topBar.classList.add('home-pinned-top','home-topbar-fixed');shell.append(topBar);}
  for(const child of [...root.children]){const id=child.dataset.nodeId;if(id==='2303:701'){applyBottomBar(child,bottomBarSelection);child.classList.add('home-pinned-bottom');shell.append(child);}if(id==='1991:4029'||id==='3172:19808'||id==='3172:19933'||id==='3172:21425'||id==='3288:16052'){child.classList.add('home-pinned-top');shell.append(child);}}
  if(state.homeState==='OB_NoMD'){
   const postCard=shell.querySelector('[data-name="PostCard"]');
@@ -296,9 +305,9 @@ function wireHomeDesign(){
   const label=element.textContent.trim().replace(/\s+/g,' ')||'메뉴 안내';
   makeButton(element,label,()=>showTestScopeNotice(app));element.dataset.testScope='true';
  };
- for(const card of shell.querySelectorAll('[data-name="contents card"],[data-name="Card/Ad/M"],[data-name="card_home"],[data-name="card_home_RepaymentSchedule"],[data-name="cmp_Home_Card"],[data-name="cmp_Home_Banner"]'))unavailableCard(card);
- for(const icon of shell.querySelectorAll('[data-name^="ic_home_loan_"]'))if(!['ic_home_loan_money','ic_home_loan_refinance'].includes(icon.dataset.name))unavailableCard(icon.parentElement);
- unavailableCard(pick('3172:19812'));
+ for(const card of shell.querySelectorAll('[data-name="contents card"],[data-name="Card/Ad/M"],[data-name="card_home"],[data-name="card_home_RepaymentSchedule"],[data-name="cmp_Home_Card"],[data-name="cmp_Home_Banner"],[data-name="cmp_Home_RepaymentSchedule"],[data-name="cmp_Home_CreditScore"] > :last-child,[data-name="cmp_Home_MoneyMate"],[data-name="cmp_Home_FindaNews"] > :last-child > *'))unavailableCard(card);
+ for(const icon of shell.querySelectorAll('[data-name^="ic_home_loan_"],[data-name^="ic_Home_Loan"]'))if(!['ic_home_loan_money','ic_home_loan_refinance'].includes(icon.dataset.name))unavailableCard(icon.parentElement);
+ unavailableCard(pick(HOME_BANNER_ID));
  for(const button of shell.querySelectorAll('.home-anonymous-banner button'))button.addEventListener('click',()=>showTestScopeNotice(app));
 }
 
@@ -324,7 +333,7 @@ function wirePostCard(card,makeButton,{feed=()=>{const {a,h,n}=postProfile();ret
   slot.replaceChildren(...chips.map(c=>{const el=(c===current?selectedChip:chip).cloneNode(true);el.querySelector('p').textContent=c.name;makeButton(el,c.name+' 포스트',()=>{state[chipKey]=c.name;fill();slot.querySelector('[aria-pressed="true"]')?.focus({preventScroll:true});});el.setAttribute('aria-pressed',String(c===current));return el;}));
   group.scrollLeft=left;
   // 글 상세 화면은 없어요. onPost(글, 칸 순서 1~3, 지금 칩, 전체 칩)로 처리를 맡겨요.
-  list.replaceChildren(...current.posts.map((p,i)=>{const el=row.cloneNode(true);el.firstElementChild.setAttribute('style',thumbStyle(p));el.querySelector('p').textContent=p.t;if(onPost)makeButton(el,p.t,()=>onPost(p,i+1,current,chips));return el;}));
+  list.replaceChildren(...current.posts.map((p,i)=>{const el=row.cloneNode(true);(el.querySelector('[data-name="thumbnail"]')||el.firstElementChild).setAttribute('style',thumbStyle(p));el.querySelector('p').textContent=p.t;if(onPost)makeButton(el,p.t,()=>onPost(p,i+1,current,chips));return el;}));
  };
  fill();
 }
