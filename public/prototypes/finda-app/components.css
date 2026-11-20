@@ -425,6 +425,9 @@
 #app .intro-menu { display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; font: 500 12px/16px var(--ds-font-base); color: var(--ds-text-body); }
 #app .intro-menu img { width: 40px; height: 40px; }
 #app .intro-preview .cohort-card { width: 100%; }
+/* 11.20 약관 소개 장의 카드 미리보기는 보여 주기용이라 '수정 ›'을 빼고 제목이 카드 폭을 다 쓰게 해요(좁은 폭에서 제목이 세 줄로 넘쳐 잘리던 문제) */
+#app .intro-preview .cohort-card__edit { display: none; }
+#app .intro-preview .cohort-card__title { width: auto; }
 #app .intro-copy { padding: 28px 24px 0; }
 #app .intro-copy h2 { margin: 0; font: 700 26px/36px var(--ds-font-base); color: var(--ds-text-ink-pure); letter-spacing: -.4px; }
 #app .intro-copy p { margin: 12px 0 0; font: 400 15px/24px var(--ds-font-base); color: var(--ds-text-body); }

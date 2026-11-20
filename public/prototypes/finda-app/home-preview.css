@@ -46,7 +46,7 @@
 #app .cohort-card__prog { flex-shrink: 0; margin-top: 6px; font-size: 11px; font-weight: 500; color: var(--ds-purple-070); background: var(--ds-purple-010); border-radius: 60px; padding: 1px 8px; }
 #app .cohort-card__edit { flex-shrink: 0; margin-top: 4px; padding: 0; border: 0; background: none; font: 500 12px/18px var(--ds-font-base); color: var(--ds-text-muted); cursor: pointer; }
 /* 11.20 cmp_Home_CohortPreview_v6 title = 288×72, Noto Sans KR SemiBold 24/36, 자간 0.4px, #000000, 폭은 카드 안쪽 가득(stretch) */
-#app .cohort-card__title { flex: none; align-self: stretch; width: 288px; height: 72px; margin: 0; font-family: 'Noto Sans KR', sans-serif; font-style: normal; font-weight: 600; font-size: 24px; line-height: 36px; letter-spacing: 0.4px; color: #000000; }
+#app .cohort-card__title { flex: none; align-self: stretch; width: 288px; height: 72px; margin: 0; word-break: keep-all; font-family: 'Noto Sans KR', sans-serif; font-style: normal; font-weight: 600; font-size: 24px; line-height: 36px; letter-spacing: 0.4px; color: #000000; }
 /* 제목 오른쪽에 '수정 ›'·진행률이 있는 카드는 그만큼 제목 폭을 줄여요 */
 #app .cohort-card__head > .cohort-card__title:not(:only-child) { flex: 1 1 0; width: auto; min-width: 0; }
 #app .cohort-card__box { display: flex; flex-direction: column; gap: 10px; padding: 14px 16px; background: var(--ds-gray-010); border-radius: 12px; }

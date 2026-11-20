@@ -5,7 +5,7 @@
 //    - 포스트: 다른 칩·글을 누르는 동안은 계속, 포스트 밖을 누르면 종료. (MY 칩 글은 기존대로 바로 종료)
 // ② 홈에 머문 시간이 DWELL_LIMIT_SEC초 이상(또는 ①의 횟수 이상)이면 끝까지 스크롤했을 때 종료해요.
 // 화면·DOM과 상관없는 판정만 맡아요. 실제 모달·전송은 app.js가 해요.
-export const CLICK_LIMIT=5;
+export const CLICK_LIMIT=10; // 11.20 5 → 10
 export const DWELL_LIMIT_SEC=60;
 
 // kind: 'quickmenu'(퀵메뉴 열기) | 'post'(포스트 칩·글) | 'other'(그 밖의 누를 수 있는 요소)
