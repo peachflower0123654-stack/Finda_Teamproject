@@ -5,7 +5,7 @@ import {aiRateName,aiRateIntro,aiRateConsentSheet,aiRateLoading,aiRateScreen,wir
 import {quickMenuButton,wireQuickMenuButtons} from './quick-menu-button.js';
 import {closeQuickMenu,openQuickMenu} from './quick-menu-dialog.js';
 import {popupMode,setQuickMenuProfile,getRecommended,recommendMenus} from './quick-menu-edit.js';
-import {showExploreDone,atScrollEnd,EXIT_POINTS,isExitPost,postClickPayload,MY_CHIP,homeViewPayload} from './explore-done.js';
+import {showExploreDone,EXIT_POINTS,isExitPost,postClickPayload,MY_CHIP,homeViewPayload} from './explore-done.js';
 import {existingScreen,existingScreenName,wireExistingScreen} from './existing-screens.js';
 import {showTestScopeNotice} from './test-scope-notice.js';
 import {cohortCard,cohortView} from './cohort-card.js';
@@ -288,8 +288,6 @@ function wireHomeDesign(){
  }
  // 온보딩 전 홈: 핀다 기본 순서 피드. 글 상세는 미구현 안내를 표시합니다.
  if(state.homeState==='NoOB_NoMD'||state.homeState==='InOB_NoMD')wirePostCard(shell.querySelector('[data-name="PostCard"]'),makeButton,{feed:defaultFeed,chipKey:'noobPostChip',rowIndex:0,onPost:()=>showTestScopeNotice(app)});
- // 종료 지점 ① 홈 끝까지 스크롤 (OB_NoMD만, 모달은 한 번만)
- if(state.homeState==='OB_NoMD'){const viewport=shell.querySelector('.figma-home-viewport');viewport?.addEventListener('scroll',()=>{if(atScrollEnd(viewport)&&showExploreDone(app))sendExploreDone(EXIT_POINTS.scrollEnd);},{passive:true});}
  for(const group of shell.querySelectorAll('[data-name="PostCard"] [data-name="Chips"], [data-name="PostCard"] [data-name="cmp_Common_ChipGroup"]'))wireChipGroup(group);
  const unavailableCard=element=>{
   if(!element||element.matches('[role="button"],button,a[href]')||element.querySelector('[role="button"],button,a[href],[role="tab"]'))return;
