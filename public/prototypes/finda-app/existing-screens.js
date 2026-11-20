@@ -1,4 +1,5 @@
 import {extraAsIsDesigns} from './as-is/extra-designs.js';
+import {findLoanDesign} from './as-is/find-loan-design.js';
 import {applyBottomBar} from './bottom-bar.js';
 import {showTestScopeNotice} from './test-scope-notice.js';
 
@@ -8,7 +9,8 @@ export const existingScreenName=screen=>screens[screen]?.[2];
 export function existingScreen(screen){
  const source=screens[screen];if(!source)return '';
  const [id,frame,,label]=source;
- const html=extraAsIsDesigns[id].html.replace(`data-node-id="${id}"`,`data-node-id="${frame}"`).replaceAll('src="assets/','src="as-is/assets/');
+ const design=screen==='find-loan'?findLoanDesign:extraAsIsDesigns[id];
+ const html=design.html.replace(`data-node-id="${id}"`,`data-node-id="${frame}"`).replaceAll('src="assets/','src="as-is/assets/');
  return `<section class="existing-finda-screen" data-existing-screen="${screen}" aria-label="${label}">${html}</section>`;
 }
 

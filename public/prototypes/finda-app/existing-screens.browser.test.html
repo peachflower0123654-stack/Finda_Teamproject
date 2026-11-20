@@ -15,7 +15,7 @@ async function images(label){await settle();for(const image of app().querySelect
 try{
  await load();check(app().dataset.screen==='Finda_Point','direct point preview');
  check(app().querySelectorAll('[data-name^="cmp_Point_MenuItem"]').length===8,'eight point menu items');
- check(pick('4483:5998')&&app().textContent.includes('OOO'),'referenced point frame and anonymous identity');
+ check(pick('4483:5998')&&app().textContent.includes('테스터'),'referenced point frame and tester identity');
  near(app().querySelector('[data-name="cmp_Point_Hero"]'),{x:0,y:27,w:360,h:204},'point hero geometry');
  near(app().querySelector('[data-name="cmp_Point_CheckInCard"]'),{x:16,y:177,w:328,h:144},'check-in geometry');
  near(app().querySelector('[data-name="cmp_Point_MenuGrid"]'),{x:16,y:341,w:328,h:188},'point grid geometry');

@@ -204,7 +204,7 @@
 }
 
 /* ic_Common_ArrowLeft: 에셋(8×14)은 오른쪽(›) 모양이라 시안처럼 좌우 반전해서 쓴다(Figma의 -scale-x-100). 에셋 자체와 크기는 바꾸지 않는다. */
-/* 뒤로 가기는 ic_Common_ArrowLeft 24 에셋(ic-common-arrow-left-24.svg)을 그대로 쓴다. */
+/* 뒤로 가기는 Figma에서 내려받은 8×14 에셋을 원래 크기로 쓴다. */
 /* 06~09 헤더(A안): NavBar 아래 단계 표시. 건너뛰기는 NavBar 오른쪽(.skip)에 있다. */
 .ob-stephead { display: flex; flex-direction: column; flex-shrink: 0; }
 .ob-step { display: flex; flex-direction: column; gap: var(--ds-spacing-sm); }
@@ -247,11 +247,16 @@
 
 /* 넘버패드가 있는 화면(06): 화면은 780px로 고정하고, 넘버패드는 아래에 붙이고, 그 위 내용만 스크롤한다.
    입력 중인 창이 맨 위에 있어서 스크롤하지 않아도 보인다. */
-.cmp-keypad-screen { padding: 0; gap: 0; height: 780px; overflow: hidden; }
+.cmp-keypad-screen { position: relative; isolation: isolate; padding: 0; gap: 0; height: 780px; overflow: hidden; }
 .cmp-keypad-screen__scroll {
   flex: 1 1 auto; min-height: 0; overflow-y: auto; scrollbar-width: none;
+  position: relative;
   display: flex; flex-direction: column; gap: var(--ds-spacing-lg); padding: var(--ds-spacing-base);
 }
+/* Outside taps dismiss the keypad without dimming the typing screen. */
+.cmp-keypad-dismiss { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; padding: 0; border: 0; border-radius: 0; background: transparent; cursor: pointer; }
+.cmp-keypad-screen__scroll :is(.ob-stephead,.fields,.no-plan-wrap) { position: relative; z-index: 2; }
+.cmp-keypad-screen > :is(.cmp-keypad,.cmp-keypad-cta) { position: relative; z-index: 2; }
 .cmp-keypad-screen__scroll::-webkit-scrollbar { display: none; }
 .cmp-keypad-screen .cmp-keypad { margin: 0; }
 
@@ -350,10 +355,12 @@
 #app > .no-plan-toast .no-plan-toast__icon img { position: absolute; left: 3px; top: 3px; display: block; max-width: none; }
 
 /* cmp_Common_TopBar / Type=Navigation (Figma 3691:2510). 화면 안에서는 여백 16 안쪽에 328×52로 놓여요(scr_04 3663:26003 측정).
-   왼쪽: 36×36 터치 영역(화면 16, 24) 안 24 아이콘(ic_Common_ArrowLeft, #8E92A4 2px). 오른쪽: 건너뛰기는 기존 타이포(14px, muted) 그대로, 터치 영역 좌우 16·높이 44. */
+   왼쪽: 36×36 터치 영역(화면 16, 24), ic_Common_ArrowLeft의 표시 끝은 x=16. 오른쪽: 건너뛰기는 기존 타이포(14px, muted) 그대로, 터치 영역 좌우 16·높이 44. */
 #app .cmp-navbar { margin: 0; height: 52px; }
-#app .cmp-navbar__back { width: 36px; height: 36px; }
-#app .cmp-navbar__back img { display: block; width: 24px; height: 24px; }
+#app .cmp-navbar__back { position: relative; width: 36px; height: 36px; }
+/* Keep the 36px hit area. Align the native SVG's painted left tip with
+   the screen's 16px content margin without moving the button or header. */
+#app .cmp-navbar__back img { position: absolute; left: 0; top: 50%; display: block; width: auto; height: auto; transform: translateY(-50%) scaleX(-1); }
 #app .cmp-navbar .skip { height: 44px; padding: 0 var(--ds-spacing-base); }
 
 /* cmp_OB_ListItem 업데이트 (Figma 4670:25730 선택 / 4670:25789 기본) — 03·04·07·09
@@ -373,7 +380,6 @@
 
 /* scr_05 — Figma 4760:32076. Other onboarding screens retain their shared styles. */
 #app[data-screen="scr_05_Onboarding_LoanOwnership_Default"] > .screen.ob05 { padding-bottom: var(--ds-spacing-36); background: var(--ds-bg-canvas); height: 780px; }
-#app .ob05 .cmp-navbar__back img { width: auto; height: auto; transform: scaleX(-1); }
 #app .ob05 .cmp-navbar .skip { color: var(--ds-gray-090); font: var(--ds-font-weight-regular) var(--ds-font-size-16)/var(--ds-line-height-24) var(--ds-font-base); }
 #app .ob05 .ob-qhead { margin-bottom: 0; }
 #app .ob05 .cmp-qtitle { letter-spacing: 0.4px; }
@@ -441,3 +447,31 @@
    키패드를 닫아도 [다음]의 위치는 유지한다. */
 #app .cmp-keypad-cta { margin-top: auto; padding-bottom: calc(var(--ds-spacing-base) + var(--ds-spacing-xxl) + var(--ds-spacing-xs)); background: transparent; }
 #app .cmp-keypad-cta .actions { margin-top: 0; padding: 0 var(--ds-spacing-base); }
+
+/* Figma 4682:30895, with existing copy and the requested 68px CTA bottom gap.
+   Only the content scrolls when longer copy needs more room. */
+#app[data-screen^="scr_10_Onboarding_Result_"] > .screen.onboarding-result { height: 780px; min-height: 780px; padding: var(--ds-spacing-base) var(--ds-spacing-base) 68px; gap: var(--ds-spacing-lg); overflow: hidden; background: var(--ds-bg-canvas); }
+.onboarding-result > * { flex-shrink: 0; }
+.onboarding-result__body { display: flex; flex: 1; flex-direction: column; gap: var(--ds-spacing-lg); min-height: 0; width: 100%; overflow-y: auto; scrollbar-width: none; }
+.onboarding-result__body::-webkit-scrollbar { display: none; }
+.onboarding-result__body > * { flex-shrink: 0; }
+.onboarding-result__intro { display: flex; flex-direction: column; align-items: center; gap: var(--ds-spacing-xs); width: 100%; text-align: center; }
+.onboarding-result__celebration { position: relative; flex-shrink: 0; width: 120px; height: 120px; }
+.onboarding-result__celebration img { position: absolute; left: 14.0625px; top: 19.8px; display: block; }
+.onboarding-result__intro h2 { width: 311px; max-width: 100%; margin: 0; color: var(--ds-text-ink); font: var(--ds-font-weight-bold) var(--ds-font-size-24)/var(--ds-line-height-36) var(--ds-font-base); letter-spacing: .4px; }
+.onboarding-result__caption { width: 100%; margin: 0; color: var(--ds-gray-070); font: var(--ds-font-weight-regular) var(--ds-font-size-16)/var(--ds-line-height-24) var(--ds-font-base); }
+.onboarding-result__caption p { margin: 0; }
+.onboarding-result__notice { display: flex; align-items: flex-start; gap: var(--ds-spacing-sm); width: 100%; margin-top: auto; padding: var(--ds-spacing-md); border-radius: var(--ds-radius-selection); background: var(--ds-gray-010); }
+.onboarding-result__notice > span { display: grid; place-items: center; flex: 0 0 20px; height: 20px; }
+.onboarding-result__notice p { margin: 0; color: var(--ds-gray-100); font: var(--ds-font-weight-regular) var(--ds-font-size-14)/var(--ds-line-height-24) var(--ds-font-base); }
+.onboarding-result__card { display: flex; flex-direction: column; gap: var(--ds-spacing-base); width: 100%; padding: var(--ds-spacing-lg) var(--ds-spacing-base) var(--ds-spacing-lg) var(--ds-spacing-lg); border: 1px solid var(--ds-purple-010); border-radius: var(--ds-radius-md); background: var(--ds-bg-canvas); }
+.onboarding-result__card-heading h3 { margin: 0; color: var(--ds-text-ink-pure); font: var(--ds-font-weight-bold) var(--ds-font-size-16)/var(--ds-line-height-24) var(--ds-font-base); }
+.onboarding-result__card-heading > p { margin: var(--ds-spacing-xs) 0 0; color: var(--ds-text-muted); font: var(--ds-font-weight-regular) var(--ds-font-size-12)/var(--ds-line-height-16) var(--ds-font-base); }
+.onboarding-result__benefits { display: flex; flex-direction: column; gap: var(--ds-spacing-md); }
+.onboarding-result__benefit { display: flex; align-items: center; gap: var(--ds-spacing-sm); min-height: 30px; }
+.onboarding-result__benefit-icon { display: grid; place-items: center; flex: 0 0 30px; height: 30px; border-radius: var(--ds-radius-md); background: var(--ds-surface-alt); }
+.onboarding-result__benefit-icon.is-primary { background: var(--ds-purple-010); }
+.onboarding-result__benefit > p { flex: 1; min-width: 0; margin: 0; color: var(--ds-gray-100); font: var(--ds-font-weight-medium) var(--ds-font-size-14)/var(--ds-line-height-20) var(--ds-font-base); }
+.onboarding-result__arrow { display: grid; place-items: center; flex: 0 0 24px; height: 24px; }
+.onboarding-result img { max-width: none; }
+#app .onboarding-result > .actions { width: 100%; margin: 0; padding: 0; }
