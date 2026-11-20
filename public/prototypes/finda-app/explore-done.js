@@ -24,7 +24,8 @@ export const resetExploreDone=()=>{shown=false;};
 export const atScrollEnd=({scrollTop,clientHeight,scrollHeight},slack=4)=>scrollHeight>clientHeight&&scrollTop+clientHeight>=scrollHeight-slack;
 
 // 종료 지점 이름 (explore_done.exit_point)
-export const EXIT_POINTS={scrollEnd:'scroll_end',myPost:'my_post_click',quickMenu:'quickmenu_done'};
+// clickCount: 홈에서 누른 횟수가 기준(explore-trigger.js)에 닿았을 때
+export const EXIT_POINTS={scrollEnd:'scroll_end',myPost:'my_post_click',quickMenu:'quickmenu_done',clickCount:'click_count'};
 // ② 종료 지점은 개인화 홈의 MY 칩 글 클릭만이에요. 다른 칩(정책·대출 등) 글 클릭은 post_click 기록만 남겨요.
 export const MY_CHIP='MY';
 export const isExitPost=chipName=>chipName===MY_CHIP;

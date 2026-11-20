@@ -37,7 +37,7 @@ test('only MY chip posts are exit point ②; other chips are logged only',()=>{
 });
 
 test('exit point names match the Supabase event contract',()=>{
- assert.deepEqual(EXIT_POINTS,{scrollEnd:'scroll_end',myPost:'my_post_click',quickMenu:'quickmenu_done'});
+ assert.deepEqual(EXIT_POINTS,{scrollEnd:'scroll_end',myPost:'my_post_click',quickMenu:'quickmenu_done',clickCount:'click_count'});
  for(const name of Object.values(EXIT_POINTS))assert.match(name,/^[a-z0-9_]{1,64}$/);
 });
 
