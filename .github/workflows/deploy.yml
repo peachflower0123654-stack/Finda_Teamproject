@@ -37,6 +37,25 @@ jobs:
             - name: Install dependencies
               run: pnpm install --frozen-lockfile
 
+            # 테스트 데이터 전송용 Supabase 키 파일을 GitHub Secrets에서 만들어요(저장소에는 올리지 않음).
+            # Settings > Secrets and variables > Actions 에 SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY 를 등록하세요.
+            # publishable 키(sb_publishable_... 또는 anon public)만 넣어요. secret/service_role 키는 절대 넣지 마세요.
+            # Secrets가 없으면 이 단계는 건너뛰고(전송 없음) 배포는 그대로 진행돼요.
+            - name: Write Supabase config
+              env:
+                  SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+                  SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
+              run: |
+                  if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_PUBLISHABLE_KEY" ]; then
+                    echo "::warning::SUPABASE_URL / SUPABASE_PUBLISHABLE_KEY secrets가 없어 테스트 데이터 전송 없이 배포해요."
+                    exit 0
+                  fi
+                  case "$SUPABASE_PUBLISHABLE_KEY" in
+                    sb_secret_*) echo "::error::secret 키가 들어 있어요. publishable 키로 바꿔 주세요."; exit 1 ;;
+                  esac
+                  node -e 'const fs=require("fs");fs.writeFileSync("public/prototypes/finda-app/supabase-config.js","export default "+JSON.stringify({url:process.env.SUPABASE_URL.trim(),publishableKey:process.env.SUPABASE_PUBLISHABLE_KEY.trim()})+";\n")'
+                  echo "Supabase config written"
+
             # base 경로는 vite.config.ts에서 '/Finda_Teamproject/'로 고정
             - name: Build
               run: pnpm run build
