@@ -30,7 +30,7 @@ finda-app의 테스트 데이터를 Supabase 무료 플랜에 저장해요. 로�
 | event | 언제 | payload |
 |---|---|---|
 | `quickmenu_done` | 퀵메뉴 편집 [완료] (종료 지점 ③) | `selected_menu_ids`(고른 추가 메뉴), `recommendation_ids`(그때 보인 맞춤 추천 6개) |
-| `explore_done` | 탐색 완료 모달이 실제로 뜬 순간 (테스터당 첫 종료 지점 1번) | `exit_point`(`scroll_end` ①홈 끝까지 스크롤 · `my_post_click` ②MY 칩 글 클릭 · `quickmenu_done` ③퀵메뉴 편집 [완료]), `recommendation_ids`(맞춤 퀵메뉴 6개), ②는 `post_id`·`position`도 |
+| `explore_done` | 탐색 완료 모달이 실제로 뜬 순간 (테스터당 첫 종료 지점 1번) | `exit_point`(`scroll_end` ①60초 이상 머물렀거나 5번 이상 누른 뒤 홈 끝까지 스크롤 · `my_post_click` ②MY 칩 글 클릭 · `quickmenu_done` ③퀵메뉴 편집 [완료] · `click_count` ④홈에서 5번째 누름, 퀵메뉴·포스트로 닿았으면 그 탐색을 마친 뒤), `recommendation_ids`(맞춤 퀵메뉴 6개), `click_count`(그때까지 홈에서 누른 횟수)·`dwell_sec`(홈에 머문 초), ②는 `post_id`·`position`도 |
 | `home_ob_view` | 개인화 홈(온보딩 후)에서 MY 3칸이 처음 보인 순간 (같은 MY면 한 번만) | `my_post_ids`(MY 3칸), `recommendation_ids`(맞춤 퀵메뉴 6개). MY 클릭률의 분모 |
 | `interest_menus` | 탐색 완료 모달 → 관심 메뉴 6개 고르기 [완료] | `selected_menu_ids`(고른 6개, 고른 순서), `recommendation_ids`(맞춤 퀵메뉴 6개), `match_count`(겹친 개수). 일치율 = match_count / 6 |
 | `post_click` | 개인화 홈(온보딩 후)에서 포스트를 누를 때마다 (모든 칩) | `chip`(MY·정책·대출 등), `post_id`, `post_category`, `position`(칩 안 1~3번째), `my_post_ids`(그 사람의 MY 3칸) |

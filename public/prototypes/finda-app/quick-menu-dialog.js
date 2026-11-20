@@ -1,7 +1,6 @@
 import {popupView,noobPopupView,editView,sheetView} from './quick-menu-views.js';
 import {toggleMenu,getSavedPicks,savePicks,getRecommended} from './quick-menu-edit.js';
 import {sendTestEvent} from './test-data.js';
-import {showExploreDone,EXIT_POINTS} from './explore-done.js';
 import {showTestScopeNotice} from './test-scope-notice.js';
 const openMenus=new WeakMap();
 export function closeQuickMenu(root){openMenus.get(root)?.();}
@@ -14,7 +13,7 @@ export function openQuickMenu(root,trigger,startEditing=false){
  const screen=root.querySelector('.screen,.figma-home-shell');
  if(screen)screen.inert=true;
  const announce=value=>root.dispatchEvent(new CustomEvent('quick-menu-view',{detail:value}));
- let picks=[],toastTimer=0,completed=false;
+ let picks=[],toastTimer=0,completed=false,edited=false; // edited: 편집 화면에 들어갔는지
 
  const showPopup=focusSelector=>{
   clearTimeout(toastTimer);
@@ -25,7 +24,7 @@ export function openQuickMenu(root,trigger,startEditing=false){
   announce('popup:quick-menu');
  };
  const showEdit=()=>{
-  completed=false;
+  completed=false;edited=true;
   picks=getSavedPicks();
   overlay.classList.add('is-editing');
   overlay.innerHTML=editView(picks);
@@ -45,7 +44,7 @@ export function openQuickMenu(root,trigger,startEditing=false){
   overlay.querySelector('.qm-sheet').innerHTML=sheetView(picks);
  };
 
- const close=({finish=false}={})=>{clearTimeout(toastTimer);document.removeEventListener('keydown',onKey,true);overlay.remove();openMenus.delete(root);if(screen)screen.inert=false;if(trigger?.isConnected)trigger.focus();announce(null);if(finish&&completed&&showExploreDone(root))sendTestEvent('explore_done',{exit_point:EXIT_POINTS.quickMenu,recommendation_ids:getRecommended()});};
+ const close=({finish=false}={})=>{clearTimeout(toastTimer);document.removeEventListener('keydown',onKey,true);overlay.remove();openMenus.delete(root);if(screen)screen.inert=false;if(trigger?.isConnected)trigger.focus();announce(null);if(finish)root.dispatchEvent(new CustomEvent('quick-menu-closed',{detail:{edited,completed}}));}; // 사용자가 닫았을 때만 알려요. 탐색 종료 판정·전송은 app.js(explore-trigger)가 해요
  const onKey=e=>{
   if(e.key==='Escape'){e.preventDefault();if(overlay.classList.contains('is-editing'))showPopup('.quick-menu-edit');else close({finish:true});}
   else if(e.key==='Tab'){const buttons=[...overlay.querySelectorAll('button:not(:disabled)')];const first=buttons[0],last=buttons.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}

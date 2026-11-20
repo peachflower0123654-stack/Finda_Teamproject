@@ -129,23 +129,28 @@ function wireConsent(){
  dialog.focus({preventScroll:true});
 }
 function wireHome(){
- action(pick('4769:25528'),'대출 받기',()=>openDetail('find-loan'));
- action(pick('4769:25529'),'대출 갈아타기',()=>openDetail('refinance'));
+ // Figma 4821:29246 핀다 홈 · 편집형 복원
+ // 핀다 상단 바(4821:29260)는 화면 맨 위에 고정해요. 스크롤 영역 밖(홈 셸)으로 옮기고, 원래 자리(0~85px)는 캔버스에 빈 칸으로 남아요.
+ const topBar=pick('4821:29260'),shell=app.querySelector('.asis-home-shell');
+ if(topBar&&shell){topBar.classList.add('asis-home-v3','asis-home-topbar-fixed');shell.append(topBar);}
+ action(pick('4821:29263'),'대출 받기',()=>openDetail('find-loan'));
+ action(pick('4821:29264'),'대출 갈아타기',()=>openDetail('refinance'));
  action(app.querySelector('[data-name="Touch Area · ic_Common_QuickMenu"]'),'포인트',()=>switchTab('point'));
  action(app.querySelector('[data-name="Touch Area · ic_Common_Security"]'),'보안',unavailable);
  action(app.querySelector('[data-name="Touch Area · ic_Common_Alarm"]'),'알림',unavailable);
- const menu=pick('4769:25530');
+ const menu=pick('4821:29265');
+ // 대출 상품 바로가기: 아이콘+이름 한 칸(78×76)씩 누를 수 있게 투명 버튼을 얹어요. 칸은 x 8부터 78 간격, 줄은 y 12·88.
  ['핀다카드','사업자대출','주택담보대출','전세대출','우수대부','신용카드 찾기','차 구매대출','차 리스렌트'].forEach((label,index)=>{
   const hit=document.createElement('button');hit.type='button';hit.className='asis-home-hit';hit.dataset.name='cmp_Home_LoanMenuItem_'+index;hit.setAttribute('aria-label',label);
-  Object.assign(hit.style,{left:(index%4*82)+'px',top:(index<4?0:84)+'px',width:'82px',height:'84px'});
-  hit.addEventListener('click',unavailable);menu.append(hit);
+  Object.assign(hit.style,{left:(8+index%4*78)+'px',top:(index<4?12:88)+'px',width:'78px',height:'76px'});
+  hit.addEventListener('click',unavailable);menu?.append(hit);
  });
- for(const element of app.querySelectorAll('[data-node-id="3531:2798"]'))action(element,'연결하기',()=>openDetail('connect'));
- action(pick('4769:25577'),'내 신용점수 확인하기',unavailable);
- action(pick('4769:25581'),'내 포인트',()=>switchTab('point'));
- action(pick('4769:25586'),'핀다 소식',unavailable);
- for(const id of ['4769:25595','4769:25601','4769:25611','4769:25616','4769:25628','4769:25633'])action(pick(id),'광고 안내',unavailable);
- action(pick('4769:25647'),'내 금액, 정보 숨기기',unavailable);
+ for(const element of app.querySelectorAll('[data-node-id="3531:2798"]'))action(element,'연결하기',()=>openDetail('connect')); // 연결하기 버튼 3개(같은 컴포넌트)
+ action(pick('4821:29313'),'내 신용점수 확인하기',unavailable);
+ action(pick('4821:29325'),'내 포인트',()=>switchTab('point'));
+ for(const id of ['4821:29340','4821:29344'])action(pick(id),'핀다 소식',unavailable);
+ for(const id of ['4821:29347','4821:29353','4821:29360','4821:29366','4821:29373','4821:29378'])action(pick(id),'광고 안내',unavailable);
+ action(pick('4821:29386'),'내 금액, 정보 숨기기',unavailable);
 }
 function wireBottomBar(selected=state.screen){
  const nav=app.querySelector('[data-name="cmp_Common_BottomBar"]');

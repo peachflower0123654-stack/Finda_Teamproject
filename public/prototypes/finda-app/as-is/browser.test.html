@@ -46,10 +46,10 @@ const specs={
  consent:[["4438:10087",{x:0,y:386,w:360,h:371}]],
  verify:[["4442:4436",{x:0,y:195.35,w:360,h:432.766}],["4442:4439",{x:16,y:629.115,w:328,h:56}]],
  signing:[["4417:4259",{x:0,y:0,w:360,h:800}]],
- home:[["4769:25528",{x:16,y:147,w:160,h:106}],["4769:25529",{x:184,y:147,w:160,h:106}],["4769:25530",{x:16,y:261,w:328,h:172}],["2303:701",{x:0,y:688,w:360,h:92}]],
- point:[["4468:11687",{x:0,y:27,w:360,h:204}],["4468:11625",{x:16,y:177,w:328,h:144}],["4468:11660",{x:16,y:341,w:328,h:188}],["4468:11700",{x:16,y:545,w:328,h:122}],["4466:11944",{x:0,y:688,w:360,h:92}]],
- all:[["4462:6513",{x:0,y:32,w:360,h:72}],["4462:6568",{x:36,y:132,w:288,h:104}],["4462:6529",{x:0,y:332,w:360,h:44}],["4426:16446",{x:0,y:688,w:360,h:92}]],
- "find-loan":[["4500:6615",{x:0,y:0,w:360,h:28}],["4500:6616",{x:0,y:28,w:360,h:48}],["4500:6617",{x:0,y:76,w:360,h:606.15}],["4500:6620",{x:0,y:688,w:360,h:92}]],
+ home:[["4821:29263",{x:16,y:147,w:160,h:106}],["4821:29264",{x:184,y:147,w:160,h:106}],["4821:29265",{x:16,y:261,w:328,h:172}],["2303:701",{x:0,y:688,w:360,h:92}]],
+ point:[["4468:11687",{x:0,y:0,w:360,h:204}],["4468:11625",{x:16,y:150,w:328,h:144}],["4468:11660",{x:16,y:314,w:328,h:188}],["4468:11700",{x:16,y:518,w:328,h:122}],["4466:11944",{x:0,y:688,w:360,h:92}]],
+ all:[["4462:6513",{x:0,y:0,w:360,h:72}],["4462:6568",{x:36,y:100,w:288,h:104}],["4462:6529",{x:0,y:300,w:360,h:44}],["4426:16446",{x:0,y:688,w:360,h:92}]],
+ "find-loan":[["4500:6616",{x:0,y:0,w:360,h:48}],["4500:6617",{x:0,y:48,w:360,h:606.15}],["4500:6620",{x:0,y:688,w:360,h:92}]],
  "rate-cut":[["4500:6921",{x:0,y:0,w:360,h:28}],["4500:6939",{x:0,y:80,w:360,h:528.414}],["4500:6941",{x:0,y:647.95,w:360,h:76}],["4500:6942",{x:0,y:723.95,w:360,h:56.051}]],
 };
 try{
@@ -89,14 +89,16 @@ try{
    const bounds=image.getBoundingClientRect();
    const data={screen:key,src:image.getAttribute("src").slice(0,120),loaded:image.complete&&image.naturalWidth>0,w:bounds.width,h:bounds.height,slot:image.parentElement.dataset.nodeId||image.parentElement.parentElement.dataset.nodeId};
    assets.push(data);
-   check(data.loaded&&bounds.width>0&&bounds.height>0,"image "+key+" "+data.src);
+   // 11.20 지운 시스템 바(display:none) 안의 이미지는 크기 0이 정상이라 불러오기만 확인해요
+   const hiddenBar=!!image.closest('[data-node-id="4462:6557"],[data-node-id="4500:6615"],[data-node-id="4466:11814"]');
+   check(data.loaded&&(hiddenBar||(bounds.width>0&&bounds.height>0)),"image "+key+" "+data.src);
    check(standalone?image.src.startsWith("data:image/"):image.src.startsWith(new URL("assets/",frame.src).href),"local image "+key);
   }
   if(key==="home"){
    const scroller=app().querySelector('[data-home-scroll]');
    check(scroller.scrollHeight===2709,"new home source content height excludes pinned navigation");
-   check(app().querySelector('.asis-home-greeting').textContent==='테스터 님을 위해 준비했어요','home tester greeting');
-   check(pick('4769:25585').textContent.includes('95P'),'home source example point balance retained');
+   check(pick('4821:29261').textContent==='테스터 님을 위해 준비했어요','home tester greeting');
+   check(pick('4821:29337').textContent.includes('95P'),'home source example point balance retained');
    check(app().querySelectorAll('[data-name^="cmp_Home_LoanMenuItem"]').length===8,'home all eight loan menu items retained');
    check(app().querySelectorAll('[aria-label="연결하기"]').length===3,'home all three connection actions');
    scroller.scrollTop=9999;
@@ -106,7 +108,7 @@ try{
   if(key==="all"){
    check(app().querySelectorAll('[data-name="cmp_All_MenuSection"]').length===8,"all 8 categories retained");
    check(app().querySelectorAll('[data-name="cmp_All_MenuRow"]').length===41,"all 41 menu rows retained");
-   const scroller=app().querySelector(".asis-tab-scroll");check(scroller.scrollHeight===2823,"all full source height retained");scroller.scrollTop=9999;check(scroller.scrollTop>2000,"all scrolls to bottom");near("4426:16446",{y:688,h:92});
+   const scroller=app().querySelector(".asis-tab-scroll");check(scroller.scrollHeight===2791,"all full source height retained (시스템 바 32px 제외)");scroller.scrollTop=9999;check(scroller.scrollTop>2000,"all scrolls to bottom");near("4426:16446",{y:688,h:92});
   }
   if(["home","point","all"].includes(key)){
    check(app().querySelector('[aria-current="page"]').dataset.bottomNav===key,"correct selected tab "+key);
